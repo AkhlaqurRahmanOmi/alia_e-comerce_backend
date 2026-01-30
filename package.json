@@ -25,8 +25,9 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "ts-node prisma/seed.ts",
     "prisma:seed:master": "ts-node prisma/seed-master.ts",
-    "prisma:seed:wineshop": "ts-node prisma/seed-wineshop.ts",
-    "prisma:seed:blog": "ts-node prisma/seed-blog-permissions.ts",
+    "prisma:seed:fashion": "ts-node prisma/seed-fashion.ts",
+    "prisma:seed:sample": "ts-node prisma/seed-sample-data.ts",
+    "prisma:seed:full": "npm run prisma:seed:master && npm run prisma:seed:fashion && npm run prisma:seed:sample",
     "logs:clear": "echo 'Clearing log files...' &&  > logs/combined1.log && > logs/error.log && > logs/warn.log && echo 'Log files cleared successfully!'"
   },
   "prisma": {
