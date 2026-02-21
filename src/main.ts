@@ -1,12 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import {NestExpressApplication} from "@nestjs/platform-express";
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { swaggerConfig } from './config/swagger.config';
 import { join } from 'path';
+import { OpenApiModule } from './openapi/open-api.module';
 
 async function bootstrap() {
   // Create app with Winston logger only (disable default NestJS logger)
@@ -14,7 +15,7 @@ async function bootstrap() {
     bufferLogs: true,
   });
   //using etag for cache validation
-  app.set('etag', 'weak')
+  app.set('etag', 'weak');
 
   // Serve uploaded files as static assets
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -81,7 +82,7 @@ async function bootstrap() {
   const documentation = SwaggerModule.createDocument(app, swaggerConfig);
   // const documentFactory = () => SwaggerModule.createDocument(app, documentation);
 
-  SwaggerModule.setup('api/docs', app, documentation);
+  OpenApiModule.setup('api/docs', app, documentation);
 
   // Enable CORS
   app.enableCors();
