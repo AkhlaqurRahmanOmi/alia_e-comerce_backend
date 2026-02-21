@@ -112,7 +112,11 @@ export class OrderReportsProvider {
   /**
    * Get best selling products with product details
    */
-  async getBestSellingProducts(startDate: Date, endDate: Date, limit: number = 10) {
+  async getBestSellingProducts(
+    startDate: Date,
+    endDate: Date,
+    limit: number = 10,
+  ) {
     const topProducts = await this.orderRepository.getBestSellingProducts(
       startDate,
       endDate,

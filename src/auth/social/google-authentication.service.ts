@@ -65,18 +65,21 @@ export class GoogleAuthenticationService implements OnModuleInit {
         }
 
         // Extract roles from userRoles relation
-        const roles: FormattedRole[] = userWithRoles.userRoles.map((userRole) => ({
-          id: userRole.role.id,
-          name: userRole.role.name,
-          description: userRole.role.description,
-          permissions: userRole.role.rolePermissions.map((rp) => ({
-            id: rp.permission.id,
-            name: rp.permission.name,
-            description: rp.permission.description,
-          })),
-        }));
+        const roles: FormattedRole[] = userWithRoles.userRoles.map(
+          (userRole) => ({
+            id: userRole.role.id,
+            name: userRole.role.name,
+            description: userRole.role.description,
+            permissions: userRole.role.rolePermissions.map((rp) => ({
+              id: rp.permission.id,
+              name: rp.permission.name,
+              description: rp.permission.description,
+            })),
+          }),
+        );
 
-        const tokens = await this.generateTokenProvider.generateTokens(userWithRoles);
+        const tokens =
+          await this.generateTokenProvider.generateTokens(userWithRoles);
 
         return {
           ...tokens,
@@ -100,24 +103,29 @@ export class GoogleAuthenticationService implements OnModuleInit {
       });
 
       // Fetch the newly created user with roles
-      const newUserWithRoles = await this.userService.findUserWithRoles(newUser.id);
+      const newUserWithRoles = await this.userService.findUserWithRoles(
+        newUser.id,
+      );
 
       if (!newUserWithRoles) {
         throw new UnauthorizedException('Failed to retrieve user data');
       }
 
-      const roles: FormattedRole[] = newUserWithRoles.userRoles.map((userRole) => ({
-        id: userRole.role.id,
-        name: userRole.role.name,
-        description: userRole.role.description,
-        permissions: userRole.role.rolePermissions.map((rp) => ({
-          id: rp.permission.id,
-          name: rp.permission.name,
-          description: rp.permission.description,
-        })),
-      }));
+      const roles: FormattedRole[] = newUserWithRoles.userRoles.map(
+        (userRole) => ({
+          id: userRole.role.id,
+          name: userRole.role.name,
+          description: userRole.role.description,
+          permissions: userRole.role.rolePermissions.map((rp) => ({
+            id: rp.permission.id,
+            name: rp.permission.name,
+            description: rp.permission.description,
+          })),
+        }),
+      );
 
-      const tokens = await this.generateTokenProvider.generateTokens(newUserWithRoles);
+      const tokens =
+        await this.generateTokenProvider.generateTokens(newUserWithRoles);
 
       return {
         ...tokens,

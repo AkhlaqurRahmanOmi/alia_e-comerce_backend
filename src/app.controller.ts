@@ -7,8 +7,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import {Auth} from "./auth/decorator/auth.decorator";
-import {AuthType} from "./auth/enums/auth-type.enum";
+import { Auth } from './auth/decorator/auth.decorator';
+import { AuthType } from './auth/enums/auth-type.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBody,
@@ -20,9 +20,12 @@ import { LocalFileStorageService } from './shared/services/local-file-storage.se
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService, private readonly localFileStorageService: LocalFileStorageService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly localFileStorageService: LocalFileStorageService,
+  ) {}
 
-    @Auth(AuthType.None)
+  @Auth(AuthType.None)
   @Get('/')
   getHello(): string {
     return this.appService.getHello();
@@ -45,20 +48,28 @@ export class AppController {
     },
   })
   @ApiResponse({ status: 200, description: 'Local file upload successful' })
-  @ApiResponse({ status: 400, description: 'No file provided or upload failed' })
+  @ApiResponse({
+    status: 400,
+    description: 'No file provided or upload failed',
+  })
   async testLocalUpload(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('No file provided');
     }
 
     try {
-      const result = await this.localFileStorageService.uploadFile(file, 'test');
+      const result = await this.localFileStorageService.uploadFile(
+        file,
+        'test',
+      );
       return {
         message: 'Local file upload successful!',
         uploadResult: result,
       };
     } catch (error) {
-      throw new BadRequestException(`Local file upload failed: ${error.message}`);
+      throw new BadRequestException(
+        `Local file upload failed: ${error.message}`,
+      );
     }
   }
 }

@@ -1,4 +1,10 @@
-import { Coupon, Product, Category, User, CouponRedemption } from '@prisma/client';
+import {
+  Coupon,
+  Product,
+  Category,
+  User,
+  CouponRedemption,
+} from '@prisma/client';
 
 // Type for Coupon with Products
 export type CouponWithProducts = Coupon & {

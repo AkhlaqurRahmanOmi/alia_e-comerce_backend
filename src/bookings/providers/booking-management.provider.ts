@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { BookingRepository, BookingSettingsRepository } from '../repositories';
 import { AvailabilityCalculatorProvider } from './availability-calculator.provider';
 import { CreateBookingDto, CancelBookingDto } from '../dtos';
@@ -17,11 +21,12 @@ export class BookingManagementProvider {
     userId?: number,
   ): Promise<Booking> {
     // Validate slot availability
-    const isAvailable = await this.availabilityCalculator.validateSlotAvailability(
-      dto.bookingDate,
-      dto.bookingTime,
-      dto.partySize,
-    );
+    const isAvailable =
+      await this.availabilityCalculator.validateSlotAvailability(
+        dto.bookingDate,
+        dto.bookingTime,
+        dto.partySize,
+      );
 
     if (!isAvailable) {
       throw new BadRequestException(
@@ -49,7 +54,9 @@ export class BookingManagementProvider {
     let expiresAt: Date | null = null;
     if (depositRequired) {
       expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + settings.paymentHoldMinutes);
+      expiresAt.setMinutes(
+        expiresAt.getMinutes() + settings.paymentHoldMinutes,
+      );
     }
 
     // Generate unique confirmation code

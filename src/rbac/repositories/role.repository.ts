@@ -99,7 +99,10 @@ export class RoleRepository extends BaseRepository<Role, number> {
     });
   }
 
-  async assignPermissions(roleId: number, permissionIds: number[]): Promise<void> {
+  async assignPermissions(
+    roleId: number,
+    permissionIds: number[],
+  ): Promise<void> {
     await this.prisma.rolePermission.createMany({
       data: permissionIds.map((permissionId) => ({
         roleId,
@@ -109,7 +112,10 @@ export class RoleRepository extends BaseRepository<Role, number> {
     });
   }
 
-  async removePermissions(roleId: number, permissionIds: number[]): Promise<void> {
+  async removePermissions(
+    roleId: number,
+    permissionIds: number[],
+  ): Promise<void> {
     await this.prisma.rolePermission.deleteMany({
       where: {
         roleId,

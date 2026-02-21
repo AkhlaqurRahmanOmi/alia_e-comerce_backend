@@ -69,10 +69,14 @@ export class NotificationTemplateRepository {
       data: {
         ...(updateDto.name && { name: updateDto.name }),
         ...(updateDto.event && { event: updateDto.event }),
-        ...(updateDto.channel && { channel: updateDto.channel as NotificationChannel }),
+        ...(updateDto.channel && {
+          channel: updateDto.channel as NotificationChannel,
+        }),
         ...(updateDto.subject !== undefined && { subject: updateDto.subject }),
         ...(updateDto.template && { template: updateDto.template }),
-        ...(updateDto.isActive !== undefined && { isActive: updateDto.isActive }),
+        ...(updateDto.isActive !== undefined && {
+          isActive: updateDto.isActive,
+        }),
         updatedAt: new Date(),
       },
     });
@@ -84,7 +88,10 @@ export class NotificationTemplateRepository {
     });
   }
 
-  async toggleActive(id: number, isActive: boolean): Promise<NotificationTemplate> {
+  async toggleActive(
+    id: number,
+    isActive: boolean,
+  ): Promise<NotificationTemplate> {
     return this.prisma.notificationTemplate.update({
       where: { id },
       data: { isActive },

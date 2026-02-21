@@ -1,4 +1,11 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 import { IsEmail } from 'class-validator';
 import { EmailProvider } from './providers/email.provider';
 import { Auth } from '../auth/decorator/auth.decorator';

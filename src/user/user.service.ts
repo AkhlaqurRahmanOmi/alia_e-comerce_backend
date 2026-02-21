@@ -10,7 +10,7 @@ import { HashingProvider } from 'src/auth/providers/hashing.provider';
 import { PasswordResetProvider } from 'src/auth/providers/password-reset.provider';
 import { UserWithRoles } from './types/user-with-relations.type';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import type {Cache} from 'cache-manager';
+import type { Cache } from 'cache-manager';
 import { PaginatedResult } from 'src/shared/types';
 import { randomBytes } from 'crypto';
 
@@ -225,14 +225,14 @@ export class UserService {
     const key = this.userRoleCacheKey(id);
 
     //Try cache
-    const cached = await this.cache.get<UserWithRoles>(key)
-    if(cached) return cached
+    const cached = await this.cache.get<UserWithRoles>(key);
+    if (cached) return cached;
     try {
       const user = await this.userRepository.findByIdWithRoles(id);
-      if(user){
+      if (user) {
         await this.cache.set(key, user, 120_000); //2 minutes in ms
       }
-      return user
+      return user;
     } catch (error) {
       throw new RequestTimeoutException(
         'Unable to process your request at the moment, please try later',
@@ -243,8 +243,7 @@ export class UserService {
     }
   }
 
-
-  public async invalidateUserRoleCache(id: number){
+  public async invalidateUserRoleCache(id: number) {
     const key = this.userRoleCacheKey(id);
     await this.cache.del(key);
   }
@@ -333,10 +332,7 @@ export class UserService {
   /**
    * Update user verification status (Admin only)
    */
-  public async updateVerificationStatus(
-    id: number,
-    isVerified: boolean,
-  ) {
+  public async updateVerificationStatus(id: number, isVerified: boolean) {
     try {
       // Check if user exists
       const user = await this.userRepository.findById(id);
@@ -391,12 +387,14 @@ export class UserService {
       }
 
       let hashedPassword: string;
-      const shouldSendSetupEmail = !adminCreateUserDto.password || adminCreateUserDto.sendSetPasswordEmail;
+      const shouldSendSetupEmail =
+        !adminCreateUserDto.password || adminCreateUserDto.sendSetPasswordEmail;
 
       // If no password provided, generate a random one (user will set their own via email)
       if (!adminCreateUserDto.password) {
         const randomPassword = randomBytes(32).toString('hex');
-        hashedPassword = await this.hashingProvider.hashPassword(randomPassword);
+        hashedPassword =
+          await this.hashingProvider.hashPassword(randomPassword);
       } else {
         hashedPassword = await this.hashingProvider.hashPassword(
           adminCreateUserDto.password,
@@ -424,9 +422,8 @@ export class UserService {
 
       // If no password was provided or admin wants to send setup email, generate token and send email
       if (shouldSendSetupEmail) {
-        const token = await this.passwordResetProvider.generateAccountSetupToken(
-          user.id,
-        );
+        const token =
+          await this.passwordResetProvider.generateAccountSetupToken(user.id);
         await this.passwordResetProvider.sendAccountSetupEmail(
           user.id,
           user.email,

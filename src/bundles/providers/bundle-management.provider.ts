@@ -137,7 +137,9 @@ export class BundleManagementProvider {
   /**
    * Get all bundles with filters
    */
-  async getAllBundles(filterDto: BundleFilterDto): Promise<PaginatedResult<Bundle>> {
+  async getAllBundles(
+    filterDto: BundleFilterDto,
+  ): Promise<PaginatedResult<Bundle>> {
     const filters: any = {};
 
     // Add isActive filter

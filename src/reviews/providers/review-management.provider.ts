@@ -60,9 +60,7 @@ export class ReviewManagementProvider {
     );
 
     if (existingReview) {
-      throw new ConflictException(
-        'You have already reviewed this product',
-      );
+      throw new ConflictException('You have already reviewed this product');
     }
 
     // Create review with pending status

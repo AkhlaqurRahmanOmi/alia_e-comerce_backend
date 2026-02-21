@@ -15,10 +15,7 @@ import { AuthType } from '../auth/enums/auth-type.enum';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { Permissions } from '../auth/decorator/permissions.decorator';
 import { OrdersService } from './orders.service';
-import {
-  UpdateOrderStatusDto,
-  OrderFilterDto,
-} from './dtos';
+import { UpdateOrderStatusDto, OrderFilterDto } from './dtos';
 import { ReportFilterDto } from '../reports/dtos';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { CacheTTL } from '../shared/decorators/cache-ttl.decorator';

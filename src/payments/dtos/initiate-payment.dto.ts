@@ -1,4 +1,10 @@
-import { IsNumber, IsString, IsEnum, IsOptional, IsObject } from 'class-validator';
+import {
+  IsNumber,
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsObject,
+} from 'class-validator';
 
 export enum PaymentGateway {
   CASH_ON_DELIVERY = 'cash',

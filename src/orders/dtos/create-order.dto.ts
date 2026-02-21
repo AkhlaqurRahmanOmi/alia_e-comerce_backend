@@ -1,4 +1,11 @@
-import { IsNumber, IsArray, ValidateNested, IsOptional, IsString, IsEnum } from 'class-validator';
+import {
+  IsNumber,
+  IsArray,
+  ValidateNested,
+  IsOptional,
+  IsString,
+  IsEnum,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaymentGateway } from '../../payments/dtos/initiate-payment.dto';
 

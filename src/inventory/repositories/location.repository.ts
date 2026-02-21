@@ -81,11 +81,7 @@ export class LocationRepository extends BaseRepository<Location, number> {
   }
 
   async findWithFilters(options: any): Promise<any> {
-    const {
-      filters = {},
-      sort,
-      pagination = { page: 1, limit: 10 },
-    } = options;
+    const { filters = {}, sort, pagination = { page: 1, limit: 10 } } = options;
 
     const { page, limit } = pagination;
     const skip = (page - 1) * limit;

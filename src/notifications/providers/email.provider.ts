@@ -22,7 +22,10 @@ export class EmailProvider {
     const smtpPort = this.configService.get<number>('SMTP_PORT', 587);
     const smtpUser = this.configService.get<string>('SMTP_USER');
     const smtpPass = this.configService.get<string>('SMTP_PASSWORD');
-    this.fromEmail = this.configService.get<string>('SMTP_FROM_EMAIL', 'noreply@example.com');
+    this.fromEmail = this.configService.get<string>(
+      'SMTP_FROM_EMAIL',
+      'noreply@example.com',
+    );
 
     if (!smtpHost || !smtpUser || !smtpPass) {
       this.logger.warn(
@@ -78,7 +81,9 @@ export class EmailProvider {
     }
   }
 
-  async sendBulkEmails(emails: EmailOptions[]): Promise<{ sent: number; failed: number }> {
+  async sendBulkEmails(
+    emails: EmailOptions[],
+  ): Promise<{ sent: number; failed: number }> {
     let sent = 0;
     let failed = 0;
 

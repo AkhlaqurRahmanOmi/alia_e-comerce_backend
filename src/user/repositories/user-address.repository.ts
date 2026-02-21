@@ -6,7 +6,10 @@ import { PrismaService } from 'src/core/config/prisma/prisma.service';
 export class UserAddressRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(userId: number, data: Partial<UserAddress>): Promise<UserAddress> {
+  async create(
+    userId: number,
+    data: Partial<UserAddress>,
+  ): Promise<UserAddress> {
     return this.prisma.userAddress.create({
       data: {
         ...data,
@@ -28,7 +31,10 @@ export class UserAddressRepository {
     });
   }
 
-  async findByIdAndUserId(id: number, userId: number): Promise<UserAddress | null> {
+  async findByIdAndUserId(
+    id: number,
+    userId: number,
+  ): Promise<UserAddress | null> {
     return this.prisma.userAddress.findFirst({
       where: { id, userId },
     });

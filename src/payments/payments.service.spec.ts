@@ -40,7 +40,8 @@ describe('PaymentsService - Pesapal Integration', () => {
 
   const mockPesapalInitResponse = {
     success: true,
-    redirectUrl: 'https://cybqa.pesapal.com/pesapalv3/api/Transactions/SubmitOrderRequest?orderTrackingId=test-123',
+    redirectUrl:
+      'https://cybqa.pesapal.com/pesapalv3/api/Transactions/SubmitOrderRequest?orderTrackingId=test-123',
     transactionId: 'test-transaction-123',
     message: 'Payment initiated successfully',
     metadata: {
@@ -103,7 +104,8 @@ describe('PaymentsService - Pesapal Integration', () => {
           PESAPAL_CONSUMER_KEY: 'test-key',
           PESAPAL_CONSUMER_SECRET: 'test-secret',
           PESAPAL_ENVIRONMENT: 'sandbox',
-          PESAPAL_IPN_URL: 'http://localhost:4000/api/v1/payments/callback/pesapal',
+          PESAPAL_IPN_URL:
+            'http://localhost:4000/api/v1/payments/callback/pesapal',
           PESAPAL_CALLBACK_URL: 'http://localhost:3000/payment/result',
         };
         return config[key];
@@ -133,7 +135,9 @@ describe('PaymentsService - Pesapal Integration', () => {
           provide: PaymentGatewayFactory,
           useValue: {
             getGateway: jest.fn().mockReturnValue(mockPesapalProvider),
-            getAvailableGateways: jest.fn().mockReturnValue(['pesapal', 'mpesa']),
+            getAvailableGateways: jest
+              .fn()
+              .mockReturnValue(['pesapal', 'mpesa']),
           },
         },
       ],
@@ -143,7 +147,9 @@ describe('PaymentsService - Pesapal Integration', () => {
     paymentRepository = module.get<PaymentRepository>(PaymentRepository);
     prismaService = module.get<PrismaService>(PrismaService);
     pesapalProvider = module.get<PesapalProvider>(PesapalProvider);
-    paymentGatewayFactory = module.get<PaymentGatewayFactory>(PaymentGatewayFactory);
+    paymentGatewayFactory = module.get<PaymentGatewayFactory>(
+      PaymentGatewayFactory,
+    );
   });
 
   afterEach(() => {
@@ -182,11 +188,21 @@ describe('PaymentsService - Pesapal Integration', () => {
 
     it('should successfully initiate a Pesapal payment', async () => {
       // Setup mocks
-      jest.spyOn(prismaService.order, 'findUnique').mockResolvedValue(mockOrder as any);
-      jest.spyOn(paymentRepository, 'findSuccessfulPaymentByOrderId').mockResolvedValue(null);
-      jest.spyOn(pesapalProvider, 'initiatePayment').mockResolvedValue(mockPesapalInitResponse);
-      jest.spyOn(paymentRepository, 'createPayment').mockResolvedValue(mockPayment as any);
-      jest.spyOn(paymentRepository, 'createTransactionLog').mockResolvedValue({} as any);
+      jest
+        .spyOn(prismaService.order, 'findUnique')
+        .mockResolvedValue(mockOrder as any);
+      jest
+        .spyOn(paymentRepository, 'findSuccessfulPaymentByOrderId')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(pesapalProvider, 'initiatePayment')
+        .mockResolvedValue(mockPesapalInitResponse);
+      jest
+        .spyOn(paymentRepository, 'createPayment')
+        .mockResolvedValue(mockPayment as any);
+      jest
+        .spyOn(paymentRepository, 'createTransactionLog')
+        .mockResolvedValue({} as any);
 
       // Execute
       const result = await service.initiatePayment(initiatePaymentDto);
@@ -222,9 +238,16 @@ describe('PaymentsService - Pesapal Integration', () => {
     });
 
     it('should throw BadRequestException if order already has successful payment', async () => {
-      const successfulPayment = { ...mockPayment, status: PaymentStatus.captured };
-      jest.spyOn(prismaService.order, 'findUnique').mockResolvedValue(mockOrder as any);
-      jest.spyOn(paymentRepository, 'findSuccessfulPaymentByOrderId').mockResolvedValue(successfulPayment as any);
+      const successfulPayment = {
+        ...mockPayment,
+        status: PaymentStatus.captured,
+      };
+      jest
+        .spyOn(prismaService.order, 'findUnique')
+        .mockResolvedValue(mockOrder as any);
+      jest
+        .spyOn(paymentRepository, 'findSuccessfulPaymentByOrderId')
+        .mockResolvedValue(successfulPayment as any);
 
       await expect(service.initiatePayment(initiatePaymentDto)).rejects.toThrow(
         BadRequestException,
@@ -235,8 +258,12 @@ describe('PaymentsService - Pesapal Integration', () => {
     });
 
     it('should throw BadRequestException if payment gateway fails', async () => {
-      jest.spyOn(prismaService.order, 'findUnique').mockResolvedValue(mockOrder as any);
-      jest.spyOn(paymentRepository, 'findSuccessfulPaymentByOrderId').mockResolvedValue(null);
+      jest
+        .spyOn(prismaService.order, 'findUnique')
+        .mockResolvedValue(mockOrder as any);
+      jest
+        .spyOn(paymentRepository, 'findSuccessfulPaymentByOrderId')
+        .mockResolvedValue(null);
       jest.spyOn(pesapalProvider, 'initiatePayment').mockResolvedValue({
         success: false,
         transactionId: '',
@@ -255,23 +282,37 @@ describe('PaymentsService - Pesapal Integration', () => {
     };
 
     it('should successfully verify a captured payment', async () => {
-      jest.spyOn(paymentRepository, 'findByTransactionId').mockResolvedValue(mockPayment as any);
-      jest.spyOn(pesapalProvider, 'verifyPayment').mockResolvedValue(mockPesapalVerifyResponse);
-      jest.spyOn(paymentRepository, 'updatePaymentStatus').mockResolvedValue({} as any);
+      jest
+        .spyOn(paymentRepository, 'findByTransactionId')
+        .mockResolvedValue(mockPayment as any);
+      jest
+        .spyOn(pesapalProvider, 'verifyPayment')
+        .mockResolvedValue(mockPesapalVerifyResponse);
+      jest
+        .spyOn(paymentRepository, 'updatePaymentStatus')
+        .mockResolvedValue({} as any);
       jest.spyOn(prismaService.order, 'update').mockResolvedValue({} as any);
-      jest.spyOn(prismaService.orderStatusHistory, 'create').mockResolvedValue({} as any);
+      jest
+        .spyOn(prismaService.orderStatusHistory, 'create')
+        .mockResolvedValue({} as any);
 
       const result = await service.verifyPayment(verifyPaymentDto);
 
       expect(result.success).toBe(true);
       expect(result.payment.status).toBe('captured');
-      expect(paymentRepository.findByTransactionId).toHaveBeenCalledWith('test-transaction-123');
-      expect(pesapalProvider.verifyPayment).toHaveBeenCalledWith('test-transaction-123');
+      expect(paymentRepository.findByTransactionId).toHaveBeenCalledWith(
+        'test-transaction-123',
+      );
+      expect(pesapalProvider.verifyPayment).toHaveBeenCalledWith(
+        'test-transaction-123',
+      );
       expect(paymentRepository.updatePaymentStatus).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if payment does not exist', async () => {
-      jest.spyOn(paymentRepository, 'findByTransactionId').mockResolvedValue(null);
+      jest
+        .spyOn(paymentRepository, 'findByTransactionId')
+        .mockResolvedValue(null);
 
       await expect(service.verifyPayment(verifyPaymentDto)).rejects.toThrow(
         NotFoundException,
@@ -282,11 +323,19 @@ describe('PaymentsService - Pesapal Integration', () => {
     });
 
     it('should update order status to processing when payment is captured', async () => {
-      jest.spyOn(paymentRepository, 'findByTransactionId').mockResolvedValue(mockPayment as any);
-      jest.spyOn(pesapalProvider, 'verifyPayment').mockResolvedValue(mockPesapalVerifyResponse);
-      jest.spyOn(paymentRepository, 'updatePaymentStatus').mockResolvedValue({} as any);
+      jest
+        .spyOn(paymentRepository, 'findByTransactionId')
+        .mockResolvedValue(mockPayment as any);
+      jest
+        .spyOn(pesapalProvider, 'verifyPayment')
+        .mockResolvedValue(mockPesapalVerifyResponse);
+      jest
+        .spyOn(paymentRepository, 'updatePaymentStatus')
+        .mockResolvedValue({} as any);
       jest.spyOn(prismaService.order, 'update').mockResolvedValue({} as any);
-      jest.spyOn(prismaService.orderStatusHistory, 'create').mockResolvedValue({} as any);
+      jest
+        .spyOn(prismaService.orderStatusHistory, 'create')
+        .mockResolvedValue({} as any);
 
       await service.verifyPayment(verifyPaymentDto);
 
@@ -317,17 +366,32 @@ describe('PaymentsService - Pesapal Integration', () => {
     };
 
     it('should successfully handle Pesapal callback', async () => {
-      jest.spyOn(pesapalProvider, 'handleCallback').mockResolvedValue(mockCallbackResponse);
-      jest.spyOn(paymentRepository, 'findByTransactionId').mockResolvedValue(mockPayment as any);
-      jest.spyOn(paymentRepository, 'createTransactionLog').mockResolvedValue({} as any);
-      jest.spyOn(paymentRepository, 'updatePaymentStatus').mockResolvedValue({} as any);
+      jest
+        .spyOn(pesapalProvider, 'handleCallback')
+        .mockResolvedValue(mockCallbackResponse);
+      jest
+        .spyOn(paymentRepository, 'findByTransactionId')
+        .mockResolvedValue(mockPayment as any);
+      jest
+        .spyOn(paymentRepository, 'createTransactionLog')
+        .mockResolvedValue({} as any);
+      jest
+        .spyOn(paymentRepository, 'updatePaymentStatus')
+        .mockResolvedValue({} as any);
       jest.spyOn(prismaService.order, 'update').mockResolvedValue({} as any);
-      jest.spyOn(prismaService.orderStatusHistory, 'create').mockResolvedValue({} as any);
+      jest
+        .spyOn(prismaService.orderStatusHistory, 'create')
+        .mockResolvedValue({} as any);
 
-      const result = await service.handleCallback('pesapal', mockCallbackPayload);
+      const result = await service.handleCallback(
+        'pesapal',
+        mockCallbackPayload,
+      );
 
       expect(result.success).toBe(true);
-      expect(pesapalProvider.handleCallback).toHaveBeenCalledWith(mockCallbackPayload);
+      expect(pesapalProvider.handleCallback).toHaveBeenCalledWith(
+        mockCallbackPayload,
+      );
       expect(paymentRepository.createTransactionLog).toHaveBeenCalledWith({
         paymentId: 1,
         eventType: 'callback_received',
@@ -338,10 +402,17 @@ describe('PaymentsService - Pesapal Integration', () => {
     });
 
     it('should return false if payment not found', async () => {
-      jest.spyOn(pesapalProvider, 'handleCallback').mockResolvedValue(mockCallbackResponse);
-      jest.spyOn(paymentRepository, 'findByTransactionId').mockResolvedValue(null);
+      jest
+        .spyOn(pesapalProvider, 'handleCallback')
+        .mockResolvedValue(mockCallbackResponse);
+      jest
+        .spyOn(paymentRepository, 'findByTransactionId')
+        .mockResolvedValue(null);
 
-      const result = await service.handleCallback('pesapal', mockCallbackPayload);
+      const result = await service.handleCallback(
+        'pesapal',
+        mockCallbackPayload,
+      );
 
       expect(result.success).toBe(false);
       expect(result.message).toBe('Payment not found');
@@ -350,19 +421,27 @@ describe('PaymentsService - Pesapal Integration', () => {
 
   describe('getPayment', () => {
     it('should return payment details', async () => {
-      jest.spyOn(paymentRepository, 'findByTransactionId').mockResolvedValue(mockPayment as any);
+      jest
+        .spyOn(paymentRepository, 'findByTransactionId')
+        .mockResolvedValue(mockPayment as any);
 
       const result = await service.getPayment('test-transaction-123');
 
       expect(result.transactionId).toBe('test-transaction-123');
       expect(result.amount).toBe(5000);
-      expect(paymentRepository.findByTransactionId).toHaveBeenCalledWith('test-transaction-123');
+      expect(paymentRepository.findByTransactionId).toHaveBeenCalledWith(
+        'test-transaction-123',
+      );
     });
 
     it('should throw NotFoundException if payment does not exist', async () => {
-      jest.spyOn(paymentRepository, 'findByTransactionId').mockResolvedValue(null);
+      jest
+        .spyOn(paymentRepository, 'findByTransactionId')
+        .mockResolvedValue(null);
 
-      await expect(service.getPayment('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.getPayment('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -375,8 +454,12 @@ describe('PaymentsService - Pesapal Integration', () => {
         totalPaid: 0,
       };
 
-      jest.spyOn(paymentRepository, 'findByOrderId').mockResolvedValue(mockPayments as any);
-      jest.spyOn(paymentRepository, 'getOrderPaymentStats').mockResolvedValue(mockStats as any);
+      jest
+        .spyOn(paymentRepository, 'findByOrderId')
+        .mockResolvedValue(mockPayments as any);
+      jest
+        .spyOn(paymentRepository, 'getOrderPaymentStats')
+        .mockResolvedValue(mockStats as any);
 
       const result = await service.getOrderPayments(1);
 

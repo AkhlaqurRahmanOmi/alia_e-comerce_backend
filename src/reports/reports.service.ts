@@ -69,7 +69,11 @@ export class ReportsService {
   /**
    * Get abandoned cart details
    */
-  async getAbandonedCartDetails(startDate: Date, endDate: Date, limit?: number) {
+  async getAbandonedCartDetails(
+    startDate: Date,
+    endDate: Date,
+    limit?: number,
+  ) {
     return this.cartService.getAbandonedCartDetails(startDate, endDate, limit);
   }
 

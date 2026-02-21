@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import {
@@ -22,7 +27,12 @@ import {
   CreateCustomScheduleDto,
 } from './dtos';
 import { BookingWithRelations, AvailabilitySummary } from './types';
-import { Booking, BookingSetting, BlockedDate, CustomSchedule } from '@prisma/client';
+import {
+  Booking,
+  BookingSetting,
+  BlockedDate,
+  CustomSchedule,
+} from '@prisma/client';
 import { QueryOptions } from '../shared/types';
 
 @Injectable()
@@ -44,7 +54,9 @@ export class BookingsService {
   // Availability Operations
   // ===========================
 
-  async checkAvailability(dto: CheckAvailabilityDto): Promise<AvailabilitySummary> {
+  async checkAvailability(
+    dto: CheckAvailabilityDto,
+  ): Promise<AvailabilitySummary> {
     const cacheKey = `${this.CACHE_PREFIX}:availability:${dto.date}:${dto.partySize}`;
 
     // Try to get from cache
@@ -54,10 +66,11 @@ export class BookingsService {
     }
 
     // Calculate availability
-    const availability = await this.availabilityCalculator.calculateAvailability(
-      dto.date,
-      dto.partySize,
-    );
+    const availability =
+      await this.availabilityCalculator.calculateAvailability(
+        dto.date,
+        dto.partySize,
+      );
 
     // Cache the result
     await this.cacheManager.set(cacheKey, availability, this.CACHE_TTL * 1000);
@@ -69,7 +82,10 @@ export class BookingsService {
   // Booking Operations
   // ===========================
 
-  async createBooking(dto: CreateBookingDto, userId?: number): Promise<Booking> {
+  async createBooking(
+    dto: CreateBookingDto,
+    userId?: number,
+  ): Promise<Booking> {
     const booking = await this.bookingManagement.createBooking(dto, userId);
 
     // Invalidate availability cache for this date
@@ -141,7 +157,11 @@ export class BookingsService {
     return this.bookingRepo.findByEmail(email);
   }
 
-  async update(id: number, dto: UpdateBookingDto, changedBy?: string): Promise<Booking> {
+  async update(
+    id: number,
+    dto: UpdateBookingDto,
+    changedBy?: string,
+  ): Promise<Booking> {
     const booking = await this.bookingRepo.findById(id);
     if (!booking) {
       throw new NotFoundException('Booking not found');
@@ -149,15 +169,17 @@ export class BookingsService {
 
     // If date or time is being updated, check availability
     if (dto.bookingDate || dto.bookingTime || dto.partySize) {
-      const newDate = dto.bookingDate || booking.bookingDate.toISOString().split('T')[0];
+      const newDate =
+        dto.bookingDate || booking.bookingDate.toISOString().split('T')[0];
       const newTime = dto.bookingTime || booking.bookingTime;
       const newPartySize = dto.partySize || booking.partySize;
 
-      const isAvailable = await this.availabilityCalculator.validateSlotAvailability(
-        newDate,
-        newTime,
-        newPartySize,
-      );
+      const isAvailable =
+        await this.availabilityCalculator.validateSlotAvailability(
+          newDate,
+          newTime,
+          newPartySize,
+        );
 
       if (!isAvailable) {
         throw new BadRequestException('Selected time slot is not available');
@@ -181,14 +203,19 @@ export class BookingsService {
 
     // Invalidate cache
     if (dto.bookingDate || booking.bookingDate) {
-      const dateToInvalidate = dto.bookingDate || booking.bookingDate.toISOString().split('T')[0];
+      const dateToInvalidate =
+        dto.bookingDate || booking.bookingDate.toISOString().split('T')[0];
       await this.invalidateAvailabilityCache(dateToInvalidate);
     }
 
     return updatedBooking;
   }
 
-  async cancel(id: number, dto: CancelBookingDto, cancelledBy: string): Promise<Booking> {
+  async cancel(
+    id: number,
+    dto: CancelBookingDto,
+    cancelledBy: string,
+  ): Promise<Booking> {
     const booking = await this.bookingRepo.findById(id);
     if (!booking) {
       throw new NotFoundException('Booking not found');
@@ -260,7 +287,8 @@ export class BookingsService {
         depositType: dto.depositType || 'fixed',
         paymentHoldMinutes: dto.paymentHoldMinutes || 15,
         cancellationHours: dto.cancellationHours || 24,
-        isBookingEnabled: dto.isBookingEnabled !== undefined ? dto.isBookingEnabled : true,
+        isBookingEnabled:
+          dto.isBookingEnabled !== undefined ? dto.isBookingEnabled : true,
       });
     }
 
@@ -281,7 +309,9 @@ export class BookingsService {
   }
 
   async createBlockedDate(dto: CreateBlockedDateDto): Promise<BlockedDate> {
-    const existingBlockedDate = await this.blockedDateRepo.findByDate(new Date(dto.date));
+    const existingBlockedDate = await this.blockedDateRepo.findByDate(
+      new Date(dto.date),
+    );
     if (existingBlockedDate) {
       throw new BadRequestException('This date is already blocked');
     }
@@ -322,10 +352,16 @@ export class BookingsService {
     return this.customScheduleRepo.findAll();
   }
 
-  async createCustomSchedule(dto: CreateCustomScheduleDto): Promise<CustomSchedule> {
-    const existingSchedule = await this.customScheduleRepo.findByDate(new Date(dto.date));
+  async createCustomSchedule(
+    dto: CreateCustomScheduleDto,
+  ): Promise<CustomSchedule> {
+    const existingSchedule = await this.customScheduleRepo.findByDate(
+      new Date(dto.date),
+    );
     if (existingSchedule) {
-      throw new BadRequestException('Custom schedule already exists for this date');
+      throw new BadRequestException(
+        'Custom schedule already exists for this date',
+      );
     }
 
     const schedule = await this.customScheduleRepo.create({

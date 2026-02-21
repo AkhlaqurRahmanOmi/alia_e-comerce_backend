@@ -11,8 +11,11 @@ export class FileValidationPipe implements PipeTransform {
     }
 
     const files = Array.isArray(value) ? value : [value];
-    const maxFileSize = this.configService.get<number>('storage.upload.maxFileSize') || 5242880;
-    const allowedTypes = this.configService.get<string[]>('storage.upload.allowedImageTypes') || ['jpg', 'jpeg', 'png', 'webp'];
+    const maxFileSize =
+      this.configService.get<number>('storage.upload.maxFileSize') || 5242880;
+    const allowedTypes = this.configService.get<string[]>(
+      'storage.upload.allowedImageTypes',
+    ) || ['jpg', 'jpeg', 'png', 'webp'];
 
     for (const file of files) {
       // Validate file size

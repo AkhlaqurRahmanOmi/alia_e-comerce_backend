@@ -49,7 +49,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           errorCode = 'VALIDATION_ERROR';
           message = 'Validation failed';
           details = this.formatValidationErrors(responseObj.message);
-          hint = 'Please check the request body and ensure all required fields are provided with valid values';
+          hint =
+            'Please check the request body and ensure all required fields are provided with valid values';
         } else {
           errorCode = this.getErrorCode(statusCode);
           message = responseObj.message || exception.message;
@@ -65,8 +66,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
       errorCode = 'INTERNAL_SERVER_ERROR';
       message = 'An unexpected error occurred';
-      details = process.env.NODE_ENV === 'development' ? exception.message : undefined;
-      hint = 'Please try again later or contact support if the problem persists';
+      details =
+        process.env.NODE_ENV === 'development' ? exception.message : undefined;
+      hint =
+        'Please try again later or contact support if the problem persists';
 
       // Log the full error for debugging
       this.logger.error(
@@ -79,7 +82,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
       errorCode = 'UNKNOWN_ERROR';
       message = 'An unknown error occurred';
-      hint = 'Please try again later or contact support if the problem persists';
+      hint =
+        'Please try again later or contact support if the problem persists';
 
       this.logger.error('Unknown error occurred', JSON.stringify(exception), {
         traceId,
@@ -110,15 +114,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // Log error for non-client errors
     if (statusCode >= 500) {
-      this.logger.error(
-        `Error ${statusCode}: ${message}`,
-        { traceId, path: request.path, errorCode },
-      );
+      this.logger.error(`Error ${statusCode}: ${message}`, {
+        traceId,
+        path: request.path,
+        errorCode,
+      });
     } else if (statusCode >= 400) {
-      this.logger.warn(
-        `Client error ${statusCode}: ${message}`,
-        { traceId, path: request.path, errorCode },
-      );
+      this.logger.warn(`Client error ${statusCode}: ${message}`, {
+        traceId,
+        path: request.path,
+        errorCode,
+      });
     }
 
     response.status(statusCode).json(errorResponse);

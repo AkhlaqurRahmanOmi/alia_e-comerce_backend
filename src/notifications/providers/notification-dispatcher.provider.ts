@@ -70,7 +70,10 @@ export class NotificationDispatcherProvider {
           break;
 
         case NotificationChannel.REALTIME:
-          const realtimeResults = await this.dispatchRealtime(dto, enabledUserIds);
+          const realtimeResults = await this.dispatchRealtime(
+            dto,
+            enabledUserIds,
+          );
           results.push(...realtimeResults);
           break;
 
@@ -321,7 +324,10 @@ export class NotificationDispatcherProvider {
         const template = await this.templateRepo.findByName(dto.templateName);
 
         if (template && template.channel === 'realtime') {
-          message = this.templateRenderer.render(template.template, dto.data || {});
+          message = this.templateRenderer.render(
+            template.template,
+            dto.data || {},
+          );
         }
       } else if (!dto.message) {
         // Try to find template by event
@@ -331,7 +337,10 @@ export class NotificationDispatcherProvider {
         );
 
         if (template) {
-          message = this.templateRenderer.render(template.template, dto.data || {});
+          message = this.templateRenderer.render(
+            template.template,
+            dto.data || {},
+          );
         }
       }
 

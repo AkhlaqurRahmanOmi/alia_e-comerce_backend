@@ -1,4 +1,10 @@
-import { IsOptional, IsBoolean, IsString, IsNumber, Min } from 'class-validator';
+import {
+  IsOptional,
+  IsBoolean,
+  IsString,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { BasePaginationDto } from '../../shared/dtos';
 

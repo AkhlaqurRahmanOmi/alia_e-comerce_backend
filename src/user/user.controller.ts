@@ -55,7 +55,6 @@ export class UserController {
   }
 
   @Auth(AuthType.None)
-
   @Get(':id')
   // @Permissions('users:view')
   @UseInterceptors(ClassSerializerInterceptor)
@@ -153,7 +152,11 @@ export class UserController {
     @ActiveUser() user: ActiveUserData,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
-    return this.userAddressProvider.updateAddress(id, user.sub, updateAddressDto);
+    return this.userAddressProvider.updateAddress(
+      id,
+      user.sub,
+      updateAddressDto,
+    );
   }
 
   @Delete('addresses/:id')

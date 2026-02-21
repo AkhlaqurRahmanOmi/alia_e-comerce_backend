@@ -27,10 +27,7 @@ export class OtpCleanupTask {
         `OTP cleanup completed. Deleted ${deletedCount} expired OTP records`,
       );
     } catch (error) {
-      this.logger.error(
-        `OTP cleanup failed: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`OTP cleanup failed: ${error.message}`, error.stack);
     }
   }
 

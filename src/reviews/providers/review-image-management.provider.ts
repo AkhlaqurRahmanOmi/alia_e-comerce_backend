@@ -34,12 +34,16 @@ export class ReviewImageManagementProvider {
     }
 
     if (review.userId !== userId) {
-      throw new ForbiddenException('You can only add images to your own reviews');
+      throw new ForbiddenException(
+        'You can only add images to your own reviews',
+      );
     }
 
     // Check max images limit
-    const maxImages = this.configService.get<number>('storage.upload.maxImagesPerReview') || 5;
-    const existingImages = await this.reviewImageRepository.findByReviewId(reviewId);
+    const maxImages =
+      this.configService.get<number>('storage.upload.maxImagesPerReview') || 5;
+    const existingImages =
+      await this.reviewImageRepository.findByReviewId(reviewId);
 
     if (existingImages.length + files.length > maxImages) {
       throw new BadRequestException(
@@ -68,10 +72,7 @@ export class ReviewImageManagementProvider {
   /**
    * Delete a specific review image
    */
-  async deleteReviewImage(
-    imageId: number,
-    userId: number,
-  ): Promise<void> {
+  async deleteReviewImage(imageId: number, userId: number): Promise<void> {
     const image = await this.reviewImageRepository.findById(imageId);
 
     if (!image) {
@@ -87,7 +88,9 @@ export class ReviewImageManagementProvider {
 
     // Check ownership - users can only delete their own review images
     if (review.userId !== userId) {
-      throw new ForbiddenException('You can only delete your own review images');
+      throw new ForbiddenException(
+        'You can only delete your own review images',
+      );
     }
 
     // Delete from local storage

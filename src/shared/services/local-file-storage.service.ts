@@ -29,13 +29,9 @@ export class LocalFileStorageService {
     this.baseUrl =
       this.configService.get<string>('storage.local.baseUrl') ||
       'http://localhost:4000';
-    this.allowedFolders =
-      this.configService.get<string[]>('storage.local.allowedFolders') || [
-        'reviews',
-        'products',
-        'variants',
-        'test',
-      ];
+    this.allowedFolders = this.configService.get<string[]>(
+      'storage.local.allowedFolders',
+    ) || ['reviews', 'products', 'variants', 'test'];
 
     // Ensure base upload directory exists on service initialization
     this.ensureUploadDirectoryExists();
@@ -57,7 +53,11 @@ export class LocalFileStorageService {
       throw new BadRequestException(`Invalid upload folder: ${folder}`);
     }
 
-    if (folder.includes('..') || folder.includes('/') || folder.includes('\\')) {
+    if (
+      folder.includes('..') ||
+      folder.includes('/') ||
+      folder.includes('\\')
+    ) {
       throw new BadRequestException('Invalid folder name');
     }
   }

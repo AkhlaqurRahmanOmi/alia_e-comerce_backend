@@ -10,11 +10,7 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class HttpLoggerMiddleware implements NestMiddleware {
-  private readonly excludedPaths = [
-    '/favicon.ico',
-    '/health',
-    '/metrics',
-  ];
+  private readonly excludedPaths = ['/favicon.ico', '/health', '/metrics'];
 
   constructor(
     @Inject(WINSTON_MODULE_NEST_PROVIDER)

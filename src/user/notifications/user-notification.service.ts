@@ -5,9 +5,7 @@ import { UserNotificationEvents } from './events/user-notification.events';
 
 @Injectable()
 export class UserNotificationService {
-  constructor(
-    private readonly notificationsService: NotificationsService,
-  ) {}
+  constructor(private readonly notificationsService: NotificationsService) {}
 
   /**
    * Send OTP email - CRITICAL (Synchronous)

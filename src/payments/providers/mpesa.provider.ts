@@ -21,19 +21,18 @@ export class MpesaProvider implements IPaymentGateway {
   private environment: string;
 
   constructor(private configService: ConfigService) {
-    this.consumerKey = this.configService.get<string>('MPESA_CONSUMER_KEY') || '';
-    this.consumerSecret = this.configService.get<string>(
-      'MPESA_CONSUMER_SECRET',
-    ) || '';
-    this.businessShortCode = this.configService.get<string>(
-      'MPESA_BUSINESS_SHORT_CODE',
-    ) || '';
+    this.consumerKey =
+      this.configService.get<string>('MPESA_CONSUMER_KEY') || '';
+    this.consumerSecret =
+      this.configService.get<string>('MPESA_CONSUMER_SECRET') || '';
+    this.businessShortCode =
+      this.configService.get<string>('MPESA_BUSINESS_SHORT_CODE') || '';
     this.passKey = this.configService.get<string>('MPESA_PASS_KEY') || '';
-    this.callbackUrl = this.configService.get<string>('MPESA_CALLBACK_URL') || '';
-    this.environment = this.configService.get<string>(
-      'MPESA_ENVIRONMENT',
-      'sandbox',
-    ) || 'sandbox';
+    this.callbackUrl =
+      this.configService.get<string>('MPESA_CALLBACK_URL') || '';
+    this.environment =
+      this.configService.get<string>('MPESA_ENVIRONMENT', 'sandbox') ||
+      'sandbox';
 
     // Set base URL based on environment
     this.baseUrl =
@@ -86,7 +85,8 @@ export class MpesaProvider implements IPaymentGateway {
         PhoneNumber: phoneNumber,
         CallBackURL: this.callbackUrl,
         AccountReference: `ORDER${orderId}`,
-        TransactionDesc: metadata?.description || `Payment for Order #${orderId}`,
+        TransactionDesc:
+          metadata?.description || `Payment for Order #${orderId}`,
       };
 
       const response = await this.httpClient.post(
@@ -104,7 +104,8 @@ export class MpesaProvider implements IPaymentGateway {
         return {
           success: true,
           transactionId: response.data.CheckoutRequestID,
-          message: response.data.ResponseDescription || 'STK Push sent successfully',
+          message:
+            response.data.ResponseDescription || 'STK Push sent successfully',
           metadata: {
             checkoutRequestId: response.data.CheckoutRequestID,
             merchantRequestId: response.data.MerchantRequestID,
@@ -127,9 +128,7 @@ export class MpesaProvider implements IPaymentGateway {
     }
   }
 
-  async verifyPayment(
-    transactionId: string,
-  ): Promise<PaymentVerifyResponse> {
+  async verifyPayment(transactionId: string): Promise<PaymentVerifyResponse> {
     try {
       this.logger.log(`Verifying M-Pesa payment: ${transactionId}`);
 

@@ -22,7 +22,7 @@ export class TemplateRenderingProvider {
         return d.toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
-          day: 'numeric'
+          day: 'numeric',
         });
       } else if (format === 'time') {
         return d.toLocaleTimeString();
@@ -32,14 +32,17 @@ export class TemplateRenderingProvider {
     });
 
     // Helper for formatting currency
-    Handlebars.registerHelper('formatCurrency', (amount: number, currency = 'USD') => {
-      if (amount === null || amount === undefined) return '';
+    Handlebars.registerHelper(
+      'formatCurrency',
+      (amount: number, currency = 'USD') => {
+        if (amount === null || amount === undefined) return '';
 
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency,
-      }).format(amount);
-    });
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency,
+        }).format(amount);
+      },
+    );
 
     // Helper for conditional logic
     Handlebars.registerHelper('eq', (a: any, b: any) => a === b);

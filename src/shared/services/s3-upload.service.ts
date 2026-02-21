@@ -32,7 +32,8 @@ export class S3UploadService {
     this.logger.warn(
       'S3UploadService is disabled - this project uses LocalFileStorageService',
     );
-    this.region = this.configService.get<string>('storage.s3.region') || 'us-east-1';
+    this.region =
+      this.configService.get<string>('storage.s3.region') || 'us-east-1';
     this.endpoint = this.configService.get<string>('storage.s3.endpoint');
     // Commented out - AWS SDK is not installed
     // const credentials = this.configService.get('storage.s3.credentials');
@@ -45,7 +46,8 @@ export class S3UploadService {
     //   forcePathStyle,
     // });
 
-    this.bucketName = this.configService.get<string>('storage.s3.bucketName') || '';
+    this.bucketName =
+      this.configService.get<string>('storage.s3.bucketName') || '';
   }
 
   /**

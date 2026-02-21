@@ -9,10 +9,7 @@ import {
 } from '../../shared/types';
 
 @Injectable()
-export class ReviewImageRepository extends BaseRepository<
-  ReviewImage,
-  number
-> {
+export class ReviewImageRepository extends BaseRepository<ReviewImage, number> {
   constructor(private readonly prisma: PrismaService) {
     super();
   }
@@ -49,10 +46,7 @@ export class ReviewImageRepository extends BaseRepository<
   async findWithFilters(
     options: QueryOptions,
   ): Promise<PaginatedResult<ReviewImage>> {
-    const {
-      filters = {},
-      pagination = { page: 1, limit: 10 },
-    } = options;
+    const { filters = {}, pagination = { page: 1, limit: 10 } } = options;
 
     const { page, limit } = pagination;
     const skip = (page - 1) * limit;

@@ -41,7 +41,9 @@ export class MovementTrackingProvider {
   /**
    * Get movement history for a location
    */
-  async getMovementsByLocation(locationId: number): Promise<InventoryMovement[]> {
+  async getMovementsByLocation(
+    locationId: number,
+  ): Promise<InventoryMovement[]> {
     return this.movementRepository.findByLocationId(locationId);
   }
 

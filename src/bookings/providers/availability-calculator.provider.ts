@@ -1,5 +1,10 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { BookingSettingsRepository, BlockedDateRepository, CustomScheduleRepository, BookingRepository } from '../repositories';
+import {
+  BookingSettingsRepository,
+  BlockedDateRepository,
+  CustomScheduleRepository,
+  BookingRepository,
+} from '../repositories';
 import { AvailableSlot, AvailabilitySummary } from '../types';
 
 @Injectable()
@@ -35,7 +40,10 @@ export class AvailabilityCalculatorProvider {
     }
 
     // Validate party size
-    if (partySize < settings.minPartySize || partySize > settings.maxPartySize) {
+    if (
+      partySize < settings.minPartySize ||
+      partySize > settings.maxPartySize
+    ) {
       throw new BadRequestException(
         `Party size must be between ${settings.minPartySize} and ${settings.maxPartySize}`,
       );
@@ -43,7 +51,9 @@ export class AvailabilityCalculatorProvider {
 
     // Check if date is within advance booking window
     const maxAdvanceDate = new Date(today);
-    maxAdvanceDate.setDate(maxAdvanceDate.getDate() + settings.advanceBookingDays);
+    maxAdvanceDate.setDate(
+      maxAdvanceDate.getDate() + settings.advanceBookingDays,
+    );
     if (bookingDate > maxAdvanceDate) {
       throw new BadRequestException(
         `Cannot book more than ${settings.advanceBookingDays} days in advance`,
@@ -63,18 +73,26 @@ export class AvailabilityCalculatorProvider {
     }
 
     // Check for custom schedule
-    const customSchedule = await this.customScheduleRepo.findByDate(bookingDate);
+    const customSchedule =
+      await this.customScheduleRepo.findByDate(bookingDate);
 
     const openingTime = customSchedule?.openingTime || settings.openingTime;
     const closingTime = customSchedule?.closingTime || settings.closingTime;
-    const slotDuration = customSchedule?.slotDuration || settings.slotDurationMinutes;
-    const maxCapacity = customSchedule?.maxCapacity || settings.maxCapacityPerSlot;
+    const slotDuration =
+      customSchedule?.slotDuration || settings.slotDurationMinutes;
+    const maxCapacity =
+      customSchedule?.maxCapacity || settings.maxCapacityPerSlot;
 
     // Generate time slots
-    const slots = this.generateTimeSlots(openingTime, closingTime, slotDuration);
+    const slots = this.generateTimeSlots(
+      openingTime,
+      closingTime,
+      slotDuration,
+    );
 
     // Get existing bookings for this date
-    const bookedCapacity = await this.bookingRepo.getBookedCapacityByDate(bookingDate);
+    const bookedCapacity =
+      await this.bookingRepo.getBookedCapacityByDate(bookingDate);
 
     // Create a map for quick lookup
     const bookedMap = new Map<string, number>();
@@ -97,7 +115,9 @@ export class AvailabilityCalculatorProvider {
       };
     });
 
-    const availableSlotsCount = availableSlots.filter((slot) => slot.isAvailable).length;
+    const availableSlotsCount = availableSlots.filter(
+      (slot) => slot.isAvailable,
+    ).length;
 
     return {
       date,

@@ -1,9 +1,8 @@
 // src/logger/winston.config.ts
 import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
 import * as winston from 'winston';
-import * as fs from 'fs'
-import * as path from 'path'
-
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Adding checkpoint for creating the logs
@@ -16,7 +15,7 @@ if (!fs.existsSync('logs')) {
 //add docker checkpoint
 const logsDir = path.join(process.cwd(), 'logs');
 if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, {recursive: true});
+  fs.mkdirSync(logsDir, { recursive: true });
 }
 
 /**
@@ -41,9 +40,9 @@ export const winstonConfig: winston.LoggerOptions = {
           prettyPrint: true,
           colors: true,
           appName: true,
-            processId: false,
-            // context: true,
-            // traceId: true,
+          processId: false,
+          // context: true,
+          // traceId: true,
         }),
       ),
     }),
@@ -67,15 +66,21 @@ export const winstonConfig: winston.LoggerOptions = {
       format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD hh:mm:ss A' }),
         winston.format.errors({ stack: true }),
-        winston.format.printf(({ timestamp, level, message, traceId, ...meta }) => {
-          return JSON.stringify({
-            timestamp,
-            level,
-            traceId: traceId,
-            message,
-            ...meta
-          }, null, 2);
-        }),
+        winston.format.printf(
+          ({ timestamp, level, message, traceId, ...meta }) => {
+            return JSON.stringify(
+              {
+                timestamp,
+                level,
+                traceId: traceId,
+                message,
+                ...meta,
+              },
+              null,
+              2,
+            );
+          },
+        ),
       ),
       maxsize: 5242880, // 5MB
       maxFiles: 5,
@@ -87,15 +92,21 @@ export const winstonConfig: winston.LoggerOptions = {
       format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD hh:mm:ss A' }),
         winston.format.errors({ stack: true }),
-        winston.format.printf(({ timestamp, level, message, traceId, ...meta }) => {
-          return JSON.stringify({
-            timestamp,
-            level,
-            traceId: traceId,
-            message,
-            ...meta
-          }, null, 2);
-        }),
+        winston.format.printf(
+          ({ timestamp, level, message, traceId, ...meta }) => {
+            return JSON.stringify(
+              {
+                timestamp,
+                level,
+                traceId: traceId,
+                message,
+                ...meta,
+              },
+              null,
+              2,
+            );
+          },
+        ),
       ),
       maxsize: 5242880, // 5MB
       maxFiles: 3,

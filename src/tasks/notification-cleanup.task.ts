@@ -24,7 +24,8 @@ export class NotificationCleanupTask {
 
     try {
       // Archive notifications older than 90 days
-      const archivedCount = await this.notificationRepository.archiveOldNotifications(90);
+      const archivedCount =
+        await this.notificationRepository.archiveOldNotifications(90);
 
       this.logger.log(
         `Notification archive completed. Archived ${archivedCount} old notification records`,

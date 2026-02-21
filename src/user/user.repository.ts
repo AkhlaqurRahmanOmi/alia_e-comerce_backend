@@ -40,16 +40,16 @@ export class UserRepository extends BaseRepository<User, number> {
     });
   }
 
-  async findWithFilters(options: QueryOptions): Promise<PaginatedResult<UserWithRoles>> {
+  async findWithFilters(
+    options: QueryOptions,
+  ): Promise<PaginatedResult<UserWithRoles>> {
     const { pagination, filters, sort } = options;
     const page = pagination?.page ?? 1;
     const limit = pagination?.limit ?? 10;
     const skip = (page - 1) * limit;
 
     // Convert SortOptions to Prisma orderBy format
-    const orderBy = sort
-      ? { [sort.field]: sort.order }
-      : undefined;
+    const orderBy = sort ? { [sort.field]: sort.order } : undefined;
 
     const [data, total] = await Promise.all([
       this.prisma.user.findMany({

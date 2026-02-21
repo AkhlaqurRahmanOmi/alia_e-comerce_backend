@@ -150,7 +150,10 @@ export class NotificationGateway
     @ConnectedSocket() client: Socket,
   ) {
     const userId = this.extractUserId(client);
-    this.logger.debug(`User ${userId} marked notifications as read:`, data.notificationIds);
+    this.logger.debug(
+      `User ${userId} marked notifications as read:`,
+      data.notificationIds,
+    );
     return { success: true };
   }
 

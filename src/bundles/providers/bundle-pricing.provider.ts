@@ -31,7 +31,8 @@ export class BundlePricingProvider {
 
     const bundlePrice = bundle.price;
     const savings = individualPrice - bundlePrice;
-    const savingsPercent = individualPrice > 0 ? (savings / individualPrice) * 100 : 0;
+    const savingsPercent =
+      individualPrice > 0 ? (savings / individualPrice) * 100 : 0;
 
     return {
       bundleId: bundle.id,

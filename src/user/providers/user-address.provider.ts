@@ -11,11 +11,12 @@ import { UpdateAddressDto } from '../dtos/update-address.dto';
 
 @Injectable()
 export class UserAddressProvider {
-  constructor(
-    private readonly addressRepository: UserAddressRepository,
-  ) {}
+  constructor(private readonly addressRepository: UserAddressRepository) {}
 
-  async createAddress(userId: number, dto: CreateAddressDto): Promise<UserAddress> {
+  async createAddress(
+    userId: number,
+    dto: CreateAddressDto,
+  ): Promise<UserAddress> {
     // If setting as default billing, clear existing default
     if (dto.isDefaultBilling) {
       await this.addressRepository.clearDefaultBilling(userId);
@@ -56,7 +57,10 @@ export class UserAddressProvider {
     dto: UpdateAddressDto,
   ): Promise<UserAddress> {
     // Verify address exists and belongs to user
-    const existingAddress = await this.addressRepository.findByIdAndUserId(id, userId);
+    const existingAddress = await this.addressRepository.findByIdAndUserId(
+      id,
+      userId,
+    );
 
     if (!existingAddress) {
       throw new NotFoundException(`Address with ID ${id} not found`);

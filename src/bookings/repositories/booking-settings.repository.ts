@@ -10,9 +10,7 @@ export class BookingSettingsRepository {
     return this.prisma.bookingSetting.findFirst();
   }
 
-  async createSettings(
-    data: Partial<BookingSetting>,
-  ): Promise<BookingSetting> {
+  async createSettings(data: Partial<BookingSetting>): Promise<BookingSetting> {
     return this.prisma.bookingSetting.create({
       data: data as Prisma.BookingSettingCreateInput,
     });

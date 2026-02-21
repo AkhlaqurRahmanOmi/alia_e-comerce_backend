@@ -43,7 +43,8 @@ export class GlobalResponseInterceptor implements NestInterceptor {
     const response = ctx.getResponse();
 
     // Get or generate trace ID
-    const traceId = request['traceId'] || this.traceIdService.getOrGenerate(request.headers);
+    const traceId =
+      request['traceId'] || this.traceIdService.getOrGenerate(request.headers);
 
     // Get API version from request or default to '1'
     const version = this.getApiVersion(request);
@@ -145,7 +146,10 @@ export class GlobalResponseInterceptor implements NestInterceptor {
   /**
    * Get resource ID from request or data
    */
-  private getResourceId(request: Request, data: any): string | number | undefined {
+  private getResourceId(
+    request: Request,
+    data: any,
+  ): string | number | undefined {
     // Try to get ID from route params first
     const params = request.params as any;
     if (params.id) {
@@ -229,7 +233,10 @@ export class GlobalResponseInterceptor implements NestInterceptor {
       if (request.method === 'POST') {
         // Extract base path (remove action like /register)
         // e.g., /api/v1/user/register -> /api/v1/user
-        const basePath = path.replace(/\/(register|create|sign-in|refresh-tokens)$/, '');
+        const basePath = path.replace(
+          /\/(register|create|sign-in|refresh-tokens)$/,
+          '',
+        );
         resourceUrl = `${protocol}://${host}${basePath}/${resourceId}`;
       } else {
         resourceUrl = this.getBaseUrl(request);

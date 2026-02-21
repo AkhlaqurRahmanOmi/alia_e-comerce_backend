@@ -42,7 +42,9 @@ export class BookingsController {
   @Get('availability')
   @Auth(AuthType.None)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Check availability for a specific date and party size' })
+  @ApiOperation({
+    summary: 'Check availability for a specific date and party size',
+  })
   async checkAvailability(@Query() checkAvailabilityDto: CheckAvailabilityDto) {
     return this.bookingsService.checkAvailability(checkAvailabilityDto);
   }
@@ -267,7 +269,9 @@ export class BookingsController {
   @Permissions('bookings:manage-settings')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create custom schedule (Admin)' })
-  async createCustomSchedule(@Body() createCustomScheduleDto: CreateCustomScheduleDto) {
+  async createCustomSchedule(
+    @Body() createCustomScheduleDto: CreateCustomScheduleDto,
+  ) {
     return this.bookingsService.createCustomSchedule(createCustomScheduleDto);
   }
 

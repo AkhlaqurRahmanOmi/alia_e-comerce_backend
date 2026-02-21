@@ -18,6 +18,6 @@ import { BlogModule } from '../blog/blog.module';
  */
 @Module({
   imports: [CatalogModule, ReviewsModule, NotificationsModule, BlogModule],
-  exports: [CatalogModule, ReviewsModule, NotificationsModule,BlogModule],
+  exports: [CatalogModule, ReviewsModule, NotificationsModule, BlogModule],
 })
 export class PublicModule {}

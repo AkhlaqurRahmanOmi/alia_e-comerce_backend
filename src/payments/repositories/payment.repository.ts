@@ -62,7 +62,10 @@ export class PaymentRepository {
 
       return payment;
     } catch (error) {
-      this.logger.error(`Failed to create payment: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to create payment: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -120,7 +123,9 @@ export class PaymentRepository {
     data: UpdatePaymentStatusDto,
   ): Promise<Payment> {
     try {
-      this.logger.log(`Updating payment ${transactionId} to status: ${data.status}`);
+      this.logger.log(
+        `Updating payment ${transactionId} to status: ${data.status}`,
+      );
 
       const payment = await this.prisma.payment.update({
         where: { transactionId },
@@ -190,7 +195,9 @@ export class PaymentRepository {
   /**
    * Find successful payment for an order
    */
-  async findSuccessfulPaymentByOrderId(orderId: number): Promise<Payment | null> {
+  async findSuccessfulPaymentByOrderId(
+    orderId: number,
+  ): Promise<Payment | null> {
     return this.prisma.payment.findFirst({
       where: {
         orderId,
@@ -224,8 +231,10 @@ export class PaymentRepository {
 
     return {
       total: payments.length,
-      pending: payments.filter((p) => p.status === PaymentStatus.pending).length,
-      captured: payments.filter((p) => p.status === PaymentStatus.captured).length,
+      pending: payments.filter((p) => p.status === PaymentStatus.pending)
+        .length,
+      captured: payments.filter((p) => p.status === PaymentStatus.captured)
+        .length,
       failed: payments.filter((p) => p.status === PaymentStatus.failed).length,
       totalAmount: payments.reduce((sum, p) => sum + p.amount, 0),
       capturedAmount: payments
@@ -259,7 +268,10 @@ export class PaymentRepository {
 
       return payment;
     } catch (error) {
-      this.logger.error(`Failed to void payment: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to void payment: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }

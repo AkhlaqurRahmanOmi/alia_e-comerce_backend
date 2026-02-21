@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Bundle } from '@prisma/client';
 import { BundleRepository } from '../repositories';
-import { BundlePricingProvider, BundlePricingInfo } from './bundle-pricing.provider';
+import {
+  BundlePricingProvider,
+  BundlePricingInfo,
+} from './bundle-pricing.provider';
 
 export interface BundleSuggestion {
   bundle: Bundle;
@@ -19,7 +22,8 @@ export class BundleSuggestionProvider {
    * Find bundles containing a specific variant
    */
   async findBundlesForVariant(variantId: number): Promise<BundleSuggestion[]> {
-    const bundles = await this.bundleRepository.findBundlesContainingVariant(variantId);
+    const bundles =
+      await this.bundleRepository.findBundlesContainingVariant(variantId);
 
     const suggestions = await Promise.all(
       bundles.map(async (bundle) => ({
@@ -35,8 +39,11 @@ export class BundleSuggestionProvider {
   /**
    * Find bundles containing any of the specified variants
    */
-  async findBundlesForVariants(variantIds: number[]): Promise<BundleSuggestion[]> {
-    const bundles = await this.bundleRepository.findBundlesContainingVariants(variantIds);
+  async findBundlesForVariants(
+    variantIds: number[],
+  ): Promise<BundleSuggestion[]> {
+    const bundles =
+      await this.bundleRepository.findBundlesContainingVariants(variantIds);
 
     // Remove duplicates (a bundle might contain multiple variants from the list)
     const uniqueBundles = Array.from(
@@ -95,8 +102,12 @@ export class BundleSuggestionProvider {
     const recommendations = suggestions.filter((suggestion) => {
       const bundle: any = suggestion.bundle;
       if (!bundle.bundleItems) return false;
-      const bundleVariantIds = bundle.bundleItems.map((item: any) => item.variantId);
-      const hasAtLeastOneItem = bundleVariantIds.some((id: any) => cartVariantIds.includes(id));
+      const bundleVariantIds = bundle.bundleItems.map(
+        (item: any) => item.variantId,
+      );
+      const hasAtLeastOneItem = bundleVariantIds.some((id: any) =>
+        cartVariantIds.includes(id),
+      );
       return hasAtLeastOneItem;
     });
 

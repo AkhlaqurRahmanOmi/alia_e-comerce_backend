@@ -1,4 +1,12 @@
-import { IsString, IsNotEmpty, Length, MaxLength, Matches, IsBoolean, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  Length,
+  MaxLength,
+  Matches,
+  IsBoolean,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCountryDto {
@@ -10,8 +18,12 @@ export class CreateCountryDto {
   })
   @IsString()
   @IsNotEmpty()
-  @Length(2, 2, { message: 'Country code must be exactly 2 characters (ISO 3166-1 alpha-2)' })
-  @Matches(/^[A-Z]{2}$/, { message: 'Country code must be 2 uppercase letters (e.g., US, FR, IT)' })
+  @Length(2, 2, {
+    message: 'Country code must be exactly 2 characters (ISO 3166-1 alpha-2)',
+  })
+  @Matches(/^[A-Z]{2}$/, {
+    message: 'Country code must be 2 uppercase letters (e.g., US, FR, IT)',
+  })
   code: string;
 
   @ApiProperty({

@@ -5,7 +5,12 @@ import {
 } from '@nestjs/common';
 import { Order, OrderStatus, UserAddress } from '@prisma/client';
 import { OrderRepository } from '../repositories/order.repository';
-import { CreateOrderDto, UpdateOrderStatusDto, CancelOrderDto, OrderFilterDto } from '../dtos';
+import {
+  CreateOrderDto,
+  UpdateOrderStatusDto,
+  CancelOrderDto,
+  OrderFilterDto,
+} from '../dtos';
 import { GuestCreateOrderDto } from '../dtos/guest-create-order.dto';
 import { PaginatedResult } from '../../shared/types';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
@@ -22,7 +27,7 @@ export class OrderManagementProvider {
     private readonly inventory: InventoryService,
     private readonly bundles: BundlesService,
     private readonly unitOfWork: UnitOfWorkService,
-    private readonly shippingService: ShippingService
+    private readonly shippingService: ShippingService,
   ) {}
 
   /**
@@ -57,11 +62,18 @@ export class OrderManagementProvider {
     }
 
     // If status is changing to 'shipped', fulfill the reserved inventory
-    if (updateStatusDto.status === OrderStatus.shipped && order.currentStatus !== OrderStatus.shipped) {
+    if (
+      updateStatusDto.status === OrderStatus.shipped &&
+      order.currentStatus !== OrderStatus.shipped
+    ) {
       await this.fulfillInventoryForOrder(id);
     }
 
-    return this.orderRepository.updateStatus(id, updateStatusDto.status, updateStatusDto.note);
+    return this.orderRepository.updateStatus(
+      id,
+      updateStatusDto.status,
+      updateStatusDto.note,
+    );
   }
 
   /**
@@ -74,14 +86,23 @@ export class OrderManagementProvider {
     }
 
     // Can cancel pending or processing orders
-    if (order.currentStatus !== OrderStatus.pending && order.currentStatus !== OrderStatus.processing) {
-      throw new BadRequestException('Only pending or processing orders can be cancelled');
+    if (
+      order.currentStatus !== OrderStatus.pending &&
+      order.currentStatus !== OrderStatus.processing
+    ) {
+      throw new BadRequestException(
+        'Only pending or processing orders can be cancelled',
+      );
     }
 
     // Release reserved inventory before cancelling
     await this.releaseInventoryForOrder(id);
 
-    return this.orderRepository.updateStatus(id, OrderStatus.cancelled, cancelDto.reason);
+    return this.orderRepository.updateStatus(
+      id,
+      OrderStatus.cancelled,
+      cancelDto.reason,
+    );
   }
 
   /**
@@ -105,7 +126,9 @@ export class OrderManagementProvider {
   /**
    * Get all orders with filters
    */
-  async getAllOrders(filterDto: OrderFilterDto): Promise<PaginatedResult<Order>> {
+  async getAllOrders(
+    filterDto: OrderFilterDto,
+  ): Promise<PaginatedResult<Order>> {
     return this.orderRepository.findOrdersWithFilters(filterDto);
   }
 
@@ -136,17 +159,25 @@ export class OrderManagementProvider {
   /**
    * Validate a single address
    */
-  private async validateAddress(addressId: number, userId: number, type: string): Promise<void> {
+  private async validateAddress(
+    addressId: number,
+    userId: number,
+    type: string,
+  ): Promise<void> {
     const address = await this.prisma.userAddress.findUnique({
       where: { id: addressId },
     });
 
     if (!address) {
-      throw new NotFoundException(`${type} address with ID ${addressId} not found`);
+      throw new NotFoundException(
+        `${type} address with ID ${addressId} not found`,
+      );
     }
 
     if (address.userId !== userId) {
-      throw new BadRequestException(`${type} address ${addressId} does not belong to user ${userId}`);
+      throw new BadRequestException(
+        `${type} address ${addressId} does not belong to user ${userId}`,
+      );
     }
   }
 
@@ -155,9 +186,13 @@ export class OrderManagementProvider {
    */
   private async validateShippingMethod(dto: CreateOrderDto): Promise<void> {
     if (dto.shippingMethodId) {
-      const shippingMethod = await this.shippingService.getShippingMethodById(dto.shippingMethodId);
+      const shippingMethod = await this.shippingService.getShippingMethodById(
+        dto.shippingMethodId,
+      );
       if (!shippingMethod || !shippingMethod.isActive) {
-        throw new NotFoundException(`Shipping method ${dto.shippingMethodId} not found or inactive`);
+        throw new NotFoundException(
+          `Shipping method ${dto.shippingMethodId} not found or inactive`,
+        );
       }
     }
   }
@@ -165,11 +200,15 @@ export class OrderManagementProvider {
   /**
    * Validate inventory and prepare fulfillment locations
    */
-  private async validateAndPrepareInventory(dto: CreateOrderDto): Promise<void> {
+  private async validateAndPrepareInventory(
+    dto: CreateOrderDto,
+  ): Promise<void> {
     for (const item of dto.items) {
       // Validate that either variantId or bundleId is provided
       if (!item.variantId && !item.bundleId) {
-        throw new BadRequestException(`Either variantId or bundleId is required for order item`);
+        throw new BadRequestException(
+          `Either variantId or bundleId is required for order item`,
+        );
       }
 
       // Handle bundle items
@@ -203,7 +242,8 @@ export class OrderManagementProvider {
   private async createOrderInTransaction(dto: CreateOrderDto): Promise<Order> {
     return this.unitOfWork.transaction(async (tx) => {
       // Calculate order totals
-      const { subtotal, variants, shippingCost } = await this.calculateOrderTotals(tx, dto);
+      const { subtotal, variants, shippingCost } =
+        await this.calculateOrderTotals(tx, dto);
 
       // Generate unique order reference
       const externalRef = await this.generateOrderReference(tx);
@@ -297,7 +337,9 @@ export class OrderManagementProvider {
     });
 
     if (!userBillingAddress) {
-      throw new NotFoundException(`Billing address ${dto.billingAddressId} not found`);
+      throw new NotFoundException(
+        `Billing address ${dto.billingAddressId} not found`,
+      );
     }
 
     // Create billing address snapshot
@@ -327,7 +369,9 @@ export class OrderManagementProvider {
       });
 
       if (!userShippingAddress) {
-        throw new NotFoundException(`Shipping address ${dto.shippingAddressId} not found`);
+        throw new NotFoundException(
+          `Shipping address ${dto.shippingAddressId} not found`,
+        );
       }
 
       const shippingOrderAddress = await this.createOrderAddressSnapshot(
@@ -410,7 +454,10 @@ export class OrderManagementProvider {
   /**
    * Reserve inventory for order
    */
-  private async reserveInventoryForOrder(order: Order, dto: CreateOrderDto): Promise<void> {
+  private async reserveInventoryForOrder(
+    order: Order,
+    dto: CreateOrderDto,
+  ): Promise<void> {
     try {
       for (const item of dto.items) {
         if (item['_isBundle'] && item.bundleId) {
@@ -437,7 +484,9 @@ export class OrderManagementProvider {
         OrderStatus.cancelled,
         'Inventory reservation failed',
       );
-      throw new BadRequestException(`Failed to reserve inventory: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to reserve inventory: ${error.message}`,
+      );
     }
   }
 
@@ -561,16 +610,22 @@ export class OrderManagementProvider {
   async createGuestOrder(dto: GuestCreateOrderDto): Promise<Order> {
     // Step 1: Validate shipping method if provided
     if (dto.shippingMethodId) {
-      const shippingMethod = await this.shippingService.getShippingMethodById(dto.shippingMethodId);
+      const shippingMethod = await this.shippingService.getShippingMethodById(
+        dto.shippingMethodId,
+      );
       if (!shippingMethod || !shippingMethod.isActive) {
-        throw new NotFoundException(`Shipping method ${dto.shippingMethodId} not found or inactive`);
+        throw new NotFoundException(
+          `Shipping method ${dto.shippingMethodId} not found or inactive`,
+        );
       }
     }
 
     // Step 2: Validate inventory
     for (const item of dto.items) {
       if (!item.variantId && !item.bundleId) {
-        throw new BadRequestException(`Either variantId or bundleId is required for order item`);
+        throw new BadRequestException(
+          `Either variantId or bundleId is required for order item`,
+        );
       }
 
       if (item.bundleId) {
@@ -622,7 +677,10 @@ export class OrderManagementProvider {
 
       // Generate unique order reference
       const timestamp = Date.now();
-      const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const randomStr = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
       const externalRef = `ORD-${timestamp}-${randomStr}`;
 
       // Create guest order
@@ -733,7 +791,9 @@ export class OrderManagementProvider {
         OrderStatus.cancelled,
         'Inventory reservation failed',
       );
-      throw new BadRequestException(`Failed to reserve inventory: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to reserve inventory: ${error.message}`,
+      );
     }
 
     // Step 5: Return order with full relations
@@ -743,7 +803,10 @@ export class OrderManagementProvider {
   /**
    * Lookup guest order by email and order reference
    */
-  async lookupGuestOrder(email: string, orderReference: string): Promise<Order | null> {
+  async lookupGuestOrder(
+    email: string,
+    orderReference: string,
+  ): Promise<Order | null> {
     const order = await this.prisma.order.findFirst({
       where: {
         guestEmail: { equals: email },

@@ -63,7 +63,11 @@ export class ReviewsService {
 
   // ---------- Review Images ----------
 
-  addReviewImages(reviewId: number, userId: number, files: Express.Multer.File[]) {
+  addReviewImages(
+    reviewId: number,
+    userId: number,
+    files: Express.Multer.File[],
+  ) {
     return this.reviewImageManagement.addReviewImages(reviewId, userId, files);
   }
 

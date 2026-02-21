@@ -16,11 +16,7 @@ import { AuthType } from '../auth/enums/auth-type.enum';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { Permissions } from '../auth/decorator/permissions.decorator';
 import { OrdersService } from './orders.service';
-import {
-  CreateOrderDto,
-  CancelOrderDto,
-  OrderFilterDto,
-} from './dtos';
+import { CreateOrderDto, CancelOrderDto, OrderFilterDto } from './dtos';
 import { GuestCreateOrderDto } from './dtos/guest-create-order.dto';
 import { GuestOrderLookupDto } from './dtos/guest-order-lookup.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
@@ -78,12 +74,16 @@ export class OrdersController {
   @Auth(AuthType.None)
   @HttpCode(HttpStatus.OK)
   async lookupGuestOrder(@Body() dto: GuestOrderLookupDto) {
-    const order = await this.orders.lookupGuestOrder(dto.email, dto.orderReference);
+    const order = await this.orders.lookupGuestOrder(
+      dto.email,
+      dto.orderReference,
+    );
 
     if (!order) {
       return {
         success: false,
-        message: 'Order not found. Please check your email and order reference.',
+        message:
+          'Order not found. Please check your email and order reference.',
       };
     }
 

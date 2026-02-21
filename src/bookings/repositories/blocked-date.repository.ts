@@ -24,7 +24,10 @@ export class BlockedDateRepository {
     });
   }
 
-  async findByDateRange(startDate: Date, endDate: Date): Promise<BlockedDate[]> {
+  async findByDateRange(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<BlockedDate[]> {
     return this.prisma.blockedDate.findMany({
       where: {
         date: {

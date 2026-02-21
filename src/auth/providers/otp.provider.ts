@@ -10,8 +10,12 @@ export class OtpProvider {
 
   constructor(private readonly configService: ConfigService) {
     this.otpLength = Number(this.configService.get<string>('OTP_LENGTH', '6'));
-    this.otpExpiryMinutes = Number(this.configService.get<string>('OTP_EXPIRY_MINUTES', '10'));
-    this.maxAttempts = Number(this.configService.get<string>('OTP_MAX_ATTEMPTS', '3'));
+    this.otpExpiryMinutes = Number(
+      this.configService.get<string>('OTP_EXPIRY_MINUTES', '10'),
+    );
+    this.maxAttempts = Number(
+      this.configService.get<string>('OTP_MAX_ATTEMPTS', '3'),
+    );
   }
 
   /**

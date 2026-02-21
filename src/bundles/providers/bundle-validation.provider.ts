@@ -43,9 +43,8 @@ export class BundleValidationProvider {
     // Check inventory for each item in bundle
     for (const item of bundle.bundleItems) {
       const neededQuantity = item.quantity * quantity;
-      const availableQuantity = await this.inventoryService.getTotalAvailableQuantity(
-        item.variantId,
-      );
+      const availableQuantity =
+        await this.inventoryService.getTotalAvailableQuantity(item.variantId);
 
       if (availableQuantity < neededQuantity) {
         throw new BadRequestException(
@@ -76,14 +75,14 @@ export class BundleValidationProvider {
 
     for (const item of bundle.bundleItems) {
       const neededQuantity = item.quantity * quantity;
-      const availableQuantity = await this.inventoryService.getTotalAvailableQuantity(
-        item.variantId,
-      );
+      const availableQuantity =
+        await this.inventoryService.getTotalAvailableQuantity(item.variantId);
 
       if (availableQuantity < neededQuantity) {
         unavailableItems.push({
           variantId: item.variantId,
-          variantName: item.variant.product?.name || `Variant ${item.variantId}`,
+          variantName:
+            item.variant.product?.name || `Variant ${item.variantId}`,
           needed: neededQuantity,
           available: availableQuantity,
         });
@@ -92,7 +91,8 @@ export class BundleValidationProvider {
 
     return {
       isAvailable: unavailableItems.length === 0,
-      unavailableItems: unavailableItems.length > 0 ? unavailableItems : undefined,
+      unavailableItems:
+        unavailableItems.length > 0 ? unavailableItems : undefined,
     };
   }
 
@@ -115,10 +115,11 @@ export class BundleValidationProvider {
       const neededQuantity = item.quantity * quantity;
 
       // Find best location for fulfillment
-      const locationId = await this.inventoryService.findBestLocationForFulfillment(
-        item.variantId,
-        neededQuantity,
-      );
+      const locationId =
+        await this.inventoryService.findBestLocationForFulfillment(
+          item.variantId,
+          neededQuantity,
+        );
 
       if (!locationId) {
         throw new BadRequestException(
@@ -156,10 +157,11 @@ export class BundleValidationProvider {
 
       // Find location where stock was reserved (this would need to be tracked)
       // For now, we'll release from best location
-      const locationId = await this.inventoryService.findBestLocationForFulfillment(
-        item.variantId,
-        neededQuantity,
-      );
+      const locationId =
+        await this.inventoryService.findBestLocationForFulfillment(
+          item.variantId,
+          neededQuantity,
+        );
 
       if (locationId) {
         await this.inventoryService.releaseStock({

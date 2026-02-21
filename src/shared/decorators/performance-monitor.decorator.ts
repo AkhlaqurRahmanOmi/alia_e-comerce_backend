@@ -1,4 +1,3 @@
-
 import { Inject } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -83,19 +82,19 @@ export function MonitorClass(slowThresholdMs: number = 1000) {
     injectLogger(constructor.prototype, 'logger');
 
     // Get all method names
-    const methodNames = Object.getOwnPropertyNames(constructor.prototype).filter(
-      (name) => {
-        const descriptor = Object.getOwnPropertyDescriptor(
-          constructor.prototype,
-          name,
-        );
-        return (
-          descriptor &&
-          typeof descriptor.value === 'function' &&
-          name !== 'constructor'
-        );
-      },
-    );
+    const methodNames = Object.getOwnPropertyNames(
+      constructor.prototype,
+    ).filter((name) => {
+      const descriptor = Object.getOwnPropertyDescriptor(
+        constructor.prototype,
+        name,
+      );
+      return (
+        descriptor &&
+        typeof descriptor.value === 'function' &&
+        name !== 'constructor'
+      );
+    });
 
     // Wrap each method
     methodNames.forEach((methodName) => {
@@ -121,7 +120,9 @@ export function MonitorClass(slowThresholdMs: number = 1000) {
                     `[${className}.${methodName}] SLOW: ${executionTime}ms`,
                   );
                 } else {
-                  logger.debug(`[${className}.${methodName}] ${executionTime}ms`);
+                  logger.debug(
+                    `[${className}.${methodName}] ${executionTime}ms`,
+                  );
                 }
 
                 return value;

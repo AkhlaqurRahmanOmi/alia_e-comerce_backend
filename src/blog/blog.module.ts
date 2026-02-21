@@ -8,6 +8,6 @@ import { SharedModule } from '../shared/shared.module';
   imports: [SharedModule],
   controllers: [BlogController],
   providers: [BlogService, BlogPostRepository],
-  exports: [BlogService]
+  exports: [BlogService],
 })
 export class BlogModule {}

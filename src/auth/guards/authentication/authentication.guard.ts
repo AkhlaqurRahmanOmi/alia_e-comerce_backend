@@ -13,7 +13,10 @@ import { AUTH_TYPE_KEY } from 'src/auth/constants/auth.constants';
 export class AuthenticationGuard implements CanActivate {
   private static readonly defaultAuthType = AuthType.Bearer;
 
-  private readonly authTypeGuardMap: Record<AuthType, CanActivate | CanActivate[]>;
+  private readonly authTypeGuardMap: Record<
+    AuthType,
+    CanActivate | CanActivate[]
+  >;
 
   constructor(
     private readonly accessTokenGuard: AccessTokenGuard,
@@ -28,14 +31,18 @@ export class AuthenticationGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // authTypes can get this from reflector class
-    const authTypes : AuthType[] =
-      this.reflector.getAllAndOverride(AUTH_TYPE_KEY, [
+    const authTypes: AuthType[] = this.reflector.getAllAndOverride(
+      AUTH_TYPE_KEY,
+      [
         context.getHandler(), // Get context from handler
         context.getClass(), // Get context from class
-      ]) ?? [AuthenticationGuard.defaultAuthType];
+      ],
+    ) ?? [AuthenticationGuard.defaultAuthType];
 
     // Array of guards
-    const guards: CanActivate[] = authTypes.map((authType: AuthType) => this.authTypeGuardMap[authType]).flat();
+    const guards: CanActivate[] = authTypes
+      .map((authType: AuthType) => this.authTypeGuardMap[authType])
+      .flat();
 
     // Default error
     const error = new UnauthorizedException();

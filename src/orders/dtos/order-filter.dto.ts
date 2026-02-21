@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsNumber, IsEnum, IsDateString } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsEnum,
+  IsDateString,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 import { OrderStatus } from '@prisma/client';
 import { BasePaginationDto } from '../../shared/dtos';

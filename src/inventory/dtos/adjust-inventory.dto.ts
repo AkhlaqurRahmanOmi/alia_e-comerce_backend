@@ -1,4 +1,10 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, IsEnum } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsEnum,
+} from 'class-validator';
 
 export enum InventoryAdjustmentReason {
   PURCHASE = 'purchase',

@@ -191,7 +191,8 @@ export class AuthController {
       setPasswordDto.password,
     );
     return {
-      message: 'Password has been set successfully. Your account is now activated.',
+      message:
+        'Password has been set successfully. Your account is now activated.',
     };
   }
 }

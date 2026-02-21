@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Notification, NotificationTemplate, NotificationPreference } from '@prisma/client';
+import {
+  Notification,
+  NotificationTemplate,
+  NotificationPreference,
+} from '@prisma/client';
 import {
   NotificationRepository,
   NotificationTemplateRepository,
   NotificationPreferenceRepository,
 } from './repositories';
-import { NotificationDispatcherProvider, } from './providers';
+import { NotificationDispatcherProvider } from './providers';
 import {
   SendNotificationDto,
   CreateTemplateDto,
@@ -37,7 +41,9 @@ export class NotificationsService {
   // Notification Management
   // ========================
 
-  async getNotifications(filterDto: NotificationFilterDto): Promise<PaginatedResult<Notification>> {
+  async getNotifications(
+    filterDto: NotificationFilterDto,
+  ): Promise<PaginatedResult<Notification>> {
     return this.notificationRepo.findWithFilters(filterDto);
   }
 
@@ -62,7 +68,9 @@ export class NotificationsService {
   }
 
   async markAsRead(dto: MarkAsReadDto): Promise<{ updated: number }> {
-    const count = await this.notificationRepo.markMultipleAsRead(dto.notificationIds);
+    const count = await this.notificationRepo.markMultipleAsRead(
+      dto.notificationIds,
+    );
     return { updated: count };
   }
 
@@ -79,7 +87,9 @@ export class NotificationsService {
     await this.notificationRepo.delete(id);
   }
 
-  async deleteMultipleNotifications(ids: number[]): Promise<{ deleted: number }> {
+  async deleteMultipleNotifications(
+    ids: number[],
+  ): Promise<{ deleted: number }> {
     const count = await this.notificationRepo.deleteMultiple(ids);
     return { deleted: count };
   }
@@ -112,7 +122,10 @@ export class NotificationsService {
     return template;
   }
 
-  async updateTemplate(id: number, dto: UpdateTemplateDto): Promise<NotificationTemplate> {
+  async updateTemplate(
+    id: number,
+    dto: UpdateTemplateDto,
+  ): Promise<NotificationTemplate> {
     const template = await this.templateRepo.findById(id);
     if (!template) {
       throw new NotFoundException(`Template with ID ${id} not found`);
@@ -128,7 +141,10 @@ export class NotificationsService {
     await this.templateRepo.delete(id);
   }
 
-  async toggleTemplate(id: number, isActive: boolean): Promise<NotificationTemplate> {
+  async toggleTemplate(
+    id: number,
+    isActive: boolean,
+  ): Promise<NotificationTemplate> {
     const template = await this.templateRepo.findById(id);
     if (!template) {
       throw new NotFoundException(`Template with ID ${id} not found`);
@@ -140,7 +156,9 @@ export class NotificationsService {
   // Preference Management
   // ========================
 
-  async updatePreference(dto: UpdatePreferenceDto): Promise<NotificationPreference> {
+  async updatePreference(
+    dto: UpdatePreferenceDto,
+  ): Promise<NotificationPreference> {
     return this.preferenceRepo.upsert(dto);
   }
 
@@ -162,6 +180,4 @@ export class NotificationsService {
     const count = await this.notificationRepo.deleteByUserId(userId);
     return { deleted: count };
   }
-
-  
 }

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { BlogPost, BlogPostStatus, Prisma } from '@prisma/client';
-import { FilterOptions, PaginatedResult, QueryOptions } from '../../shared/types';
+import {
+  FilterOptions,
+  PaginatedResult,
+  QueryOptions,
+} from '../../shared/types';
 import { BaseRepository } from '../../shared/repository/base.repository';
 
 @Injectable()
@@ -35,11 +39,15 @@ export class BlogPostRepository extends BaseRepository<BlogPost, number> {
     await this.prisma.blogPost.delete({ where: { id } });
   }
 
-  async findWithFilters(options: QueryOptions): Promise<PaginatedResult<BlogPost>> {
+  async findWithFilters(
+    options: QueryOptions,
+  ): Promise<PaginatedResult<BlogPost>> {
     const { filters, sort, pagination, search, fields } = options || {};
 
     // Build where clause
-    let where: Prisma.BlogPostWhereInput = { ...(filters as Prisma.BlogPostWhereInput) };
+    let where: Prisma.BlogPostWhereInput = {
+      ...(filters as Prisma.BlogPostWhereInput),
+    };
 
     if (search?.query && (fields?.length || search.fields?.length)) {
       const targetFields = fields?.length ? fields : search.fields;
@@ -54,7 +62,9 @@ export class BlogPostRepository extends BaseRepository<BlogPost, number> {
     }
 
     const orderBy = sort?.field
-      ? ({ [sort.field]: sort.order ?? 'asc' } as Prisma.BlogPostOrderByWithRelationInput)
+      ? ({
+          [sort.field]: sort.order ?? 'asc',
+        } as Prisma.BlogPostOrderByWithRelationInput)
       : ({ createdAt: 'desc' } as Prisma.BlogPostOrderByWithRelationInput);
 
     const page = Math.max(1, pagination?.page ?? 1);
@@ -96,7 +106,9 @@ export class BlogPostRepository extends BaseRepository<BlogPost, number> {
   }
 
   async countTotal(filters?: FilterOptions): Promise<number> {
-    return this.prisma.blogPost.count({ where: filters as Prisma.BlogPostWhereInput });
+    return this.prisma.blogPost.count({
+      where: filters as Prisma.BlogPostWhereInput,
+    });
   }
 
   async findMany(where?: Prisma.BlogPostWhereInput): Promise<BlogPost[]> {

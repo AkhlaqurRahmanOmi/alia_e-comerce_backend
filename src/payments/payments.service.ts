@@ -9,7 +9,10 @@ import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { PrismaService } from '../core/config/prisma/prisma.service';
 // import { PaymentGatewayFactory } from './providers/payment-gateway.factory';
 import { PaymentRepository } from './repositories/payment.repository';
-import { InitiatePaymentDto, PaymentGateway } from './dtos/initiate-payment.dto';
+import {
+  InitiatePaymentDto,
+  PaymentGateway,
+} from './dtos/initiate-payment.dto';
 import { VerifyPaymentDto } from './dtos/verify-payment.dto';
 
 @Injectable()
@@ -42,14 +45,13 @@ export class PaymentsService {
       }
 
       // Check if order already has a successful payment
-      const successfulPayment = await this.paymentRepository.findSuccessfulPaymentByOrderId(
-        dto.orderId,
-      );
+      const successfulPayment =
+        await this.paymentRepository.findSuccessfulPaymentByOrderId(
+          dto.orderId,
+        );
 
       if (successfulPayment) {
-        throw new BadRequestException(
-          'Order already has a successful payment',
-        );
+        throw new BadRequestException('Order already has a successful payment');
       }
 
       // Handle Cash-On-Delivery payment
@@ -86,7 +88,8 @@ export class PaymentsService {
               amount: payment.amount,
               gateway: payment.gateway,
             },
-            message: 'Cash on delivery payment initiated. Cash will be collected upon delivery.',
+            message:
+              'Cash on delivery payment initiated. Cash will be collected upon delivery.',
           },
         };
       }
@@ -112,8 +115,9 @@ export class PaymentsService {
       this.logger.log(`Verifying payment: ${dto.transactionId}`);
 
       // Find payment in database
-      const payment =
-        await this.paymentRepository.findByTransactionId(dto.transactionId);
+      const payment = await this.paymentRepository.findByTransactionId(
+        dto.transactionId,
+      );
 
       if (!payment) {
         throw new NotFoundException(
@@ -132,9 +136,10 @@ export class PaymentsService {
           amount: payment.amount,
           gateway: payment.gateway,
         },
-        message: payment.status === 'pending'
-          ? 'Awaiting cash payment on delivery'
-          : `Payment ${payment.status}`,
+        message:
+          payment.status === 'pending'
+            ? 'Awaiting cash payment on delivery'
+            : `Payment ${payment.status}`,
       };
     } catch (error) {
       this.logger.error(
@@ -179,7 +184,8 @@ export class PaymentsService {
     }
 
     // Map status for frontend compatibility: captured -> completed
-    const frontendStatus = payment.status === 'captured' ? 'completed' : payment.status;
+    const frontendStatus =
+      payment.status === 'captured' ? 'completed' : payment.status;
 
     return {
       id: payment.id,

@@ -168,7 +168,9 @@ export class OrderRepository extends BaseRepository<Order, number> {
   }
 
   //new one
-  async findOrdersWithFilters(filterDto: OrderFilterDto): Promise<PaginatedResult<Order>> {
+  async findOrdersWithFilters(
+    filterDto: OrderFilterDto,
+  ): Promise<PaginatedResult<Order>> {
     const queryOptions: QueryOptions = {
       filters: {},
       pagination: {
@@ -277,7 +279,11 @@ export class OrderRepository extends BaseRepository<Order, number> {
     });
   }
 
-  async updateStatus(id: number, status: string, note?: string): Promise<Order> {
+  async updateStatus(
+    id: number,
+    status: string,
+    note?: string,
+  ): Promise<Order> {
     return this.unitOfWork.transaction(async (tx) => {
       // Update order status
       const order = await tx.order.update({
@@ -355,7 +361,9 @@ export class OrderRepository extends BaseRepository<Order, number> {
    * Get daily order trends
    */
   async getDailyTrends(startDate: Date, endDate: Date) {
-    return this.prisma.$queryRaw<Array<{ date: Date; orderCount: bigint; revenue: number }>>`
+    return this.prisma.$queryRaw<
+      Array<{ date: Date; orderCount: bigint; revenue: number }>
+    >`
       SELECT
         DATE(placed_at) as date,
         COUNT(*)::bigint as "orderCount",
@@ -372,7 +380,11 @@ export class OrderRepository extends BaseRepository<Order, number> {
   /**
    * Get top customers by revenue
    */
-  async getTopCustomersByRevenue(startDate: Date, endDate: Date, limit: number = 10) {
+  async getTopCustomersByRevenue(
+    startDate: Date,
+    endDate: Date,
+    limit: number = 10,
+  ) {
     return this.prisma.order.groupBy({
       by: ['userId'],
       where: {
@@ -402,7 +414,11 @@ export class OrderRepository extends BaseRepository<Order, number> {
   /**
    * Get best selling products by quantity
    */
-  async getBestSellingProducts(startDate: Date, endDate: Date, limit: number = 10) {
+  async getBestSellingProducts(
+    startDate: Date,
+    endDate: Date,
+    limit: number = 10,
+  ) {
     return this.prisma.orderItem.groupBy({
       by: ['variantId'],
       where: {
@@ -437,7 +453,12 @@ export class OrderRepository extends BaseRepository<Order, number> {
    */
   async getRevenueByCategory(startDate: Date, endDate: Date) {
     return this.prisma.$queryRaw<
-      Array<{ categoryId: number; categoryName: string; revenue: number; orderCount: bigint }>
+      Array<{
+        categoryId: number;
+        categoryName: string;
+        revenue: number;
+        orderCount: bigint;
+      }>
     >`
       SELECT
         c.id as "categoryId",

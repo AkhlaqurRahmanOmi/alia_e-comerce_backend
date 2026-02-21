@@ -1,7 +1,7 @@
 import {
-    Injectable,
-    BadRequestException,
-    NotFoundException,
+  Injectable,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { hash } from 'bcrypt';
@@ -12,275 +12,274 @@ import { NotificationChannel } from '../../notifications/enums';
 
 @Injectable()
 export class PasswordResetProvider {
-    // Token expires in 1 hour
-    private readonly TOKEN_EXPIRY_HOURS = 1;
-    private readonly BCRYPT_ROUNDS = 10;
+  // Token expires in 1 hour
+  private readonly TOKEN_EXPIRY_HOURS = 1;
+  private readonly BCRYPT_ROUNDS = 10;
 
-    constructor(
-        private readonly passwordResetTokenRepo: PasswordResetTokenRepository,
-        private readonly prisma: PrismaService,
-        private readonly notificationsService: NotificationsService,
-    ) {}
+  constructor(
+    private readonly passwordResetTokenRepo: PasswordResetTokenRepository,
+    private readonly prisma: PrismaService,
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
-    /**
-     * Request password reset - generates token and sends email
-     */
-    async requestPasswordReset(email: string): Promise<void> {
-        // Find user by email
-        const user = await this.prisma.user.findUnique({
-            where: { email },
-        });
+  /**
+   * Request password reset - generates token and sends email
+   */
+  async requestPasswordReset(email: string): Promise<void> {
+    // Find user by email
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
 
-        // Always return success even if user doesn't exist (security best practice)
-        if (!user) {
-            return;
-        }
-
-        // Invalidate any existing tokens for this user
-        await this.passwordResetTokenRepo.invalidateUserTokens(user.id);
-
-        // Generate a secure random token
-        const token = randomBytes(32).toString('hex');
-
-        // Calculate expiry time
-        const expiresAt = new Date();
-        expiresAt.setHours(expiresAt.getHours() + this.TOKEN_EXPIRY_HOURS);
-
-        // Save token to database
-        await this.passwordResetTokenRepo.create({
-            userId: user.id,
-            token,
-            expiresAt,
-        });
-
-        // Send password reset email
-        await this.notificationsService.send({
-            userId: user.id,
-            event: 'PASSWORD_RESET',
-            channels: [NotificationChannel.EMAIL],
-            title: 'Password Reset Request',
-            message: `You requested a password reset. Use the token: ${token}`,
-            data: {
-                token,
-                expiresAt: expiresAt.toISOString(),
-                resetLink: `${process.env.FRONTEND_URL}/reset-password?token=${token}`,
-            },
-        });
+    // Always return success even if user doesn't exist (security best practice)
+    if (!user) {
+      return;
     }
 
-    /**
-     * Reset password using token
-     */
-    async resetPassword(token: string, newPassword: string): Promise<void> {
-        // Find valid token
-        const resetToken = await this.passwordResetTokenRepo.findValidToken(token);
+    // Invalidate any existing tokens for this user
+    await this.passwordResetTokenRepo.invalidateUserTokens(user.id);
 
-        if (!resetToken) {
-            throw new BadRequestException(
-                'Invalid or expired password reset token',
-            );
-        }
+    // Generate a secure random token
+    const token = randomBytes(32).toString('hex');
 
-        // Hash new password
-        const hashedPassword = await hash(newPassword, this.BCRYPT_ROUNDS);
+    // Calculate expiry time
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + this.TOKEN_EXPIRY_HOURS);
 
-        // Update user password
-        await this.prisma.user.update({
-            where: { id: resetToken.userId },
-            data: { password: hashedPassword },
-        });
+    // Save token to database
+    await this.passwordResetTokenRepo.create({
+      userId: user.id,
+      token,
+      expiresAt,
+    });
 
-        // Mark token as used
-        await this.passwordResetTokenRepo.markAsUsed(resetToken.id);
+    // Send password reset email
+    await this.notificationsService.send({
+      userId: user.id,
+      event: 'PASSWORD_RESET',
+      channels: [NotificationChannel.EMAIL],
+      title: 'Password Reset Request',
+      message: `You requested a password reset. Use the token: ${token}`,
+      data: {
+        token,
+        expiresAt: expiresAt.toISOString(),
+        resetLink: `${process.env.FRONTEND_URL}/reset-password?token=${token}`,
+      },
+    });
+  }
 
-        // Send confirmation email
-        await this.notificationsService.send({
-            userId: resetToken.userId,
-            event: 'PASSWORD_CHANGED',
-            channels: [NotificationChannel.EMAIL],
-            title: 'Password Changed Successfully',
-            message: 'Your password has been changed successfully.',
-            data: {
-                changedAt: new Date().toISOString(),
-            },
-        });
+  /**
+   * Reset password using token
+   */
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    // Find valid token
+    const resetToken = await this.passwordResetTokenRepo.findValidToken(token);
+
+    if (!resetToken) {
+      throw new BadRequestException('Invalid or expired password reset token');
     }
 
-    /**
-     * Verify if a token is valid
-     */
-    async verifyToken(token: string): Promise<boolean> {
-        const resetToken = await this.passwordResetTokenRepo.findValidToken(token);
-        return !!resetToken;
+    // Hash new password
+    const hashedPassword = await hash(newPassword, this.BCRYPT_ROUNDS);
+
+    // Update user password
+    await this.prisma.user.update({
+      where: { id: resetToken.userId },
+      data: { password: hashedPassword },
+    });
+
+    // Mark token as used
+    await this.passwordResetTokenRepo.markAsUsed(resetToken.id);
+
+    // Send confirmation email
+    await this.notificationsService.send({
+      userId: resetToken.userId,
+      event: 'PASSWORD_CHANGED',
+      channels: [NotificationChannel.EMAIL],
+      title: 'Password Changed Successfully',
+      message: 'Your password has been changed successfully.',
+      data: {
+        changedAt: new Date().toISOString(),
+      },
+    });
+  }
+
+  /**
+   * Verify if a token is valid
+   */
+  async verifyToken(token: string): Promise<boolean> {
+    const resetToken = await this.passwordResetTokenRepo.findValidToken(token);
+    return !!resetToken;
+  }
+
+  /**
+   * Generate random password for guest users
+   */
+  generateRandomPassword(length: number = 16): string {
+    const charset =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let password = '';
+    const randomValues = randomBytes(length);
+
+    for (let i = 0; i < length; i++) {
+      password += charset[randomValues[i] % charset.length];
     }
 
-    /**
-     * Generate random password for guest users
-     */
-    generateRandomPassword(length: number = 16): string {
-        const charset =
-            'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-        let password = '';
-        const randomValues = randomBytes(length);
+    return password;
+  }
 
-        for (let i = 0; i < length; i++) {
-            password += charset[randomValues[i] % charset.length];
-        }
+  /**
+   * Create account with random password and send reset link
+   * (For guest checkout flow)
+   */
+  async createGuestAccountWithReset(data: {
+    email: string;
+    firstName?: string;
+    lastName?: string;
+  }): Promise<{ userId: number; resetToken: string }> {
+    // Generate random password
+    const randomPassword = this.generateRandomPassword();
+    const hashedPassword = await hash(randomPassword, this.BCRYPT_ROUNDS);
 
-        return password;
+    // Create user
+    const user = await this.prisma.user.create({
+      data: {
+        email: data.email,
+        password: hashedPassword,
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
+        isVerified: false,
+      },
+    });
+
+    // Generate password reset token
+    const token = randomBytes(32).toString('hex');
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours for first-time setup
+
+    await this.passwordResetTokenRepo.create({
+      userId: user.id,
+      token,
+      expiresAt,
+    });
+
+    // Send welcome email with password reset link
+    await this.notificationsService.send({
+      userId: user.id,
+      event: 'WELCOME',
+      channels: [NotificationChannel.EMAIL],
+      title: 'Welcome! Set Your Password',
+      message: `Your account has been created. Please set your password using the link below.`,
+      data: {
+        token,
+        expiresAt: expiresAt.toISOString(),
+        resetLink: `${process.env.FRONTEND_URL}/set-password?token=${token}`,
+      },
+    });
+
+    return { userId: user.id, resetToken: token };
+  }
+
+  /**
+   * Cleanup expired tokens (can be run as a cron job)
+   */
+  async cleanupExpiredTokens(): Promise<number> {
+    return this.passwordResetTokenRepo.deleteExpired();
+  }
+
+  /**
+   * Generate setup token for admin-created users
+   * User will use this token to set their initial password
+   */
+  async generateAccountSetupToken(userId: number): Promise<string> {
+    // Invalidate any existing tokens for this user
+    await this.passwordResetTokenRepo.invalidateUserTokens(userId);
+
+    // Generate a secure random token
+    const token = randomBytes(32).toString('hex');
+
+    // Calculate expiry time (24 hours for account setup)
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 24);
+
+    // Save token to database
+    await this.passwordResetTokenRepo.create({
+      userId,
+      token,
+      expiresAt,
+    });
+
+    return token;
+  }
+
+  /**
+   * Send account setup email with password setup link
+   */
+  async sendAccountSetupEmail(
+    userId: number,
+    email: string,
+    firstName: string,
+    token: string,
+  ): Promise<void> {
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 24);
+
+    await this.notificationsService.send({
+      userId,
+      event: 'ACCOUNT_SETUP',
+      channels: [NotificationChannel.EMAIL],
+      title: 'Welcome! Set Your Password',
+      message: `Your account has been created by an administrator. Please set your password to activate your account.`,
+      data: {
+        firstName,
+        token,
+        expiresAt: expiresAt.toISOString(),
+        setupLink: `${process.env.FRONTEND_URL}/set-password?token=${token}`,
+      },
+    });
+  }
+
+  /**
+   * Set password for the first time using setup token
+   * Also marks user as verified
+   */
+  async setPasswordWithToken(
+    token: string,
+    newPassword: string,
+  ): Promise<void> {
+    // Find valid token
+    const resetToken = await this.passwordResetTokenRepo.findValidToken(token);
+
+    if (!resetToken) {
+      throw new BadRequestException('Invalid or expired setup token');
     }
 
-    /**
-     * Create account with random password and send reset link
-     * (For guest checkout flow)
-     */
-    async createGuestAccountWithReset(data: {
-        email: string;
-        firstName?: string;
-        lastName?: string;
-    }): Promise<{ userId: number; resetToken: string }> {
-        // Generate random password
-        const randomPassword = this.generateRandomPassword();
-        const hashedPassword = await hash(randomPassword, this.BCRYPT_ROUNDS);
+    // Hash new password
+    const hashedPassword = await hash(newPassword, this.BCRYPT_ROUNDS);
 
-        // Create user
-        const user = await this.prisma.user.create({
-            data: {
-                email: data.email,
-                password: hashedPassword,
-                firstName: data.firstName || '',
-                lastName: data.lastName || '',
-                isVerified: false,
-            },
-        });
+    // Update user password and mark as verified
+    await this.prisma.user.update({
+      where: { id: resetToken.userId },
+      data: {
+        password: hashedPassword,
+        isVerified: true,
+        verifiedAt: new Date(),
+      },
+    });
 
-        // Generate password reset token
-        const token = randomBytes(32).toString('hex');
-        const expiresAt = new Date();
-        expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours for first-time setup
+    // Mark token as used
+    await this.passwordResetTokenRepo.markAsUsed(resetToken.id);
 
-        await this.passwordResetTokenRepo.create({
-            userId: user.id,
-            token,
-            expiresAt,
-        });
-
-        // Send welcome email with password reset link
-        await this.notificationsService.send({
-            userId: user.id,
-            event: 'WELCOME',
-            channels: [NotificationChannel.EMAIL],
-            title: 'Welcome! Set Your Password',
-            message: `Your account has been created. Please set your password using the link below.`,
-            data: {
-                token,
-                expiresAt: expiresAt.toISOString(),
-                resetLink: `${process.env.FRONTEND_URL}/set-password?token=${token}`,
-            },
-        });
-
-        return { userId: user.id, resetToken: token };
-    }
-
-    /**
-     * Cleanup expired tokens (can be run as a cron job)
-     */
-    async cleanupExpiredTokens(): Promise<number> {
-        return this.passwordResetTokenRepo.deleteExpired();
-    }
-
-    /**
-     * Generate setup token for admin-created users
-     * User will use this token to set their initial password
-     */
-    async generateAccountSetupToken(userId: number): Promise<string> {
-        // Invalidate any existing tokens for this user
-        await this.passwordResetTokenRepo.invalidateUserTokens(userId);
-
-        // Generate a secure random token
-        const token = randomBytes(32).toString('hex');
-
-        // Calculate expiry time (24 hours for account setup)
-        const expiresAt = new Date();
-        expiresAt.setHours(expiresAt.getHours() + 24);
-
-        // Save token to database
-        await this.passwordResetTokenRepo.create({
-            userId,
-            token,
-            expiresAt,
-        });
-
-        return token;
-    }
-
-    /**
-     * Send account setup email with password setup link
-     */
-    async sendAccountSetupEmail(
-        userId: number,
-        email: string,
-        firstName: string,
-        token: string,
-    ): Promise<void> {
-        const expiresAt = new Date();
-        expiresAt.setHours(expiresAt.getHours() + 24);
-
-        await this.notificationsService.send({
-            userId,
-            event: 'ACCOUNT_SETUP',
-            channels: [NotificationChannel.EMAIL],
-            title: 'Welcome! Set Your Password',
-            message: `Your account has been created by an administrator. Please set your password to activate your account.`,
-            data: {
-                firstName,
-                token,
-                expiresAt: expiresAt.toISOString(),
-                setupLink: `${process.env.FRONTEND_URL}/set-password?token=${token}`,
-            },
-        });
-    }
-
-    /**
-     * Set password for the first time using setup token
-     * Also marks user as verified
-     */
-    async setPasswordWithToken(token: string, newPassword: string): Promise<void> {
-        // Find valid token
-        const resetToken = await this.passwordResetTokenRepo.findValidToken(token);
-
-        if (!resetToken) {
-            throw new BadRequestException(
-                'Invalid or expired setup token',
-            );
-        }
-
-        // Hash new password
-        const hashedPassword = await hash(newPassword, this.BCRYPT_ROUNDS);
-
-        // Update user password and mark as verified
-        await this.prisma.user.update({
-            where: { id: resetToken.userId },
-            data: {
-                password: hashedPassword,
-                isVerified: true,
-                verifiedAt: new Date(),
-            },
-        });
-
-        // Mark token as used
-        await this.passwordResetTokenRepo.markAsUsed(resetToken.id);
-
-        // Send confirmation email
-        await this.notificationsService.send({
-            userId: resetToken.userId,
-            event: 'ACCOUNT_ACTIVATED',
-            channels: [NotificationChannel.EMAIL],
-            title: 'Account Activated Successfully',
-            message: 'Your account has been activated. You can now sign in.',
-            data: {
-                activatedAt: new Date().toISOString(),
-            },
-        });
-    }
+    // Send confirmation email
+    await this.notificationsService.send({
+      userId: resetToken.userId,
+      event: 'ACCOUNT_ACTIVATED',
+      channels: [NotificationChannel.EMAIL],
+      title: 'Account Activated Successfully',
+      message: 'Your account has been activated. You can now sign in.',
+      data: {
+        activatedAt: new Date().toISOString(),
+      },
+    });
+  }
 }

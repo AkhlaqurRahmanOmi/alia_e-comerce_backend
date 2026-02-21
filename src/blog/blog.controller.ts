@@ -70,11 +70,9 @@ export class BlogController {
   @Auth(AuthType.None)
   // @Permissions('blog:view')
   @Get(':id')
-
   getById(@Param('id') id: string) {
     return this.blogService.findById(Number(id));
   }
-
 
   @Permissions('blog:update')
   @Patch(':id')

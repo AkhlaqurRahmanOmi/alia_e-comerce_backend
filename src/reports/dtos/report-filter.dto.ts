@@ -65,12 +65,28 @@ export class ReportFilterDto {
 
         case DateRangePreset.THIS_MONTH:
           startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-          endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+          endDate = new Date(
+            now.getFullYear(),
+            now.getMonth() + 1,
+            0,
+            23,
+            59,
+            59,
+            999,
+          );
           break;
 
         case DateRangePreset.LAST_MONTH:
           startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-          endDate = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+          endDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            0,
+            23,
+            59,
+            59,
+            999,
+          );
           break;
 
         case DateRangePreset.THIS_YEAR:
@@ -88,7 +104,9 @@ export class ReportFilterDto {
           startDate.setDate(startDate.getDate() - 30);
       }
     } else {
-      startDate = this.startDate ? new Date(this.startDate) : new Date(now.setDate(now.getDate() - 30));
+      startDate = this.startDate
+        ? new Date(this.startDate)
+        : new Date(now.setDate(now.getDate() - 30));
       endDate = this.endDate ? new Date(this.endDate) : new Date();
     }
 

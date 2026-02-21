@@ -42,7 +42,10 @@ class GuestAddressDto {
   @MaxLength(50)
   lastName: string;
 
-  @ApiProperty({ description: 'Email Address', example: 'customer@example.com' })
+  @ApiProperty({
+    description: 'Email Address',
+    example: 'customer@example.com',
+  })
   @IsEmail()
   @MaxLength(255)
   email: string;
@@ -93,7 +96,10 @@ class GuestAddressDto {
 }
 
 export class GuestCreateOrderDto {
-  @ApiProperty({ description: 'Guest customer email', example: 'guest@example.com' })
+  @ApiProperty({
+    description: 'Guest customer email',
+    example: 'guest@example.com',
+  })
   @IsEmail()
   @MaxLength(255)
   guestEmail: string;
@@ -127,7 +133,10 @@ export class GuestCreateOrderDto {
   @Type(() => GuestAddressDto)
   shippingAddress: GuestAddressDto;
 
-  @ApiProperty({ description: 'Billing address (optional, defaults to shipping)', type: GuestAddressDto })
+  @ApiProperty({
+    description: 'Billing address (optional, defaults to shipping)',
+    type: GuestAddressDto,
+  })
   @ValidateNested()
   @Type(() => GuestAddressDto)
   @IsOptional()

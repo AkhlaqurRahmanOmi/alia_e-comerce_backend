@@ -10,14 +10,19 @@ export class LocationManagementProvider {
   /**
    * Create a new location
    */
-  async createLocation(createLocationDto: CreateLocationDto): Promise<Location> {
+  async createLocation(
+    createLocationDto: CreateLocationDto,
+  ): Promise<Location> {
     return this.locationRepository.create(createLocationDto);
   }
 
   /**
    * Update an existing location
    */
-  async updateLocation(id: number, updateLocationDto: UpdateLocationDto): Promise<Location> {
+  async updateLocation(
+    id: number,
+    updateLocationDto: UpdateLocationDto,
+  ): Promise<Location> {
     const location = await this.locationRepository.findById(id);
     if (!location) {
       throw new NotFoundException(`Location with ID ${id} not found`);

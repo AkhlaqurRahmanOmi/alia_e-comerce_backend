@@ -77,7 +77,10 @@ export class PermissionRepository extends BaseRepository<Permission, number> {
     });
   }
 
-  async update(id: number, data: Partial<Permission>): Promise<PermissionWithRelations> {
+  async update(
+    id: number,
+    data: Partial<Permission>,
+  ): Promise<PermissionWithRelations> {
     return this.prisma.permission.update({
       where: { id },
       data: { ...data, updatedAt: new Date() },
@@ -97,7 +100,10 @@ export class PermissionRepository extends BaseRepository<Permission, number> {
     });
   }
 
-  async search(query: string, fields: string[]): Promise<PermissionWithRelations[]> {
+  async search(
+    query: string,
+    fields: string[],
+  ): Promise<PermissionWithRelations[]> {
     return this.prisma.permission.findMany({
       where: {
         OR: [
@@ -160,7 +166,10 @@ export class PermissionRepository extends BaseRepository<Permission, number> {
     });
 
     const countQuery = this.prisma.permission.count({ where });
-    const [permissions, total] = await Promise.all([permissionsQuery, countQuery]);
+    const [permissions, total] = await Promise.all([
+      permissionsQuery,
+      countQuery,
+    ]);
 
     return {
       data: permissions,

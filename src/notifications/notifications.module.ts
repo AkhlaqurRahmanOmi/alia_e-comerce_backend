@@ -19,7 +19,7 @@ import { NotificationListener } from './listeners';
 import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [PrismaModule, ConfigModule, forwardRef(()=> UserModule)],
+  imports: [PrismaModule, ConfigModule, forwardRef(() => UserModule)],
   controllers: [NotificationsController, TestEmailController],
   providers: [
     // Service (Public API)

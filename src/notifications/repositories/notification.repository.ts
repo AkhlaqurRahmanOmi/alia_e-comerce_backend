@@ -57,7 +57,16 @@ export class NotificationRepository {
   async findWithFilters(
     filterDto: NotificationFilterDto,
   ): Promise<PaginatedResult<Notification>> {
-    const { userId, event, channel, status, startDate, endDate, page = 1, limit = 20 } = filterDto;
+    const {
+      userId,
+      event,
+      channel,
+      status,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 20,
+    } = filterDto;
 
     const where: any = {};
 
@@ -159,7 +168,10 @@ export class NotificationRepository {
     return result.count;
   }
 
-  async updateStatus(id: number, status: NotificationStatus): Promise<Notification> {
+  async updateStatus(
+    id: number,
+    status: NotificationStatus,
+  ): Promise<Notification> {
     return this.prisma.notification.update({
       where: { id },
       data: {

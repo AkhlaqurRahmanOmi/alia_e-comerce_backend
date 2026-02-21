@@ -7,13 +7,7 @@ import { SharedModule } from '../shared/shared.module';
 @Module({
   imports: [SharedModule],
   controllers: [RbacController],
-  providers: [
-    RbacService,
-    RoleRepository,
-    PermissionRepository,
-  ],
-  exports: [
-    RbacService,
-  ],
+  providers: [RbacService, RoleRepository, PermissionRepository],
+  exports: [RbacService],
 })
 export class RbacModule {}

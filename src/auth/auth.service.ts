@@ -205,7 +205,9 @@ export class AuthService {
 
     // Check if expired
     if (this.otpProvider.isExpired(otpRecord.expiresAt)) {
-      throw new BadRequestException('OTP has expired. Please request a new one');
+      throw new BadRequestException(
+        'OTP has expired. Please request a new one',
+      );
     }
 
     // Check max attempts
@@ -254,13 +256,13 @@ export class AuthService {
     );
 
     //add welcome email
-      //that's not necessary right now
+    //that's not necessary right now
 
-      // await this.userNotificationService.sendWelcomeEmail(
-      //   user.id,
-      //   user.email,
-      //   user.firstName,
-      // );
+    // await this.userNotificationService.sendWelcomeEmail(
+    //   user.id,
+    //   user.email,
+    //   user.firstName,
+    // );
 
     // Fetch user with roles for token generation
     const userWithRoles = await this.userRepository.findByIdWithRoles(user.id);
@@ -282,7 +284,9 @@ export class AuthService {
     }));
 
     // Auto-login: Generate tokens directly (user is already authenticated via OTP)
-    const tokens = await this.generateTokenProvider.generateTokens(userWithRoles || user);
+    const tokens = await this.generateTokenProvider.generateTokens(
+      userWithRoles || user,
+    );
 
     return {
       message: 'Email verified successfully',

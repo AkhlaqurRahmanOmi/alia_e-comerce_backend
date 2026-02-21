@@ -42,19 +42,21 @@ export class GenerateTokenProvider {
     const roles = user.userRoles?.map((ur) => ur.role.name) || [];
 
     // Extract permissions
-    const permissions = user.userRoles?.flatMap((ur) =>
-      ur.role.rolePermissions.map((rp) => rp.permission.name)
-    ) || [];
+    const permissions =
+      user.userRoles?.flatMap((ur) =>
+        ur.role.rolePermissions.map((rp) => rp.permission.name),
+      ) || [];
 
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken<Partial<{ email: string; roles: string[]; permissions: string[] }>>(
-        user.id,
-        this.jwtConfiguration.accessTokenTtl,
-        { email: user.email, roles, permissions }
-      ),
+      this.signToken<
+        Partial<{ email: string; roles: string[]; permissions: string[] }>
+      >(user.id, this.jwtConfiguration.accessTokenTtl, {
+        email: user.email,
+        roles,
+        permissions,
+      }),
       this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
     ]);
     return { accessToken, refreshToken };
   }
-
 }

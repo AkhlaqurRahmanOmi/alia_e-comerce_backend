@@ -27,11 +27,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
  * ```
  */
 @Module({
-  imports: [
-    ScheduleModule.forRoot(),
-    AuthModule,
-    NotificationsModule,
-  ],
+  imports: [ScheduleModule.forRoot(), AuthModule, NotificationsModule],
   providers: [
     OtpCleanupTask,
     NotificationCleanupTask,

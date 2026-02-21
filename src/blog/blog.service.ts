@@ -37,7 +37,7 @@ export class BlogService {
 
     // check existence via repository
     // Loop capped as safety (practically won't hit this)
-    // eslint-disable-next-line no-constant-condition
+
     while (true) {
       const exists = await this.blogRepo.findBySlug(candidate);
       if (!exists) return candidate;
@@ -59,7 +59,9 @@ export class BlogService {
       status: dto.status ?? BlogPostStatus.draft,
       image: dto.image,
       publishedAt:
-        dto.status === BlogPostStatus.published ? (dto as any)['publishedAt'] ?? now : undefined,
+        dto.status === BlogPostStatus.published
+          ? ((dto as any)['publishedAt'] ?? now)
+          : undefined,
       createdAt: now,
       updatedAt: now,
     } as Partial<BlogPost>;
@@ -68,7 +70,14 @@ export class BlogService {
   }
 
   async findAll(params: ListParams = {}): Promise<PaginatedResult<BlogPost>> {
-    const { status, search, page = 1, limit = 10, sortField, sortOrder } = params;
+    const {
+      status,
+      search,
+      page = 1,
+      limit = 10,
+      sortField,
+      sortOrder,
+    } = params;
 
     const options: QueryOptions = {
       filters: {
@@ -81,7 +90,7 @@ export class BlogService {
           }
         : undefined,
       sort: sortField
-        ? { field: sortField, order: (sortOrder ?? 'desc') as 'asc' | 'desc' }
+        ? { field: sortField, order: sortOrder ?? 'desc' }
         : { field: 'createdAt', order: 'desc' },
       pagination: { page, limit },
     };
@@ -89,7 +98,9 @@ export class BlogService {
     return this.blogRepo.findWithFilters(options);
   }
 
-  async findPublished(params: { page?: number; limit?: number } = {}): Promise<PaginatedResult<BlogPost>> {
+  async findPublished(
+    params: { page?: number; limit?: number } = {},
+  ): Promise<PaginatedResult<BlogPost>> {
     const { page = 1, limit = 10 } = params;
 
     const options: QueryOptions = {
@@ -125,7 +136,9 @@ export class BlogService {
       ...dto,
       slug: existing.slug,
       publishedAt:
-        willBePublished && !existing.publishedAt ? (dto as any)?.publishedAt ?? now : existing.publishedAt,
+        willBePublished && !existing.publishedAt
+          ? ((dto as any)?.publishedAt ?? now)
+          : existing.publishedAt,
       updatedAt: now,
     } as Partial<BlogPost>;
 

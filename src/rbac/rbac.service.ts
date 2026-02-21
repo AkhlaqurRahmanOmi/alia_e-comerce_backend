@@ -300,7 +300,10 @@ export class RbacService {
     }
 
     // Check name uniqueness if being updated
-    if (updatePermissionDto.name && updatePermissionDto.name !== permission.name) {
+    if (
+      updatePermissionDto.name &&
+      updatePermissionDto.name !== permission.name
+    ) {
       const existingPermission = await this.permissionRepository.findByName(
         updatePermissionDto.name,
       );

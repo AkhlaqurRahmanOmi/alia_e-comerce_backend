@@ -4,7 +4,10 @@ import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { BaseRepository } from '../../shared/repository/base.repository';
 
 @Injectable()
-export class VariantInventoryRepository extends BaseRepository<VariantInventory, number> {
+export class VariantInventoryRepository extends BaseRepository<
+  VariantInventory,
+  number
+> {
   constructor(private readonly prisma: PrismaService) {
     super();
   }
@@ -46,7 +49,10 @@ export class VariantInventoryRepository extends BaseRepository<VariantInventory,
     });
   }
 
-  async update(id: number, data: Partial<VariantInventory>): Promise<VariantInventory> {
+  async update(
+    id: number,
+    data: Partial<VariantInventory>,
+  ): Promise<VariantInventory> {
     return this.prisma.variantInventory.update({
       where: { id },
       data: { ...data, updatedAt: new Date() },
@@ -110,7 +116,10 @@ export class VariantInventoryRepository extends BaseRepository<VariantInventory,
       where: { variantId },
     });
 
-    return inventories.reduce((total, inv) => total + (inv.quantity - inv.reserved), 0);
+    return inventories.reduce(
+      (total, inv) => total + (inv.quantity - inv.reserved),
+      0,
+    );
   }
 
   async getTotalQuantity(variantId: number): Promise<number> {
@@ -126,7 +135,10 @@ export class VariantInventoryRepository extends BaseRepository<VariantInventory,
     locationId: number,
     delta: number,
   ): Promise<VariantInventory> {
-    const inventory = await this.findByVariantAndLocation(variantId, locationId);
+    const inventory = await this.findByVariantAndLocation(
+      variantId,
+      locationId,
+    );
 
     if (!inventory) {
       // Create new inventory record if it doesn't exist
@@ -148,7 +160,10 @@ export class VariantInventoryRepository extends BaseRepository<VariantInventory,
     locationId: number,
     delta: number,
   ): Promise<VariantInventory> {
-    const inventory = await this.findByVariantAndLocation(variantId, locationId);
+    const inventory = await this.findByVariantAndLocation(
+      variantId,
+      locationId,
+    );
 
     if (!inventory) {
       throw new Error('Inventory record not found');
@@ -169,11 +184,7 @@ export class VariantInventoryRepository extends BaseRepository<VariantInventory,
   }
 
   async findWithFilters(options: any): Promise<any> {
-    const {
-      filters = {},
-      sort,
-      pagination = { page: 1, limit: 10 },
-    } = options;
+    const { filters = {}, sort, pagination = { page: 1, limit: 10 } } = options;
 
     const { page, limit } = pagination;
     const skip = (page - 1) * limit;

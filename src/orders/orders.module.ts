@@ -13,7 +13,12 @@ import { PrismaModule } from '../core/config/prisma/prisma.module';
 @Module({
   imports: [PrismaModule, InventoryModule, BundlesModule, ShippingModule],
   controllers: [OrdersController, OrdersAdminController],
-  providers: [OrdersService, OrderManagementProvider, OrderReportsProvider, OrderRepository],
+  providers: [
+    OrdersService,
+    OrderManagementProvider,
+    OrderReportsProvider,
+    OrderRepository,
+  ],
   exports: [OrdersService],
 })
 export class OrdersModule {}

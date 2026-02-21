@@ -70,7 +70,8 @@ export class SignInProvider {
     }));
 
     // Generate tokens with role information
-    const tokens = await this.generateTokenProvider.generateTokens(userWithRoles);
+    const tokens =
+      await this.generateTokenProvider.generateTokens(userWithRoles);
 
     // Return tokens along with user details, roles, and addresses
     return {

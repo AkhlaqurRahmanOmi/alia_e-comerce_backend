@@ -1,4 +1,9 @@
-import { Booking, User, BookingStatusHistory, BookingPayment } from '@prisma/client';
+import {
+  Booking,
+  User,
+  BookingStatusHistory,
+  BookingPayment,
+} from '@prisma/client';
 
 export type BookingWithRelations = Booking & {
   user?: User | null;

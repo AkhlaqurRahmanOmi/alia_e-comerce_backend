@@ -14,13 +14,16 @@ export class StockAllocationProvider {
   /**
    * Reserve stock for an order
    */
-  async reserveStock(reserveDto: ReserveInventoryDto): Promise<VariantInventory> {
+  async reserveStock(
+    reserveDto: ReserveInventoryDto,
+  ): Promise<VariantInventory> {
     const { variantId, locationId, quantity, orderId } = reserveDto;
 
-    const inventory = await this.variantInventoryRepository.findByVariantAndLocation(
-      variantId,
-      locationId,
-    );
+    const inventory =
+      await this.variantInventoryRepository.findByVariantAndLocation(
+        variantId,
+        locationId,
+      );
 
     if (!inventory) {
       throw new BadRequestException(
@@ -36,11 +39,12 @@ export class StockAllocationProvider {
     }
 
     // Update reserved quantity
-    const updatedInventory = await this.variantInventoryRepository.updateReserved(
-      variantId,
-      locationId,
-      quantity,
-    );
+    const updatedInventory =
+      await this.variantInventoryRepository.updateReserved(
+        variantId,
+        locationId,
+        quantity,
+      );
 
     // Note: We don't create a movement record for reservations as the stock hasn't actually moved
     // Movement will be recorded when the order is fulfilled and stock is deducted
@@ -51,13 +55,16 @@ export class StockAllocationProvider {
   /**
    * Release reserved stock (e.g., when order is cancelled)
    */
-  async releaseStock(releaseDto: ReleaseInventoryDto): Promise<VariantInventory> {
+  async releaseStock(
+    releaseDto: ReleaseInventoryDto,
+  ): Promise<VariantInventory> {
     const { variantId, locationId, quantity, orderId } = releaseDto;
 
-    const inventory = await this.variantInventoryRepository.findByVariantAndLocation(
-      variantId,
-      locationId,
-    );
+    const inventory =
+      await this.variantInventoryRepository.findByVariantAndLocation(
+        variantId,
+        locationId,
+      );
 
     if (!inventory) {
       throw new BadRequestException(
@@ -72,11 +79,12 @@ export class StockAllocationProvider {
     }
 
     // Update reserved quantity (negative delta to decrease)
-    const updatedInventory = await this.variantInventoryRepository.updateReserved(
-      variantId,
-      locationId,
-      -quantity,
-    );
+    const updatedInventory =
+      await this.variantInventoryRepository.updateReserved(
+        variantId,
+        locationId,
+        -quantity,
+      );
 
     return updatedInventory;
   }
@@ -90,10 +98,11 @@ export class StockAllocationProvider {
     quantity: number,
     orderId?: number,
   ): Promise<VariantInventory> {
-    const inventory = await this.variantInventoryRepository.findByVariantAndLocation(
-      variantId,
-      locationId,
-    );
+    const inventory =
+      await this.variantInventoryRepository.findByVariantAndLocation(
+        variantId,
+        locationId,
+      );
 
     if (!inventory) {
       throw new BadRequestException(
@@ -115,11 +124,12 @@ export class StockAllocationProvider {
     );
 
     // Decrease quantity
-    const updatedInventory = await this.variantInventoryRepository.updateQuantity(
-      variantId,
-      locationId,
-      -quantity,
-    );
+    const updatedInventory =
+      await this.variantInventoryRepository.updateQuantity(
+        variantId,
+        locationId,
+        -quantity,
+      );
 
     // Record movement
     await this.movementTrackingProvider.recordMovement({
@@ -141,10 +151,11 @@ export class StockAllocationProvider {
     locationId: number,
     quantity: number,
   ): Promise<boolean> {
-    const inventory = await this.variantInventoryRepository.findByVariantAndLocation(
-      variantId,
-      locationId,
-    );
+    const inventory =
+      await this.variantInventoryRepository.findByVariantAndLocation(
+        variantId,
+        locationId,
+      );
 
     if (!inventory) {
       return false;
@@ -161,7 +172,8 @@ export class StockAllocationProvider {
     variantId: number,
     quantity: number,
   ): Promise<number | null> {
-    const inventories = await this.variantInventoryRepository.findByVariantId(variantId);
+    const inventories =
+      await this.variantInventoryRepository.findByVariantId(variantId);
 
     let bestLocation: number | null = null;
     let maxAvailable = 0;

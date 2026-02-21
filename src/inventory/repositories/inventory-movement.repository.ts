@@ -5,7 +5,10 @@ import { BaseRepository } from '../../shared/repository/base.repository';
 import { PaginatedResult, QueryOptions } from '../../shared/types';
 
 @Injectable()
-export class InventoryMovementRepository extends BaseRepository<InventoryMovement, number> {
+export class InventoryMovementRepository extends BaseRepository<
+  InventoryMovement,
+  number
+> {
   constructor(private readonly prisma: PrismaService) {
     super();
   }
@@ -51,7 +54,10 @@ export class InventoryMovementRepository extends BaseRepository<InventoryMovemen
     });
   }
 
-  async update(id: number, data: Partial<InventoryMovement>): Promise<InventoryMovement> {
+  async update(
+    id: number,
+    data: Partial<InventoryMovement>,
+  ): Promise<InventoryMovement> {
     return this.prisma.inventoryMovement.update({
       where: { id },
       data,
@@ -113,12 +119,10 @@ export class InventoryMovementRepository extends BaseRepository<InventoryMovemen
     });
   }
 
-  async findWithFilters(options: QueryOptions): Promise<PaginatedResult<InventoryMovement>> {
-    const {
-      filters = {},
-      sort,
-      pagination = { page: 1, limit: 10 },
-    } = options;
+  async findWithFilters(
+    options: QueryOptions,
+  ): Promise<PaginatedResult<InventoryMovement>> {
+    const { filters = {}, sort, pagination = { page: 1, limit: 10 } } = options;
 
     const { page, limit } = pagination;
     const skip = (page - 1) * limit;

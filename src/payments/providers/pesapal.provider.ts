@@ -18,7 +18,8 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
 
   constructor(private configService: ConfigService) {
     this.ipnUrl = this.configService.get<string>('PESAPAL_IPN_URL') || '';
-    this.callbackUrl = this.configService.get<string>('PESAPAL_CALLBACK_URL') || '';
+    this.callbackUrl =
+      this.configService.get<string>('PESAPAL_CALLBACK_URL') || '';
   }
 
   async onModuleInit() {
@@ -27,14 +28,13 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
 
   private async initializePesapal() {
     try {
-      const consumerKey = this.configService.get<string>('PESAPAL_CONSUMER_KEY') || '';
-      const consumerSecret = this.configService.get<string>(
-        'PESAPAL_CONSUMER_SECRET',
-      ) || '';
-      const environment = this.configService.get<string>(
-        'PESAPAL_ENVIRONMENT',
-        'sandbox',
-      ) || 'sandbox';
+      const consumerKey =
+        this.configService.get<string>('PESAPAL_CONSUMER_KEY') || '';
+      const consumerSecret =
+        this.configService.get<string>('PESAPAL_CONSUMER_SECRET') || '';
+      const environment =
+        this.configService.get<string>('PESAPAL_ENVIRONMENT', 'sandbox') ||
+        'sandbox';
 
       this.logger.log(`Initializing Pesapal SDK in ${environment} mode...`);
 
@@ -51,9 +51,14 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
       });
 
       this.isInitialized = true;
-      this.logger.log(`Pesapal SDK initialized successfully. Found ${this.pesapal.ipns?.length || 0} registered IPN(s)`);
+      this.logger.log(
+        `Pesapal SDK initialized successfully. Found ${this.pesapal.ipns?.length || 0} registered IPN(s)`,
+      );
     } catch (error) {
-      this.logger.error(`Failed to initialize Pesapal SDK: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to initialize Pesapal SDK: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -86,7 +91,8 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
       const notificationId = await this.getIPNId();
 
       if (!notificationId) {
-        const errorMsg = 'No IPN registered. Please register IPN in Pesapal dashboard or ensure PESAPAL_IPN_URL is configured correctly.';
+        const errorMsg =
+          'No IPN registered. Please register IPN in Pesapal dashboard or ensure PESAPAL_IPN_URL is configured correctly.';
         this.logger.error(errorMsg);
         throw new Error(errorMsg);
       }
@@ -116,15 +122,23 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
       };
 
       const productId = `ORDER-${orderId}-${Date.now()}`;
-      const description = metadata?.description || `Payment for Order #${orderId}`;
+      const description =
+        metadata?.description || `Payment for Order #${orderId}`;
 
-      const response = await this.pesapal.submitOrder(paymentDetails, productId, description);
+      const response = await this.pesapal.submitOrder(
+        paymentDetails,
+        productId,
+        description,
+      );
 
       // SDK v1.x returns nested structure: { success, status, pesaPalOrderRes: { ... } }
       const orderData = response.pesaPalOrderRes || response;
       const statusCode = String(response.status || orderData.status);
 
-      if ((response.success || statusCode === '200') && orderData.redirect_url) {
+      if (
+        (response.success || statusCode === '200') &&
+        orderData.redirect_url
+      ) {
         return {
           success: true,
           redirectUrl: orderData.redirect_url,
@@ -134,7 +148,11 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
         };
       }
 
-      throw new Error(orderData.error?.message || response.message || 'Failed to initiate payment');
+      throw new Error(
+        orderData.error?.message ||
+          response.message ||
+          'Failed to initiate payment',
+      );
     } catch (error) {
       this.logger.error(
         `Failed to initiate Pesapal payment: ${error.message || JSON.stringify(error)}`,
@@ -143,7 +161,9 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
 
       // Log full error details for debugging
       if (error.error) {
-        this.logger.error(`Pesapal error details: ${JSON.stringify(error.error)}`);
+        this.logger.error(
+          `Pesapal error details: ${JSON.stringify(error.error)}`,
+        );
       }
 
       return {
@@ -154,17 +174,16 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
     }
   }
 
-  async verifyPayment(
-    transactionId: string,
-  ): Promise<PaymentVerifyResponse> {
+  async verifyPayment(transactionId: string): Promise<PaymentVerifyResponse> {
     try {
       this.logger.log(`Verifying Pesapal payment: ${transactionId}`);
 
-      const response =
-        await this.pesapal.getTransactionStatus(transactionId);
+      const response = await this.pesapal.getTransactionStatus(transactionId);
 
       if (response.status === '200') {
-        const status = this.mapPesapalStatus(response.payment_status_description);
+        const status = this.mapPesapalStatus(
+          response.payment_status_description,
+        );
 
         return {
           success: true,
@@ -247,10 +266,15 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
       if (ipnResponse.status === '200') {
         this.logger.log(`IPN registered successfully: ${this.ipnUrl}`);
       } else {
-        this.logger.warn(`IPN registration failed with status ${ipnResponse.status}`);
+        this.logger.warn(
+          `IPN registration failed with status ${ipnResponse.status}`,
+        );
       }
     } catch (error) {
-      this.logger.error(`IPN registration failed: ${error.message}`, error.stack);
+      this.logger.error(
+        `IPN registration failed: ${error.message}`,
+        error.stack,
+      );
       // Don't throw - let it continue to try fetching existing IPNs
     }
   }
@@ -291,11 +315,11 @@ export class PesapalProvider implements IPaymentGateway, OnModuleInit {
     pesapalStatus: string,
   ): 'pending' | 'authorized' | 'captured' | 'failed' | 'voided' {
     const statusMap = {
-      'PENDING': 'pending',
-      'COMPLETED': 'captured',
-      'FAILED': 'failed',
-      'INVALID': 'failed',
-      'REVERSED': 'voided',
+      PENDING: 'pending',
+      COMPLETED: 'captured',
+      FAILED: 'failed',
+      INVALID: 'failed',
+      REVERSED: 'voided',
     };
 
     return (statusMap[pesapalStatus?.toUpperCase()] || 'pending') as any;
