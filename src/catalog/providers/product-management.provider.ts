@@ -119,14 +119,49 @@ export class ProductManagementProvider {
   // In src/catalog/providers/product-management.provider.ts
 // Update the getAllProducts method to pass minRating filter
 
+  private async getDescendantCategoryIds(rootCategoryId: number): Promise<number[]> {
+    const seen = new Set<number>([rootCategoryId]);
+    let frontier: number[] = [rootCategoryId];
+
+    while (frontier.length > 0) {
+      const children = await this.prisma.category.findMany({
+        where: {
+          parentId: {
+            in: frontier,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const nextFrontier = children
+        .map((child) => child.id)
+        .filter((id) => !seen.has(id));
+
+      if (nextFrontier.length === 0) {
+        break;
+      }
+
+      nextFrontier.forEach((id) => seen.add(id));
+      frontier = nextFrontier;
+    }
+
+    return Array.from(seen);
+  }
+
   async getAllProducts(filterDto: ProductFilterDto) {
     // Validate price range
     if (filterDto.minPrice && filterDto.maxPrice && filterDto.minPrice > filterDto.maxPrice) {
       throw new ConflictException('minPrice cannot be greater than maxPrice');
     }
 
-    const categoryFilter = filterDto.categoryId
-      ? { productCategories: { some: { categoryId: filterDto.categoryId } } }
+    const categoryIds = filterDto.categoryId
+      ? await this.getDescendantCategoryIds(filterDto.categoryId)
+      : [];
+
+    const categoryFilter = categoryIds.length
+      ? { productCategories: { some: { categoryId: { in: categoryIds } } } }
       : {};
 
     const options: QueryOptions = {
