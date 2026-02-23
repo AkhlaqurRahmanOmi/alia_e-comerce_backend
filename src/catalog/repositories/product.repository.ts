@@ -22,6 +22,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
       where: { id },
       include: {
         country: true,
+        productSegments: {
+          include: {
+            segment: true,
+          },
+        },
         productImages: true,
         variants: {
           include: {
@@ -66,6 +71,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
       where: { deletedAt: null },
       include: {
         country: true,
+        productSegments: {
+          include: {
+            segment: true,
+          },
+        },
         productImages: {
           where: { isMain: true },
           take: 1,
@@ -99,6 +109,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
       data: data as any,
       include: {
         country: true,
+        productSegments: {
+          include: {
+            segment: true,
+          },
+        },
         productImages: true,
         variants: true,
       },
@@ -111,6 +126,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
       data: { ...data, updatedAt: new Date() },
       include: {
         country: true,
+        productSegments: {
+          include: {
+            segment: true,
+          },
+        },
         productImages: true,
         variants: true,
         productCategories: {
@@ -128,6 +148,7 @@ export class ProductRepository extends BaseRepository<Product, number> {
     variants?: any[];
     images?: any[];
     categoryIds?: number[];
+    segmentIds?: number[];
   }): Promise<Product> {
     return this.prisma.$transaction(async (tx) => {
       // Update base product
@@ -315,11 +336,31 @@ export class ProductRepository extends BaseRepository<Product, number> {
         }
       }
 
+      // Replace segment assignments if provided
+      if (data.segmentIds !== undefined) {
+        await tx.productSegment.deleteMany({ where: { productId: id } });
+        if (data.segmentIds.length > 0) {
+          const uniqueSegmentIds = [...new Set(data.segmentIds)];
+          await tx.productSegment.createMany({
+            data: uniqueSegmentIds.map((segmentId) => ({
+              productId: id,
+              segmentId,
+            })),
+            skipDuplicates: true,
+          });
+        }
+      }
+
       // Return the updated product with relations
       return tx.product.findUnique({
         where: { id },
         include: {
           country: true,
+          productSegments: {
+            include: {
+              segment: true,
+            },
+          },
           productImages: true,
           variants: {
             include: {
@@ -467,6 +508,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
           orderBy: sort ? { [sort.field]: sort.order } : { createdAt: 'desc' },
           include: {
             country: true,
+            productSegments: {
+              include: {
+                segment: true,
+              },
+            },
             productImages: {
               where: { isMain: true },
               take: 1,
@@ -518,6 +564,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
           orderBy: sort ? { [sort.field]: sort.order } : { createdAt: 'desc' },
           include: {
             country: true,
+            productSegments: {
+              include: {
+                segment: true,
+              },
+            },
             productImages: {
               where: { isMain: true },
               take: 1,
@@ -592,6 +643,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
       where,
       include: {
         country: true,
+        productSegments: {
+          include: {
+            segment: true,
+          },
+        },
         productImages: {
           where: { isMain: true },
           take: 1,
@@ -640,6 +696,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
       },
       include: {
         country: true,
+        productSegments: {
+          include: {
+            segment: true,
+          },
+        },
         productImages: {
           where: { isMain: true },
           take: 1,
@@ -673,6 +734,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
       where: { seoSlug: slug },
       include: {
         country: true,
+        productSegments: {
+          include: {
+            segment: true,
+          },
+        },
         productImages: true,
         variants: true,
         productCategories: {
@@ -711,6 +777,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
       },
       include: {
         country: true,
+        productSegments: {
+          include: {
+            segment: true,
+          },
+        },
         productImages: {
           where: { isMain: true },
           take: 1,
@@ -776,6 +847,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
             take: limit * 3, // Get 3x limit for fuzzy matching, then paginate
             include: {
                 country: true,
+                productSegments: {
+                    include: {
+                        segment: true,
+                    },
+                },
                 variants: {
                     where: { isActive: true },
                     take: 1,
@@ -856,5 +932,36 @@ export class ProductRepository extends BaseRepository<Product, number> {
             },
         };
     }
+
+  async setProductSegments(productId: number, segmentIds: number[]): Promise<void> {
+    await this.prisma.productSegment.deleteMany({
+      where: { productId },
+    });
+
+    if (segmentIds.length === 0) {
+      return;
+    }
+
+    const uniqueSegmentIds = [...new Set(segmentIds)];
+    await this.prisma.productSegment.createMany({
+      data: uniqueSegmentIds.map((segmentId) => ({
+        productId,
+        segmentId,
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  async getProductSegments(productId: number) {
+    return this.prisma.productSegment.findMany({
+      where: { productId },
+      include: {
+        segment: true,
+      },
+      orderBy: {
+        assignedAt: 'asc',
+      },
+    });
+  }
 
 }

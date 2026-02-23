@@ -393,6 +393,7 @@ export const ModelName = {
   RolePermission: 'RolePermission',
   Country: 'Country',
   Product: 'Product',
+  Segment: 'Segment',
   ProductSegment: 'ProductSegment',
   ProductImage: 'ProductImage',
   Variant: 'Variant',
@@ -460,7 +461,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "otp" | "passwordResetToken" | "role" | "permission" | "userRole" | "rolePermission" | "country" | "product" | "productSegment" | "productImage" | "variant" | "variantImage" | "productOption" | "optionValue" | "variantOptionValue" | "category" | "productCategory" | "productAttribute" | "bundle" | "bundleItem" | "shippingMethod" | "location" | "variantInventory" | "inventoryMovement" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "orderAddress" | "shipment" | "fulfillmentItem" | "payment" | "transactionLog" | "refund" | "refundItem" | "returnRequest" | "returnItem" | "orderStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponUser" | "couponRedemption" | "review" | "reviewImage" | "userAddress" | "recentlyViewed" | "notificationTemplate" | "notification" | "notificationPreference" | "blogPost" | "homepageSection" | "bookingSetting" | "booking" | "bookingPayment" | "blockedDate" | "customSchedule" | "bookingStatusHistory"
+    modelProps: "user" | "otp" | "passwordResetToken" | "role" | "permission" | "userRole" | "rolePermission" | "country" | "product" | "segment" | "productSegment" | "productImage" | "variant" | "variantImage" | "productOption" | "optionValue" | "variantOptionValue" | "category" | "productCategory" | "productAttribute" | "bundle" | "bundleItem" | "shippingMethod" | "location" | "variantInventory" | "inventoryMovement" | "cart" | "cartItem" | "wishlist" | "wishlistItem" | "order" | "orderItem" | "orderAddress" | "shipment" | "fulfillmentItem" | "payment" | "transactionLog" | "refund" | "refundItem" | "returnRequest" | "returnItem" | "orderStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponUser" | "couponRedemption" | "review" | "reviewImage" | "userAddress" | "recentlyViewed" | "notificationTemplate" | "notification" | "notificationPreference" | "blogPost" | "homepageSection" | "bookingSetting" | "booking" | "bookingPayment" | "blockedDate" | "customSchedule" | "bookingStatusHistory"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1127,6 +1128,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProductCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProductCountAggregateOutputType> | number
+        }
+      }
+    }
+    Segment: {
+      payload: Prisma.$SegmentPayload<ExtArgs>
+      fields: Prisma.SegmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SegmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SegmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+        }
+        findFirst: {
+          args: Prisma.SegmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SegmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+        }
+        findMany: {
+          args: Prisma.SegmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>[]
+        }
+        create: {
+          args: Prisma.SegmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+        }
+        createMany: {
+          args: Prisma.SegmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SegmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>[]
+        }
+        delete: {
+          args: Prisma.SegmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+        }
+        update: {
+          args: Prisma.SegmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.SegmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SegmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SegmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.SegmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+        }
+        aggregate: {
+          args: Prisma.SegmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSegment>
+        }
+        groupBy: {
+          args: Prisma.SegmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SegmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SegmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SegmentCountAggregateOutputType> | number
         }
       }
     }
@@ -5132,14 +5207,23 @@ export const ProductScalarFieldEnum = {
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
-export const ProductSegmentScalarFieldEnum = {
+export const SegmentScalarFieldEnum = {
   id: 'id',
-  productId: 'productId',
   key: 'key',
+  name: 'name',
   isActive: 'isActive',
   position: 'position',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+} as const
+
+export type SegmentScalarFieldEnum = (typeof SegmentScalarFieldEnum)[keyof typeof SegmentScalarFieldEnum]
+
+
+export const ProductSegmentScalarFieldEnum = {
+  productId: 'productId',
+  segmentId: 'segmentId',
+  assignedAt: 'assignedAt'
 } as const
 
 export type ProductSegmentScalarFieldEnum = (typeof ProductSegmentScalarFieldEnum)[keyof typeof ProductSegmentScalarFieldEnum]
@@ -6283,6 +6367,7 @@ export type GlobalOmitConfig = {
   rolePermission?: Prisma.RolePermissionOmit
   country?: Prisma.CountryOmit
   product?: Prisma.ProductOmit
+  segment?: Prisma.SegmentOmit
   productSegment?: Prisma.ProductSegmentOmit
   productImage?: Prisma.ProductImageOmit
   variant?: Prisma.VariantOmit

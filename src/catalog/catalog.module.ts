@@ -8,11 +8,14 @@ import {
   ImageManagementProvider,
   OptionManagementProvider,
   WishlistManagementProvider,
+  SegmentManagementProvider,
 } from './providers';
 import {
   ProductRepository,
   VariantRepository,
-  CategoryRepository, WishlistRepository,
+  CategoryRepository,
+  WishlistRepository,
+  SegmentRepository,
 } from './repositories';
 import { SharedModule } from '../shared/shared.module';
 
@@ -26,17 +29,17 @@ import { SharedModule } from '../shared/shared.module';
     VariantRepository,
     CategoryRepository,
     WishlistRepository,
+    SegmentRepository,
     // Providers (exported for reusability in other modules)
     ProductManagementProvider,
     VariantManagementProvider,
     CategoryManagementProvider,
+    SegmentManagementProvider,
     ImageManagementProvider,
     OptionManagementProvider,
     //wishlist provider
-    WishlistManagementProvider
+    WishlistManagementProvider,
   ],
-  exports: [
-    CatalogService
-  ],
+  exports: [CatalogService],
 })
 export class CatalogModule {}

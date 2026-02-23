@@ -6,6 +6,7 @@ import {
   ImageManagementProvider,
   OptionManagementProvider,
   WishlistManagementProvider,
+  SegmentManagementProvider,
 } from './providers';
 import {
   CreateProductDto,
@@ -20,7 +21,9 @@ import {
   CreateOptionValueDto,
   ProductFilterDto,
   CreateCompleteProductDto,
-  AddToWishlistDto
+  AddToWishlistDto,
+  CreateSegmentDto,
+  UpdateSegmentDto,
 } from './dtos';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -40,6 +43,7 @@ export class CatalogService {
     private readonly productManagement: ProductManagementProvider,
     private readonly variantManagement: VariantManagementProvider,
     private readonly categoryManagement: CategoryManagementProvider,
+    private readonly segmentManagement: SegmentManagementProvider,
     private readonly imageManagement: ImageManagementProvider,
     private readonly optionManagement: OptionManagementProvider,
     private readonly wishlistManagement : WishlistManagementProvider,
@@ -78,6 +82,22 @@ export class CatalogService {
 
   getCategoryProducts(categoryId: number) {
     return this.productManagement.getProductsByCategory(categoryId);
+  }
+
+  getSegments() {
+    return this.segmentManagement.getAllSegments();
+  }
+
+  getActiveSegments() {
+    return this.segmentManagement.getActiveSegments();
+  }
+
+  getSegmentById(id: number) {
+    return this.segmentManagement.getSegmentById(id);
+  }
+
+  searchSegments(query: string) {
+    return this.segmentManagement.searchSegments(query);
   }
 
   getProductImages(productId: number) {
@@ -145,6 +165,20 @@ export class CatalogService {
     return this.categoryManagement.deleteCategory(id);
   }
 
+  createSegment(dto: CreateSegmentDto) {
+    return this.segmentManagement.createSegment(dto);
+  }
+
+  updateSegment(id: number, dto: UpdateSegmentDto) {
+    return this.segmentManagement.updateSegment(id, dto);
+  }
+
+  async deleteSegment(id: number) {
+    const existing = await this.segmentManagement.getSegmentById(id);
+    if (!existing) throw new NotFoundException(`Segment ${id} not found`);
+    return this.segmentManagement.deleteSegment(id);
+  }
+
   addProductImage(dto: CreateProductImageDto) {
     return this.imageManagement.addProductImage(dto);
   }
@@ -185,20 +219,49 @@ export class CatalogService {
    */
   async createCompleteProduct(data: CreateCompleteProductDto) {
     const productId = await this.unitOfWork.transaction(async (tx) => {
+      const { segmentIds, ...productData } = data.product;
+      const normalizedSegmentIds = [...new Set(segmentIds ?? [])];
+
+      if (normalizedSegmentIds.length > 0) {
+        const existingSegments = await tx.segment.findMany({
+          where: { id: { in: normalizedSegmentIds } },
+          select: { id: true },
+        });
+
+        const existingSegmentIds = new Set(existingSegments.map((segment) => segment.id));
+        const missingSegmentIds = normalizedSegmentIds.filter(
+          (segmentId) => !existingSegmentIds.has(segmentId),
+        );
+
+        if (missingSegmentIds.length > 0) {
+          throw new NotFoundException(
+            `Segment(s) not found: ${missingSegmentIds.join(', ')}`,
+          );
+        }
+      }
+
       // Create product
       const product = await tx.product.create({
         data: {
-          name: data.product.name,
-          description: data.product.description,
-          seoTitle: data.product.seoTitle,
-          seoDescription: data.product.seoDescription,
-          seoSlug: data.product.seoSlug,
-          isActive: data.product.isActive ?? false,
+          ...productData,
+          isActive: productData.isActive ?? false,
         },
       });
 
       // Type the operations array explicitly
       const operations: Promise<any>[] = [];
+
+      if (normalizedSegmentIds.length > 0) {
+        operations.push(
+          tx.productSegment.createMany({
+            data: normalizedSegmentIds.map((segmentId) => ({
+              productId: product.id,
+              segmentId,
+            })),
+            skipDuplicates: true,
+          }),
+        );
+      }
 
       if (data.options?.length) {
         operations.push(

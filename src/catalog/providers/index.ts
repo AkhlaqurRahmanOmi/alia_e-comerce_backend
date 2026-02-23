@@ -4,3 +4,4 @@ export * from './category-management.provider';
 export * from './image-management.provider';
 export * from './option-management.provider';
 export * from './wishlist-management.provider';
+export * from './segment-management.provider';

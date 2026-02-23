@@ -28,11 +28,13 @@ import {
   CreateProductDto,
   CreateProductImageDto,
   CreateProductOptionDto,
+  CreateSegmentDto,
   CreateVariantDto,
   CreateVariantImageDto,
   ProductFilterDto,
   UpdateCategoryDto,
   UpdateProductDto,
+  UpdateSegmentDto,
   UpdateVariantDto,
 } from './dtos';
 import { ActiveUser } from '../auth/decorator/active-user.decorator';
@@ -199,6 +201,60 @@ export class CatalogController {
   @HttpCode(HttpStatus.OK)
   getCategoryProducts(@Param('id', ParseIntPipe) categoryId: number) {
     return this.catalog.getCategoryProducts(categoryId);
+  }
+
+  // ============ Public Segment Endpoints ============
+
+  @Get('segments')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.OK)
+  getSegments() {
+    return this.catalog.getSegments();
+  }
+
+  @Get('segments/active')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.OK)
+  getActiveSegments() {
+    return this.catalog.getActiveSegments();
+  }
+
+  @Get('segments/search')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.OK)
+  searchSegments(@Query('q') query: string) {
+    return this.catalog.searchSegments(query);
+  }
+
+  @Get('segments/:id')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.OK)
+  getSegmentById(@Param('id', ParseIntPipe) id: number) {
+    return this.catalog.getSegmentById(id);
+  }
+
+  @Post('segments')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.CREATED)
+  createSegment(@Body() createSegmentDto: CreateSegmentDto) {
+    return this.catalog.createSegment(createSegmentDto);
+  }
+
+  @Patch('segments/:id')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.OK)
+  updateSegment(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSegmentDto: UpdateSegmentDto,
+  ) {
+    return this.catalog.updateSegment(id, updateSegmentDto);
+  }
+
+  @Delete('segments/:id')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteSegment(@Param('id', ParseIntPipe) id: number) {
+    await this.catalog.deleteSegment(id);
   }
 
   @Get('products/:id/images')

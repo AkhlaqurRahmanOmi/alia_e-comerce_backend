@@ -10,6 +10,8 @@ export * from './create-product-option.dto';
 export * from './create-option-value.dto';
 export * from './product-filter.dto';
 export * from './create-complete-product.dto'
+export * from './create-segment.dto';
+export * from './update-segment.dto';
 
 /*
 * wishlist dtos

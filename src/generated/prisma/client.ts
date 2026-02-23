@@ -83,6 +83,11 @@ export type Country = Prisma.CountryModel
  */
 export type Product = Prisma.ProductModel
 /**
+ * Model Segment
+ * 
+ */
+export type Segment = Prisma.SegmentModel
+/**
  * Model ProductSegment
  * 
  */

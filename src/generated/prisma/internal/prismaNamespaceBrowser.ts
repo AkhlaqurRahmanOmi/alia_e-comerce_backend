@@ -60,6 +60,7 @@ export const ModelName = {
   RolePermission: 'RolePermission',
   Country: 'Country',
   Product: 'Product',
+  Segment: 'Segment',
   ProductSegment: 'ProductSegment',
   ProductImage: 'ProductImage',
   Variant: 'Variant',
@@ -245,14 +246,23 @@ export const ProductScalarFieldEnum = {
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
-export const ProductSegmentScalarFieldEnum = {
+export const SegmentScalarFieldEnum = {
   id: 'id',
-  productId: 'productId',
   key: 'key',
+  name: 'name',
   isActive: 'isActive',
   position: 'position',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+} as const
+
+export type SegmentScalarFieldEnum = (typeof SegmentScalarFieldEnum)[keyof typeof SegmentScalarFieldEnum]
+
+
+export const ProductSegmentScalarFieldEnum = {
+  productId: 'productId',
+  segmentId: 'segmentId',
+  assignedAt: 'assignedAt'
 } as const
 
 export type ProductSegmentScalarFieldEnum = (typeof ProductSegmentScalarFieldEnum)[keyof typeof ProductSegmentScalarFieldEnum]

@@ -27,89 +27,61 @@ export type AggregateProductSegment = {
 }
 
 export type ProductSegmentAvgAggregateOutputType = {
-  id: number | null
   productId: number | null
-  position: number | null
+  segmentId: number | null
 }
 
 export type ProductSegmentSumAggregateOutputType = {
-  id: number | null
   productId: number | null
-  position: number | null
+  segmentId: number | null
 }
 
 export type ProductSegmentMinAggregateOutputType = {
-  id: number | null
   productId: number | null
-  key: string | null
-  isActive: boolean | null
-  position: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  segmentId: number | null
+  assignedAt: Date | null
 }
 
 export type ProductSegmentMaxAggregateOutputType = {
-  id: number | null
   productId: number | null
-  key: string | null
-  isActive: boolean | null
-  position: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  segmentId: number | null
+  assignedAt: Date | null
 }
 
 export type ProductSegmentCountAggregateOutputType = {
-  id: number
   productId: number
-  key: number
-  isActive: number
-  position: number
-  createdAt: number
-  updatedAt: number
+  segmentId: number
+  assignedAt: number
   _all: number
 }
 
 
 export type ProductSegmentAvgAggregateInputType = {
-  id?: true
   productId?: true
-  position?: true
+  segmentId?: true
 }
 
 export type ProductSegmentSumAggregateInputType = {
-  id?: true
   productId?: true
-  position?: true
+  segmentId?: true
 }
 
 export type ProductSegmentMinAggregateInputType = {
-  id?: true
   productId?: true
-  key?: true
-  isActive?: true
-  position?: true
-  createdAt?: true
-  updatedAt?: true
+  segmentId?: true
+  assignedAt?: true
 }
 
 export type ProductSegmentMaxAggregateInputType = {
-  id?: true
   productId?: true
-  key?: true
-  isActive?: true
-  position?: true
-  createdAt?: true
-  updatedAt?: true
+  segmentId?: true
+  assignedAt?: true
 }
 
 export type ProductSegmentCountAggregateInputType = {
-  id?: true
   productId?: true
-  key?: true
-  isActive?: true
-  position?: true
-  createdAt?: true
-  updatedAt?: true
+  segmentId?: true
+  assignedAt?: true
   _all?: true
 }
 
@@ -200,13 +172,9 @@ export type ProductSegmentGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 export type ProductSegmentGroupByOutputType = {
-  id: number
   productId: number
-  key: string
-  isActive: boolean
-  position: number
-  createdAt: Date
-  updatedAt: Date
+  segmentId: number
+  assignedAt: Date
   _count: ProductSegmentCountAggregateOutputType | null
   _avg: ProductSegmentAvgAggregateOutputType | null
   _sum: ProductSegmentSumAggregateOutputType | null
@@ -233,50 +201,37 @@ export type ProductSegmentWhereInput = {
   AND?: Prisma.ProductSegmentWhereInput | Prisma.ProductSegmentWhereInput[]
   OR?: Prisma.ProductSegmentWhereInput[]
   NOT?: Prisma.ProductSegmentWhereInput | Prisma.ProductSegmentWhereInput[]
-  id?: Prisma.IntFilter<"ProductSegment"> | number
   productId?: Prisma.IntFilter<"ProductSegment"> | number
-  key?: Prisma.StringFilter<"ProductSegment"> | string
-  isActive?: Prisma.BoolFilter<"ProductSegment"> | boolean
-  position?: Prisma.IntFilter<"ProductSegment"> | number
-  createdAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
+  segmentId?: Prisma.IntFilter<"ProductSegment"> | number
+  assignedAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  segment?: Prisma.XOR<Prisma.SegmentScalarRelationFilter, Prisma.SegmentWhereInput>
 }
 
 export type ProductSegmentOrderByWithRelationInput = {
-  id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  key?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
-  position?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  segmentId?: Prisma.SortOrder
+  assignedAt?: Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
+  segment?: Prisma.SegmentOrderByWithRelationInput
 }
 
 export type ProductSegmentWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
-  productId_key?: Prisma.ProductSegmentProductIdKeyCompoundUniqueInput
+  productId_segmentId?: Prisma.ProductSegmentProductIdSegmentIdCompoundUniqueInput
   AND?: Prisma.ProductSegmentWhereInput | Prisma.ProductSegmentWhereInput[]
   OR?: Prisma.ProductSegmentWhereInput[]
   NOT?: Prisma.ProductSegmentWhereInput | Prisma.ProductSegmentWhereInput[]
   productId?: Prisma.IntFilter<"ProductSegment"> | number
-  key?: Prisma.StringFilter<"ProductSegment"> | string
-  isActive?: Prisma.BoolFilter<"ProductSegment"> | boolean
-  position?: Prisma.IntFilter<"ProductSegment"> | number
-  createdAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
+  segmentId?: Prisma.IntFilter<"ProductSegment"> | number
+  assignedAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-}, "id" | "productId_key">
+  segment?: Prisma.XOR<Prisma.SegmentScalarRelationFilter, Prisma.SegmentWhereInput>
+}, "productId_segmentId">
 
 export type ProductSegmentOrderByWithAggregationInput = {
-  id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  key?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
-  position?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  segmentId?: Prisma.SortOrder
+  assignedAt?: Prisma.SortOrder
   _count?: Prisma.ProductSegmentCountOrderByAggregateInput
   _avg?: Prisma.ProductSegmentAvgOrderByAggregateInput
   _max?: Prisma.ProductSegmentMaxOrderByAggregateInput
@@ -288,79 +243,49 @@ export type ProductSegmentScalarWhereWithAggregatesInput = {
   AND?: Prisma.ProductSegmentScalarWhereWithAggregatesInput | Prisma.ProductSegmentScalarWhereWithAggregatesInput[]
   OR?: Prisma.ProductSegmentScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProductSegmentScalarWhereWithAggregatesInput | Prisma.ProductSegmentScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"ProductSegment"> | number
   productId?: Prisma.IntWithAggregatesFilter<"ProductSegment"> | number
-  key?: Prisma.StringWithAggregatesFilter<"ProductSegment"> | string
-  isActive?: Prisma.BoolWithAggregatesFilter<"ProductSegment"> | boolean
-  position?: Prisma.IntWithAggregatesFilter<"ProductSegment"> | number
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProductSegment"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProductSegment"> | Date | string
+  segmentId?: Prisma.IntWithAggregatesFilter<"ProductSegment"> | number
+  assignedAt?: Prisma.DateTimeWithAggregatesFilter<"ProductSegment"> | Date | string
 }
 
 export type ProductSegmentCreateInput = {
-  key: string
-  isActive?: boolean
-  position?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  assignedAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutProductSegmentsInput
+  segment: Prisma.SegmentCreateNestedOneWithoutProductSegmentsInput
 }
 
 export type ProductSegmentUncheckedCreateInput = {
-  id?: number
   productId: number
-  key: string
-  isActive?: boolean
-  position?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  segmentId: number
+  assignedAt?: Date | string
 }
 
 export type ProductSegmentUpdateInput = {
-  key?: Prisma.StringFieldUpdateOperationsInput | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutProductSegmentsNestedInput
+  segment?: Prisma.SegmentUpdateOneRequiredWithoutProductSegmentsNestedInput
 }
 
 export type ProductSegmentUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
-  key?: Prisma.StringFieldUpdateOperationsInput | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  segmentId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ProductSegmentCreateManyInput = {
-  id?: number
   productId: number
-  key: string
-  isActive?: boolean
-  position?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  segmentId: number
+  assignedAt?: Date | string
 }
 
 export type ProductSegmentUpdateManyMutationInput = {
-  key?: Prisma.StringFieldUpdateOperationsInput | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ProductSegmentUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
-  key?: Prisma.StringFieldUpdateOperationsInput | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  segmentId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ProductSegmentListRelationFilter = {
@@ -373,51 +298,37 @@ export type ProductSegmentOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ProductSegmentProductIdKeyCompoundUniqueInput = {
+export type ProductSegmentProductIdSegmentIdCompoundUniqueInput = {
   productId: number
-  key: string
+  segmentId: number
 }
 
 export type ProductSegmentCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  key?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
-  position?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  segmentId?: Prisma.SortOrder
+  assignedAt?: Prisma.SortOrder
 }
 
 export type ProductSegmentAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  position?: Prisma.SortOrder
+  segmentId?: Prisma.SortOrder
 }
 
 export type ProductSegmentMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  key?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
-  position?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  segmentId?: Prisma.SortOrder
+  assignedAt?: Prisma.SortOrder
 }
 
 export type ProductSegmentMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  key?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
-  position?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  segmentId?: Prisma.SortOrder
+  assignedAt?: Prisma.SortOrder
 }
 
 export type ProductSegmentSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  position?: Prisma.SortOrder
+  segmentId?: Prisma.SortOrder
 }
 
 export type ProductSegmentCreateNestedManyWithoutProductInput = {
@@ -462,21 +373,56 @@ export type ProductSegmentUncheckedUpdateManyWithoutProductNestedInput = {
   deleteMany?: Prisma.ProductSegmentScalarWhereInput | Prisma.ProductSegmentScalarWhereInput[]
 }
 
+export type ProductSegmentCreateNestedManyWithoutSegmentInput = {
+  create?: Prisma.XOR<Prisma.ProductSegmentCreateWithoutSegmentInput, Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput> | Prisma.ProductSegmentCreateWithoutSegmentInput[] | Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput[]
+  connectOrCreate?: Prisma.ProductSegmentCreateOrConnectWithoutSegmentInput | Prisma.ProductSegmentCreateOrConnectWithoutSegmentInput[]
+  createMany?: Prisma.ProductSegmentCreateManySegmentInputEnvelope
+  connect?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+}
+
+export type ProductSegmentUncheckedCreateNestedManyWithoutSegmentInput = {
+  create?: Prisma.XOR<Prisma.ProductSegmentCreateWithoutSegmentInput, Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput> | Prisma.ProductSegmentCreateWithoutSegmentInput[] | Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput[]
+  connectOrCreate?: Prisma.ProductSegmentCreateOrConnectWithoutSegmentInput | Prisma.ProductSegmentCreateOrConnectWithoutSegmentInput[]
+  createMany?: Prisma.ProductSegmentCreateManySegmentInputEnvelope
+  connect?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+}
+
+export type ProductSegmentUpdateManyWithoutSegmentNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductSegmentCreateWithoutSegmentInput, Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput> | Prisma.ProductSegmentCreateWithoutSegmentInput[] | Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput[]
+  connectOrCreate?: Prisma.ProductSegmentCreateOrConnectWithoutSegmentInput | Prisma.ProductSegmentCreateOrConnectWithoutSegmentInput[]
+  upsert?: Prisma.ProductSegmentUpsertWithWhereUniqueWithoutSegmentInput | Prisma.ProductSegmentUpsertWithWhereUniqueWithoutSegmentInput[]
+  createMany?: Prisma.ProductSegmentCreateManySegmentInputEnvelope
+  set?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+  disconnect?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+  delete?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+  connect?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+  update?: Prisma.ProductSegmentUpdateWithWhereUniqueWithoutSegmentInput | Prisma.ProductSegmentUpdateWithWhereUniqueWithoutSegmentInput[]
+  updateMany?: Prisma.ProductSegmentUpdateManyWithWhereWithoutSegmentInput | Prisma.ProductSegmentUpdateManyWithWhereWithoutSegmentInput[]
+  deleteMany?: Prisma.ProductSegmentScalarWhereInput | Prisma.ProductSegmentScalarWhereInput[]
+}
+
+export type ProductSegmentUncheckedUpdateManyWithoutSegmentNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductSegmentCreateWithoutSegmentInput, Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput> | Prisma.ProductSegmentCreateWithoutSegmentInput[] | Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput[]
+  connectOrCreate?: Prisma.ProductSegmentCreateOrConnectWithoutSegmentInput | Prisma.ProductSegmentCreateOrConnectWithoutSegmentInput[]
+  upsert?: Prisma.ProductSegmentUpsertWithWhereUniqueWithoutSegmentInput | Prisma.ProductSegmentUpsertWithWhereUniqueWithoutSegmentInput[]
+  createMany?: Prisma.ProductSegmentCreateManySegmentInputEnvelope
+  set?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+  disconnect?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+  delete?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+  connect?: Prisma.ProductSegmentWhereUniqueInput | Prisma.ProductSegmentWhereUniqueInput[]
+  update?: Prisma.ProductSegmentUpdateWithWhereUniqueWithoutSegmentInput | Prisma.ProductSegmentUpdateWithWhereUniqueWithoutSegmentInput[]
+  updateMany?: Prisma.ProductSegmentUpdateManyWithWhereWithoutSegmentInput | Prisma.ProductSegmentUpdateManyWithWhereWithoutSegmentInput[]
+  deleteMany?: Prisma.ProductSegmentScalarWhereInput | Prisma.ProductSegmentScalarWhereInput[]
+}
+
 export type ProductSegmentCreateWithoutProductInput = {
-  key: string
-  isActive?: boolean
-  position?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  assignedAt?: Date | string
+  segment: Prisma.SegmentCreateNestedOneWithoutProductSegmentsInput
 }
 
 export type ProductSegmentUncheckedCreateWithoutProductInput = {
-  id?: number
-  key: string
-  isActive?: boolean
-  position?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  segmentId: number
+  assignedAt?: Date | string
 }
 
 export type ProductSegmentCreateOrConnectWithoutProductInput = {
@@ -509,119 +455,143 @@ export type ProductSegmentScalarWhereInput = {
   AND?: Prisma.ProductSegmentScalarWhereInput | Prisma.ProductSegmentScalarWhereInput[]
   OR?: Prisma.ProductSegmentScalarWhereInput[]
   NOT?: Prisma.ProductSegmentScalarWhereInput | Prisma.ProductSegmentScalarWhereInput[]
-  id?: Prisma.IntFilter<"ProductSegment"> | number
   productId?: Prisma.IntFilter<"ProductSegment"> | number
-  key?: Prisma.StringFilter<"ProductSegment"> | string
-  isActive?: Prisma.BoolFilter<"ProductSegment"> | boolean
-  position?: Prisma.IntFilter<"ProductSegment"> | number
-  createdAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
+  segmentId?: Prisma.IntFilter<"ProductSegment"> | number
+  assignedAt?: Prisma.DateTimeFilter<"ProductSegment"> | Date | string
+}
+
+export type ProductSegmentCreateWithoutSegmentInput = {
+  assignedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutProductSegmentsInput
+}
+
+export type ProductSegmentUncheckedCreateWithoutSegmentInput = {
+  productId: number
+  assignedAt?: Date | string
+}
+
+export type ProductSegmentCreateOrConnectWithoutSegmentInput = {
+  where: Prisma.ProductSegmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductSegmentCreateWithoutSegmentInput, Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput>
+}
+
+export type ProductSegmentCreateManySegmentInputEnvelope = {
+  data: Prisma.ProductSegmentCreateManySegmentInput | Prisma.ProductSegmentCreateManySegmentInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProductSegmentUpsertWithWhereUniqueWithoutSegmentInput = {
+  where: Prisma.ProductSegmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProductSegmentUpdateWithoutSegmentInput, Prisma.ProductSegmentUncheckedUpdateWithoutSegmentInput>
+  create: Prisma.XOR<Prisma.ProductSegmentCreateWithoutSegmentInput, Prisma.ProductSegmentUncheckedCreateWithoutSegmentInput>
+}
+
+export type ProductSegmentUpdateWithWhereUniqueWithoutSegmentInput = {
+  where: Prisma.ProductSegmentWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProductSegmentUpdateWithoutSegmentInput, Prisma.ProductSegmentUncheckedUpdateWithoutSegmentInput>
+}
+
+export type ProductSegmentUpdateManyWithWhereWithoutSegmentInput = {
+  where: Prisma.ProductSegmentScalarWhereInput
+  data: Prisma.XOR<Prisma.ProductSegmentUpdateManyMutationInput, Prisma.ProductSegmentUncheckedUpdateManyWithoutSegmentInput>
 }
 
 export type ProductSegmentCreateManyProductInput = {
-  id?: number
-  key: string
-  isActive?: boolean
-  position?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  segmentId: number
+  assignedAt?: Date | string
 }
 
 export type ProductSegmentUpdateWithoutProductInput = {
-  key?: Prisma.StringFieldUpdateOperationsInput | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  segment?: Prisma.SegmentUpdateOneRequiredWithoutProductSegmentsNestedInput
 }
 
 export type ProductSegmentUncheckedUpdateWithoutProductInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  key?: Prisma.StringFieldUpdateOperationsInput | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  segmentId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ProductSegmentUncheckedUpdateManyWithoutProductInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  key?: Prisma.StringFieldUpdateOperationsInput | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  segmentId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ProductSegmentCreateManySegmentInput = {
+  productId: number
+  assignedAt?: Date | string
+}
+
+export type ProductSegmentUpdateWithoutSegmentInput = {
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutProductSegmentsNestedInput
+}
+
+export type ProductSegmentUncheckedUpdateWithoutSegmentInput = {
+  productId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ProductSegmentUncheckedUpdateManyWithoutSegmentInput = {
+  productId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type ProductSegmentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
   productId?: boolean
-  key?: boolean
-  isActive?: boolean
-  position?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  segmentId?: boolean
+  assignedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  segment?: boolean | Prisma.SegmentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productSegment"]>
 
 export type ProductSegmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
   productId?: boolean
-  key?: boolean
-  isActive?: boolean
-  position?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  segmentId?: boolean
+  assignedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  segment?: boolean | Prisma.SegmentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productSegment"]>
 
 export type ProductSegmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
   productId?: boolean
-  key?: boolean
-  isActive?: boolean
-  position?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  segmentId?: boolean
+  assignedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  segment?: boolean | Prisma.SegmentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productSegment"]>
 
 export type ProductSegmentSelectScalar = {
-  id?: boolean
   productId?: boolean
-  key?: boolean
-  isActive?: boolean
-  position?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  segmentId?: boolean
+  assignedAt?: boolean
 }
 
-export type ProductSegmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "key" | "isActive" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["productSegment"]>
+export type ProductSegmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"productId" | "segmentId" | "assignedAt", ExtArgs["result"]["productSegment"]>
 export type ProductSegmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  segment?: boolean | Prisma.SegmentDefaultArgs<ExtArgs>
 }
 export type ProductSegmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  segment?: boolean | Prisma.SegmentDefaultArgs<ExtArgs>
 }
 export type ProductSegmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  segment?: boolean | Prisma.SegmentDefaultArgs<ExtArgs>
 }
 
 export type $ProductSegmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProductSegment"
   objects: {
     product: Prisma.$ProductPayload<ExtArgs>
+    segment: Prisma.$SegmentPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
     productId: number
-    key: string
-    isActive: boolean
-    position: number
-    createdAt: Date
-    updatedAt: Date
+    segmentId: number
+    assignedAt: Date
   }, ExtArgs["result"]["productSegment"]>
   composites: {}
 }
@@ -705,8 +675,8 @@ export interface ProductSegmentDelegate<ExtArgs extends runtime.Types.Extensions
    * // Get first 10 ProductSegments
    * const productSegments = await prisma.productSegment.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const productSegmentWithIdOnly = await prisma.productSegment.findMany({ select: { id: true } })
+   * // Only select the `productId`
+   * const productSegmentWithProductIdOnly = await prisma.productSegment.findMany({ select: { productId: true } })
    * 
    */
   findMany<T extends ProductSegmentFindManyArgs>(args?: Prisma.SelectSubset<T, ProductSegmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductSegmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -750,9 +720,9 @@ export interface ProductSegmentDelegate<ExtArgs extends runtime.Types.Extensions
    *   ]
    * })
    * 
-   * // Create many ProductSegments and only return the `id`
-   * const productSegmentWithIdOnly = await prisma.productSegment.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many ProductSegments and only return the `productId`
+   * const productSegmentWithProductIdOnly = await prisma.productSegment.createManyAndReturn({
+   *   select: { productId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -841,9 +811,9 @@ export interface ProductSegmentDelegate<ExtArgs extends runtime.Types.Extensions
    *   ]
    * })
    * 
-   * // Update zero or more ProductSegments and only return the `id`
-   * const productSegmentWithIdOnly = await prisma.productSegment.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more ProductSegments and only return the `productId`
+   * const productSegmentWithProductIdOnly = await prisma.productSegment.updateManyAndReturn({
+   *   select: { productId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1017,6 +987,7 @@ readonly fields: ProductSegmentFieldRefs;
 export interface Prisma__ProductSegmentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  segment<T extends Prisma.SegmentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SegmentDefaultArgs<ExtArgs>>): Prisma.Prisma__SegmentClient<runtime.Types.Result.GetResult<Prisma.$SegmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1046,13 +1017,9 @@ export interface Prisma__ProductSegmentClient<T, Null = never, ExtArgs extends r
  * Fields of the ProductSegment model
  */
 export interface ProductSegmentFieldRefs {
-  readonly id: Prisma.FieldRef<"ProductSegment", 'Int'>
   readonly productId: Prisma.FieldRef<"ProductSegment", 'Int'>
-  readonly key: Prisma.FieldRef<"ProductSegment", 'String'>
-  readonly isActive: Prisma.FieldRef<"ProductSegment", 'Boolean'>
-  readonly position: Prisma.FieldRef<"ProductSegment", 'Int'>
-  readonly createdAt: Prisma.FieldRef<"ProductSegment", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"ProductSegment", 'DateTime'>
+  readonly segmentId: Prisma.FieldRef<"ProductSegment", 'Int'>
+  readonly assignedAt: Prisma.FieldRef<"ProductSegment", 'DateTime'>
 }
     
 

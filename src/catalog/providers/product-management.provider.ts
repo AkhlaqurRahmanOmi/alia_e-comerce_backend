@@ -20,19 +20,36 @@ export class ProductManagementProvider {
    * Create a new product
    */
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
+    const { segmentIds, ...productData } = createProductDto;
+
     // Check if slug already exists
-    if (createProductDto.seoSlug) {
+    if (productData.seoSlug) {
       const existingProduct = await this.productRepository.findBySlug(
-        createProductDto.seoSlug,
+        productData.seoSlug,
       );
       if (existingProduct) {
         throw new ConflictException(
-          `Product with slug '${createProductDto.seoSlug}' already exists`,
+          `Product with slug '${productData.seoSlug}' already exists`,
         );
       }
     }
 
-    return this.productRepository.create(createProductDto);
+    const normalizedSegmentIds = await this.validateSegmentIds(segmentIds);
+    const createdProduct = await this.productRepository.create(productData);
+
+    if (normalizedSegmentIds && normalizedSegmentIds.length > 0) {
+      await this.productRepository.setProductSegments(
+        createdProduct.id,
+        normalizedSegmentIds,
+      );
+      const hydratedProduct = await this.productRepository.findById(createdProduct.id);
+      if (!hydratedProduct) {
+        throw new NotFoundException(`Product with ID ${createdProduct.id} not found`);
+      }
+      return hydratedProduct;
+    }
+
+    return createdProduct;
   }
 
   /**
@@ -60,9 +77,17 @@ export class ProductManagementProvider {
     }
 
     // Check if this is a complete update (with nested data)
-    const { options, variants, images, categoryIds, ...productData } = updateProductDto;
+    const { options, variants, images, categoryIds, segmentIds, ...productData } =
+      updateProductDto;
+    const normalizedSegmentIds = await this.validateSegmentIds(segmentIds);
 
-    if (!options && !variants && !images && !categoryIds) {
+    if (
+      !options &&
+      !variants &&
+      !images &&
+      !categoryIds &&
+      normalizedSegmentIds === undefined
+    ) {
       // Simple update - just product fields
       return this.productRepository.update(id, updateProductDto);
     }
@@ -74,7 +99,37 @@ export class ProductManagementProvider {
       variants,
       images,
       categoryIds,
+      segmentIds: normalizedSegmentIds,
     });
+  }
+
+  private async validateSegmentIds(
+    segmentIds?: number[],
+  ): Promise<number[] | undefined> {
+    if (segmentIds === undefined) {
+      return undefined;
+    }
+
+    const uniqueSegmentIds = [...new Set(segmentIds)];
+    if (uniqueSegmentIds.length === 0) {
+      return [];
+    }
+
+    const existingSegments = await this.prisma.segment.findMany({
+      where: { id: { in: uniqueSegmentIds } },
+      select: { id: true },
+    });
+
+    const existingIds = new Set(existingSegments.map((segment) => segment.id));
+    const missingSegmentIds = uniqueSegmentIds.filter((id) => !existingIds.has(id));
+
+    if (missingSegmentIds.length > 0) {
+      throw new NotFoundException(
+        `Segment(s) not found: ${missingSegmentIds.join(', ')}`,
+      );
+    }
+
+    return uniqueSegmentIds;
   }
 
   /**
