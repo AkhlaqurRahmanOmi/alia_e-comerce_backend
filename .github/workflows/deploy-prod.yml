@@ -1,0 +1,51 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prod-deploy
+  cancel-in-progress: false
+
+jobs:
+  migrate-and-deploy:
+    name: Migrate DB and trigger Coolify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      COOLIFY_WEBHOOK: ${{ secrets.COOLIFY_WEBHOOK }}
+      COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Validate required secrets
+        run: |
+          test -n "$DATABASE_URL" || (echo "Missing secret: DATABASE_URL" && exit 1)
+          test -n "$COOLIFY_WEBHOOK" || (echo "Missing secret: COOLIFY_WEBHOOK" && exit 1)
+          test -n "$COOLIFY_TOKEN" || (echo "Missing secret: COOLIFY_TOKEN" && exit 1)
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
+
+      - name: Trigger Coolify deploy webhook
+        run: |
+          curl --fail --show-error --silent \
+            --request GET "$COOLIFY_WEBHOOK" \
+            --header "Authorization: Bearer $COOLIFY_TOKEN"

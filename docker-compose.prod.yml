@@ -2,7 +2,6 @@ version: '3.9'
 services:
   app:
     container_name: alia-backend
-    image: ${IMAGE_NAME:-alia-backend:latest}
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,6 +10,7 @@ services:
     restart: unless-stopped
     env_file:
       - .env.prod
+    command: ['node', 'dist/main']
     ports:
       - '4000:4000'
     volumes:
