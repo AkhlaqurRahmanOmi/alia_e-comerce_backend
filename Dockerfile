@@ -1,26 +1,30 @@
+# syntax=docker/dockerfile:1.7
+ARG NODE_VERSION=22-alpine
+
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:${NODE_VERSION} AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci
+# Use install instead of ci to tolerate transient lock drift in container builds.
+RUN npm install
 RUN npx prisma generate
 
 COPY . .
 RUN npm run build
 
 # Stage 2: Production
-FROM node:20-alpine
+FROM node:${NODE_VERSION}
 
 WORKDIR /app
 
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist

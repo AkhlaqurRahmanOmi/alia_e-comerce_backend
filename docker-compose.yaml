@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NODE_VERSION: 22-alpine
     ports:
       - "4000:4000"
     environment:
