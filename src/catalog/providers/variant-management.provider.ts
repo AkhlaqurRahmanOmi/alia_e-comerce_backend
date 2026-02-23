@@ -4,7 +4,7 @@ import {
   ConflictException,
   BadRequestException,
 } from '@nestjs/common';
-import { Variant } from '@prisma/client';
+import { Variant } from '@/generated/prisma/client';
 import { VariantRepository } from '../repositories';
 import { CreateVariantDto, UpdateVariantDto } from '../dtos';
 import { PrismaService } from '../../core/config/prisma/prisma.service';

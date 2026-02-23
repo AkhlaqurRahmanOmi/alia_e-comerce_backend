@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
-import { BlogPost } from '@prisma/client';
+import { BlogPost } from '@/generated/prisma/client';
 import { Auth } from '../auth/decorator/auth.decorator';
 import { AuthType } from '../auth/enums/auth-type.enum';
 import { Permissions } from '../auth/decorator/permissions.decorator';

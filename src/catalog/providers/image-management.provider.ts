@@ -3,7 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { ProductImage, VariantImage } from '@prisma/client';
+import { ProductImage, VariantImage } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { CreateProductImageDto, CreateVariantImageDto } from '../dtos';
 

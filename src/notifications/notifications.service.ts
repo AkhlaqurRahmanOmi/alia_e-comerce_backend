@@ -3,7 +3,7 @@ import {
   Notification,
   NotificationTemplate,
   NotificationPreference,
-} from '@prisma/client';
+} from '@/generated/prisma/client';
 import {
   NotificationRepository,
   NotificationTemplateRepository,

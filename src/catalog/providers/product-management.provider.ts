@@ -3,7 +3,7 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { Product } from '@prisma/client';
+import { Product } from '@/generated/prisma/client';
 import { ProductRepository } from '../repositories';
 import { CreateProductDto, UpdateProductDto, ProductFilterDto } from '../dtos';
 import { PaginatedResult, QueryOptions } from '../../shared/types';

@@ -6,7 +6,7 @@ import {
   IsDateString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus } from '@/generated/prisma/client';
 import { BasePaginationDto } from '../../shared/dtos';
 
 export class OrderFilterDto extends BasePaginationDto {

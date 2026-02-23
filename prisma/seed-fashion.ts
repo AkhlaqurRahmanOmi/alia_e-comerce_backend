@@ -1,8 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import { seedFashionCategories } from './seeds/02-fashion-catalog/categories.seed';
 import { seedFashionProducts } from './seeds/02-fashion-catalog/products.seed';
+import { createSeedPrismaClient } from './seed-prisma-client';
 
-const prisma = new PrismaClient();
+const { prisma, pool } = createSeedPrismaClient();
 
 async function main() {
   console.log('🌱 Starting fashion catalog seeding...\n');
@@ -30,4 +30,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

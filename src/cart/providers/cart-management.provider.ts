@@ -7,7 +7,7 @@ import {
 import { CartRepository, CartItemRepository } from '../repositories';
 import { CartInventoryProvider } from './cart-inventory.provider';
 import { AddToCartDto, UpdateCartItemDto } from '../dtos';
-import { Cart, CartItem, CartStatus } from '@prisma/client';
+import { Cart, CartItem, CartStatus } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 
 @Injectable()

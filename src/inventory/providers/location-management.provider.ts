@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Location } from '@prisma/client';
+import { Location } from '@/generated/prisma/client';
 import { LocationRepository } from '../repositories';
 import { CreateLocationDto, UpdateLocationDto } from '../dtos';
 

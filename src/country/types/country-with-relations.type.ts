@@ -1,4 +1,4 @@
-import { Country } from '@prisma/client';
+import { Country } from '@/generated/prisma/client';
 
 /**
  * Country with related product information

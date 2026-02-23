@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import { seedRolesAndPermissions } from './seeds/01-master/roles-permissions.seed';
 import { seedNotificationTemplates } from './seeds/01-master/notification-templates.seed';
 import { seedShippingMethods } from './seeds/01-master/shipping-methods.seed';
@@ -6,8 +5,9 @@ import { seedFashionCategories } from './seeds/02-fashion-catalog/categories.see
 import { seedFashionProducts } from './seeds/02-fashion-catalog/products.seed';
 import { seedSampleUsers } from './seeds/03-sample-data/users.seed';
 import { seedSampleReviews } from './seeds/03-sample-data/reviews.seed';
+import { createSeedPrismaClient } from './seed-prisma-client';
 
-const prisma = new PrismaClient();
+const { prisma, pool } = createSeedPrismaClient();
 
 async function main() {
   console.log('🌱 Starting complete database seeding...\n');
@@ -89,4 +89,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

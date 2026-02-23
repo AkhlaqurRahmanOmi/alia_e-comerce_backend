@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DiscountType } from '@prisma/client';
+import { DiscountType } from '@/generated/prisma/client';
 import { CouponWithRelations } from '../types';
 
 @Injectable()

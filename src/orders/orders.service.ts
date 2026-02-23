@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus } from '@/generated/prisma/client';
 import { OrderManagementProvider } from './providers/order-management.provider';
 import { OrderReportsProvider } from './providers/order-reports.provider';
 import {

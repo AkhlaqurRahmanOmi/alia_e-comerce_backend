@@ -1,8 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import { seedSampleUsers } from './seeds/03-sample-data/users.seed';
 import { seedSampleReviews } from './seeds/03-sample-data/reviews.seed';
+import { createSeedPrismaClient } from './seed-prisma-client';
 
-const prisma = new PrismaClient();
+const { prisma, pool } = createSeedPrismaClient();
 
 async function main() {
   console.log('🌱 Starting sample data seeding...\n');
@@ -30,4 +30,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

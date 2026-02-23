@@ -12,7 +12,7 @@ import { SetPasswordDto } from './dtos/set-password.dto';
 import { ActiveUser } from './decorator/active-user.decorator';
 import type { ActiveUserData } from './interfaces/active-user-data.interface';
 import { RelatedLinks } from 'src/shared/decorators/related-links.decorator';
-import { CreateUserDto } from '../user/dtos/create-user.dto';
+import { CreateUserDto } from '@/user/dtos/create-user.dto';
 import { PasswordResetProvider } from './providers/password-reset.provider';
 import { ApiTags } from '@nestjs/swagger';
 

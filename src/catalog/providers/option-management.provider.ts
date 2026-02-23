@@ -3,7 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { ProductOption, OptionValue } from '@prisma/client';
+import { ProductOption, OptionValue } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { CreateProductOptionDto, CreateOptionValueDto } from '../dtos';
 

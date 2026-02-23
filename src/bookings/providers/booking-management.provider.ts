@@ -6,7 +6,7 @@ import {
 import { BookingRepository, BookingSettingsRepository } from '../repositories';
 import { AvailabilityCalculatorProvider } from './availability-calculator.provider';
 import { CreateBookingDto, CancelBookingDto } from '../dtos';
-import { Booking, BookingStatus } from '@prisma/client';
+import { Booking, BookingStatus } from '@/generated/prisma/client';
 
 @Injectable()
 export class BookingManagementProvider {

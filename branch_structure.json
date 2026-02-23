@@ -1,0 +1,18 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "main",
+    "origin",
+    "prisma-migration"
+  ],
+  "parent": {
+    "main": null,
+    "origin": "main",
+    "prisma-migration": "main"
+  },
+  "order": [
+    "main",
+    "origin",
+    "prisma-migration"
+  ]
+}

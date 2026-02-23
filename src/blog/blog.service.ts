@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { BlogPost, BlogPostStatus } from '@prisma/client';
+import { BlogPost, BlogPostStatus } from '@/generated/prisma/client';
 import { BlogPostRepository } from './repositories/blog-post.repository';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { BlogPostQueryDto } from './dto/update-blog-post.dto';

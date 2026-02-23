@@ -4,7 +4,7 @@ import {
   ConflictException,
   BadRequestException,
 } from '@nestjs/common';
-import { Bundle } from '@prisma/client';
+import { Bundle } from '@/generated/prisma/client';
 import { BundleRepository, BundleItemRepository } from '../repositories';
 import { CreateBundleDto, UpdateBundleDto, BundleFilterDto } from '../dtos';
 import { PaginatedResult, QueryOptions } from '../../shared/types';

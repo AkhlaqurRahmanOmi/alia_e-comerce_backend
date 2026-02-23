@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Coupon } from '@prisma/client';
+import { Coupon } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { BaseRepository } from '../../shared/repository/base.repository';
 import {

@@ -17,7 +17,17 @@ import { BlogModule } from '../blog/blog.module';
  * Access control is handled by guards in individual controllers.
  */
 @Module({
-  imports: [CatalogModule, ReviewsModule, NotificationsModule, BlogModule],
-  exports: [CatalogModule, ReviewsModule, NotificationsModule, BlogModule],
+  imports: [
+    CatalogModule,
+    ReviewsModule,
+    NotificationsModule,
+    // BlogModule
+  ],
+  exports: [
+    CatalogModule,
+    ReviewsModule,
+    NotificationsModule,
+    // BlogModule
+  ],
 })
 export class PublicModule {}

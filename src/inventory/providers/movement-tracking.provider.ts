@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InventoryMovement } from '@prisma/client';
+import { InventoryMovement } from '@/generated/prisma/client';
 import { InventoryMovementRepository } from '../repositories';
 import { MovementFilterDto } from '../dtos';
 import { PaginatedResult, QueryOptions } from '../../shared/types';
