@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Notification, NotificationChannel } from '@prisma/client';
+import { Notification, NotificationChannel } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { NotificationFilterDto } from '../dtos';
 import { NotificationStatus } from '../enums';

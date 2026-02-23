@@ -16,9 +16,9 @@ import { OtpProvider } from './providers/otp.provider';
 import { OtpRepository } from './repositories/otp.repository';
 import { PasswordResetProvider } from './providers/password-reset.provider';
 import { PasswordResetTokenRepository } from './repositories/password-reset-token.repository';
-import { PrismaModule } from '../core/config/prisma/prisma.module';
-import { NotificationsModule } from '../notifications/notifications.module';
-import { OrdersModule } from '../orders/orders.module';
+import { PrismaModule } from '@/core/config/prisma/prisma.module';
+import { NotificationsModule } from '@/notifications/notifications.module';
+import { OrdersModule } from '@/orders/orders.module';
 
 @Module({
   controllers: [AuthController, GoogleAuthenticationController],

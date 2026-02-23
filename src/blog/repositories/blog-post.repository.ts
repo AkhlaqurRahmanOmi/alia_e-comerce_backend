@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
-import { BlogPost, BlogPostStatus, Prisma } from '@prisma/client';
+import { BlogPost, BlogPostStatus, Prisma } from '@/generated/prisma/client';
 import {
   FilterOptions,
   PaginatedResult,

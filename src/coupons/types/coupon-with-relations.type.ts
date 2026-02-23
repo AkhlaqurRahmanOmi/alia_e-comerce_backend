@@ -4,7 +4,7 @@ import {
   Category,
   User,
   CouponRedemption,
-} from '@prisma/client';
+} from '@/generated/prisma/client';
 
 // Type for Coupon with Products
 export type CouponWithProducts = Coupon & {

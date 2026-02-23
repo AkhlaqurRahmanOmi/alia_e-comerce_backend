@@ -5,14 +5,17 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider        = "prisma-client-js"
+  provider               = "prisma-client"
   // output   = "../generated/prisma"
-  previewFeatures = ["fullTextSearchPostgres"]
+  output                 = "../src/generated/prisma"
+  moduleFormat           = "cjs"
+  generatedFileExtension = "ts"
+  importFileExtension    = ""
+  // previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ======================
@@ -281,11 +284,27 @@ model Product {
   reviews           Review[]
   recentlyViewed    RecentlyViewed[]
   couponProducts    CouponProduct[]
+  productSegments   ProductSegment[]
 
   // @@index([name(ops: raw("gin_trgm_ops"))], type: Gin)
   // @@index([description(ops: raw("gin_trgm_ops"))], type: Gin)
   // @@fulltext([name])
   @@map("Product")
+}
+
+model ProductSegment {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  key       String // "featured", "trending", "new-arrival", etc.
+  isActive  Boolean  @default(true)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, key])
+  @@index([key, isActive, position])
 }
 
 model ProductImage {
@@ -628,15 +647,15 @@ model WishlistItem {
 // Orders
 // ======================
 model Order {
-  id                Int         @id @default(autoincrement())
-  userId            Int?        @map("user_id") // Nullable for guest orders
+  id     Int  @id @default(autoincrement())
+  userId Int? @map("user_id") // Nullable for guest orders
 
   // Guest customer information (for orders without userId)
-  guestEmail        String?     @map("guest_email") @db.VarChar(255)
-  guestPhone        String?     @map("guest_phone") @db.VarChar(20)
-  guestFirstName    String?     @map("guest_first_name") @db.VarChar(50)
-  guestLastName     String?     @map("guest_last_name") @db.VarChar(50)
-  isGuestOrder      Boolean     @default(false) @map("is_guest_order")
+  guestEmail     String? @map("guest_email") @db.VarChar(255)
+  guestPhone     String? @map("guest_phone") @db.VarChar(20)
+  guestFirstName String? @map("guest_first_name") @db.VarChar(50)
+  guestLastName  String? @map("guest_last_name") @db.VarChar(50)
+  isGuestOrder   Boolean @default(false) @map("is_guest_order")
 
   externalRef       String?     @map("external_ref") @db.VarChar(100)
   currentStatus     OrderStatus @default(pending)

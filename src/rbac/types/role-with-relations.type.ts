@@ -1,4 +1,4 @@
-import { Role, Permission } from '@prisma/client';
+import { Role, Permission } from '@/generated/prisma/client';
 
 /**
  * Role with related permission information

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from 'src/shared/repository/base.repository';
-import { User } from '@prisma/client';
+import { User } from '@/generated/prisma/client';
 import { PrismaService } from 'src/core/config/prisma/prisma.service';
 import { FilterOptions, PaginatedResult, QueryOptions } from 'src/shared/types';
 import { UserWithRoles } from './types/user-with-relations.type';

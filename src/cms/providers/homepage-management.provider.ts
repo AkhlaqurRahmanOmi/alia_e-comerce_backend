@@ -4,7 +4,7 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
-import { HomepageSection } from '@prisma/client';
+import { HomepageSection } from '@/generated/prisma/client';
 import { HomepageSectionRepository } from '../repositories/homepage-section.repository';
 
 /**

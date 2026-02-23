@@ -9,7 +9,7 @@ import {
   MaxLength,
   Matches,
 } from 'class-validator';
-import { BookingStatus } from '@prisma/client';
+import { BookingStatus } from '@/generated/prisma/client';
 
 export class UpdateBookingDto {
   @IsDateString()

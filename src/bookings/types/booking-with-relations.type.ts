@@ -3,7 +3,7 @@ import {
   User,
   BookingStatusHistory,
   BookingPayment,
-} from '@prisma/client';
+} from '@/generated/prisma/client';
 
 export type BookingWithRelations = Booking & {
   user?: User | null;

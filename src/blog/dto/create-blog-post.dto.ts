@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum, MaxLength } from 'class-validator';
-import { BlogPostStatus } from '@prisma/client';
+import { BlogPostStatus } from '@/generated/prisma/client';
 
 export class CreateBlogPostDto {
   @IsString()

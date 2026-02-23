@@ -7,7 +7,7 @@ import {
   Min,
   MaxLength,
 } from 'class-validator';
-import { ShippingMethodType } from '@prisma/client';
+import { ShippingMethodType } from '@/generated/prisma/client';
 
 export class CreateShippingMethodDto {
   @IsString()

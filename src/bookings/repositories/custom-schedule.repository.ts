@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CustomSchedule, Prisma } from '@prisma/client';
+import { CustomSchedule, Prisma } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 
 @Injectable()

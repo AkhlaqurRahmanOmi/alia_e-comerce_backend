@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
-import { Otp } from '@prisma/client';
+import { Otp } from '@/generated/prisma/client';
 
 @Injectable()
 export class OtpRepository {

@@ -1,4 +1,7 @@
-import { PrismaClient, NotificationChannel } from '@prisma/client';
+import {
+  NotificationChannel,
+  PrismaClient,
+} from '../../../src/generated/prisma/client';
 
 export async function seedNotificationTemplates(prisma: PrismaClient) {
   console.log('📧 Seeding notification templates...');

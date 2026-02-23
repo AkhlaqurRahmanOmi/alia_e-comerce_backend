@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Category } from '@prisma/client';
-import { PrismaService } from '../../core/config/prisma/prisma.service';
-import { BaseRepository } from '../../shared/repository/base.repository';
+import { Category } from '@/generated/prisma/client';
+import { PrismaService } from '@/core/config/prisma/prisma.service';
+import { BaseRepository } from '@/shared/repository/base.repository';
 import {
   FilterOptions,
   PaginatedResult,
   QueryOptions,
-} from '../../shared/types';
+} from '@/shared/types';
 
 @Injectable()
 export class CategoryRepository extends BaseRepository<Category, number> {

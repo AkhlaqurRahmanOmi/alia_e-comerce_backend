@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../core/config/prisma/prisma.service';
-import { BaseRepository } from '../../shared/repository/base.repository';
-import { Wishlist, WishlistItem } from '@prisma/client';
-import { FilterOptions, PaginatedResult, QueryOptions } from '../../shared/types';
+import { PrismaService } from '@/core/config/prisma/prisma.service';
+import { BaseRepository } from '@/shared/repository/base.repository';
+import { Wishlist, WishlistItem } from '@/generated/prisma/client';
+import { FilterOptions, PaginatedResult, QueryOptions } from '@/shared/types';
 
 @Injectable()
 export class WishlistRepository extends BaseRepository<Wishlist, number> {

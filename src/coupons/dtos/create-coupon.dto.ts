@@ -11,7 +11,7 @@ import {
   MaxLength,
   IsDateString,
 } from 'class-validator';
-import { DiscountType } from '@prisma/client';
+import { DiscountType } from '@/generated/prisma/client';
 
 export class CreateCouponDto {
   @IsString()

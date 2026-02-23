@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ShippingMethod } from '@prisma/client';
+import { ShippingMethod } from '@/generated/prisma/client';
 import {
   ShippingManagementProvider,
   ShippingRateCalculatorProvider,

@@ -1,4 +1,7 @@
-import { PrismaClient, ShippingMethodType } from '@prisma/client';
+import {
+  PrismaClient,
+  ShippingMethodType,
+} from '../../../src/generated/prisma/client';
 
 export async function seedShippingMethods(prisma: PrismaClient) {
   console.log('🚚 Seeding shipping methods...');

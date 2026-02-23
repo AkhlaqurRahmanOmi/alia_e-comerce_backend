@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BlockedDate, Prisma } from '@prisma/client';
+import { BlockedDate, Prisma } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 
 @Injectable()

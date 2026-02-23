@@ -4,7 +4,7 @@ import {
   ConflictException,
   BadRequestException,
 } from '@nestjs/common';
-import { Category } from '@prisma/client';
+import { Category } from '@/generated/prisma/client';
 import { CategoryRepository } from '../repositories/category.repository';
 import { CreateCategoryDto, UpdateCategoryDto } from '../dtos';
 import { PrismaService } from '../../core/config/prisma/prisma.service';

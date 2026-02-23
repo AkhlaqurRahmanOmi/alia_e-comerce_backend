@@ -3,7 +3,7 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { ShippingMethod } from '@prisma/client';
+import { ShippingMethod } from '@/generated/prisma/client';
 import { ShippingMethodRepository } from '../repositories';
 import {
   CreateShippingMethodDto,
