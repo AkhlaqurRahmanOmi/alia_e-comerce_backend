@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { NotificationTemplate, NotificationChannel } from '@prisma/client';
+import {
+  NotificationTemplate,
+  NotificationChannel,
+} from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { CreateTemplateDto, UpdateTemplateDto } from '../dtos';
 

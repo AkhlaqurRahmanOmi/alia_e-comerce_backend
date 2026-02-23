@@ -5,7 +5,7 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
-import { Review } from '@prisma/client';
+import { Review } from '@/generated/prisma/client';
 import { ReviewRepository } from '../repositories';
 import {
   CreateReviewDto,

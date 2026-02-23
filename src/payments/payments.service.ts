@@ -5,7 +5,7 @@ import {
   BadRequestException,
   Optional,
 } from '@nestjs/common';
-import { OrderStatus, PaymentStatus } from '@prisma/client';
+import { OrderStatus, PaymentStatus } from '@/generated/prisma/client';
 import { PrismaService } from '../core/config/prisma/prisma.service';
 // import { PaymentGatewayFactory } from './providers/payment-gateway.factory';
 import { PaymentRepository } from './repositories/payment.repository';

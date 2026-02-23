@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Product } from '@prisma/client';
+// import { Product } from '../../generated/prisma/models/Product';
+import { Product } from '@/generated/prisma/client';
 import Fuse  from 'fuse.js'
-import { PrismaService } from '../../core/config/prisma/prisma.service';
-import { BaseRepository } from '../../shared/repository/base.repository';
+import { PrismaService } from '@/core/config/prisma/prisma.service';
+import { BaseRepository } from '@/shared/repository/base.repository';
 import {
   FilterOptions,
   PaginatedResult,
   QueryOptions,
-} from '../../shared/types';
+} from '@/shared/types';
 import {ProductFilterDto} from "../dtos";
 
 @Injectable()

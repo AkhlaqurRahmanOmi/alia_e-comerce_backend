@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PaymentStatus, Payment, TransactionLog } from '@prisma/client';
+import {
+  PaymentStatus,
+  Payment,
+  TransactionLog,
+} from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 
 export interface CreatePaymentDto {

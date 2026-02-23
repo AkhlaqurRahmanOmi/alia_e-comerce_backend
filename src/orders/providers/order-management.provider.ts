@@ -3,7 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { Order, OrderStatus, UserAddress } from '@prisma/client';
+import { Order, OrderStatus, UserAddress } from '@/generated/prisma/client';
 import { OrderRepository } from '../repositories/order.repository';
 import {
   CreateOrderDto,

@@ -1,18 +1,65 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import {
+  INestApplication,
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Prisma, PrismaClient } from '../../../generated/prisma/client';
+import { Pool } from 'pg';
 
 @Injectable()
 export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  async onModuleInit() {
-    await this.$connect();
-    console.log('✅ Prisma connected to the database!');
+  private readonly logger = new Logger(PrismaService.name);
+  private readonly pool: Pool;
+
+  constructor(configService: ConfigService) {
+    const databaseUrl = configService.getOrThrow<string>('DATABASE_URL');
+    const nodeEnv = configService.get<string>('NODE_ENV', 'development');
+
+    const pool = new Pool({ connectionString: databaseUrl });
+    const adapter = new PrismaPg(pool);
+
+    const logLevels: Prisma.LogLevel[] =
+      nodeEnv === 'production' ? ['warn', 'error'] : ['warn', 'error'];
+
+    super({
+      adapter,
+      log: logLevels,
+      errorFormat: nodeEnv === 'production' ? 'minimal' : 'pretty',
+    });
+
+    this.pool = pool;
   }
 
-  async onModuleDestroy() {
-    await this.$disconnect();
-    console.log('❌ Prisma disconnected from the database!');
+  async onModuleInit(): Promise<void> {
+    try {
+      await this.$connect();
+      this.logger.log('Successfully connected to PostgreSQL database');
+    } catch (error) {
+      this.logger.error('Failed to connect to PostgreSQL database', error);
+      throw error;
+    }
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    try {
+      await this.$disconnect();
+      await this.pool.end();
+      this.logger.log('Disconnected from PostgreSQL database');
+    } catch (error) {
+      this.logger.error('Error disconnecting from database', error);
+    }
+  }
+
+  async enableShutdownHooks(app: INestApplication): Promise<void> {
+    process.on('beforeExit', () => {
+
+    });
   }
 }

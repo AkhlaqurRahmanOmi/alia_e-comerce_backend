@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CartItem, Prisma } from '@prisma/client';
-import { BaseRepository } from '../../shared/repository/base.repository';
-import { PrismaService } from '../../core/config/prisma/prisma.service';
+import { CartItem, Prisma } from '../../generated/prisma/client';
+import { BaseRepository } from '@/shared/repository/base.repository';
+import { PrismaService } from '@/core/config/prisma/prisma.service';
 import {
   PaginatedResult,
   QueryOptions,
   FilterOptions,
-} from '../../shared/types';
+} from '@/shared/types';
 
 @Injectable()
 export class CartItemRepository extends BaseRepository<CartItem, number> {

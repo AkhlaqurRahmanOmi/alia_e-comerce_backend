@@ -4,7 +4,7 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
-import { ReviewImage } from '@prisma/client';
+import { ReviewImage } from '@/generated/prisma/client';
 import { ReviewImageRepository, ReviewRepository } from '../repositories';
 import { LocalFileStorageService } from '../../shared/services/local-file-storage.service';
 import { ConfigService } from '@nestjs/config';

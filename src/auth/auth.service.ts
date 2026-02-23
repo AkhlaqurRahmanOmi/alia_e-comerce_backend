@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user/user.service';
-import { OrdersService } from '../orders/orders.service';
+import { OrdersService } from '@/orders/orders.service';
 import { SignInDto } from './dtos/signin.dto';
 import { SignInProvider } from './providers/sign-in.provider';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
@@ -18,11 +18,11 @@ import { VerifyOtpDto } from './dtos/verify-otp.dto';
 import { ResendOtpDto } from './dtos/resend-otp.dto';
 import { OtpProvider } from './providers/otp.provider';
 import { OtpRepository } from './repositories/otp.repository';
-import { UserNotificationService } from '../user/notifications/user-notification.service';
-import { UserRepository } from '../user/user.repository';
-import { UnitOfWorkService } from '../shared/services/unit-of-work.service';
+import { UserNotificationService } from '@/user/notifications/user-notification.service';
+import { UserRepository } from '@/user/user.repository';
+import { UnitOfWorkService } from '@/shared/services/unit-of-work.service';
 import { HashingProvider } from './providers/hashing.provider';
-import { FormattedRole } from '../user/types/user-with-relations.type';
+import { FormattedRole } from '@/user/types/user-with-relations.type';
 
 @Injectable()
 export class AuthService {

@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
 import { seedRolesAndPermissions } from './seeds/01-master/roles-permissions.seed';
 import { seedNotificationTemplates } from './seeds/01-master/notification-templates.seed';
 import { seedShippingMethods } from './seeds/01-master/shipping-methods.seed';
+import { createSeedPrismaClient } from './seed-prisma-client';
 
-const prisma = new PrismaClient();
+const { prisma, pool } = createSeedPrismaClient();
 
 async function main() {
   console.log('🌱 Starting master data seeding...\n');
@@ -35,4 +35,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

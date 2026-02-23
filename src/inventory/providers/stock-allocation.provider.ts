@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { VariantInventory } from '@prisma/client';
+import { VariantInventory } from '@/generated/prisma/client';
 import { VariantInventoryRepository } from '../repositories';
 import { MovementTrackingProvider } from './movement-tracking.provider';
 import { ReserveInventoryDto, ReleaseInventoryDto } from '../dtos';

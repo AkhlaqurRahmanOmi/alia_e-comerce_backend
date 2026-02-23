@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Cart, CartStatus, Prisma } from '@prisma/client';
+import { Cart, CartStatus, Prisma } from '../../generated/prisma/client';
 import { BaseRepository } from '../../shared/repository/base.repository';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import {

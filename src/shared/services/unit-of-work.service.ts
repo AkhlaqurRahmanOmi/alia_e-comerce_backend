@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@/generated/prisma/client';
 import * as crypto from 'crypto';
 
 export interface TransactionOptions {

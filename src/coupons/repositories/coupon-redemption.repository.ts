@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CouponRedemption } from '@prisma/client';
+import { CouponRedemption } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 
 @Injectable()

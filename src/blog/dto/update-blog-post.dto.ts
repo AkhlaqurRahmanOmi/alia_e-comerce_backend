@@ -1,5 +1,5 @@
 import { IsOptional, IsEnum, IsString } from 'class-validator';
-import { BlogPostStatus } from '@prisma/client';
+import { BlogPostStatus } from '@/generated/prisma/client';
 
 export class BlogPostQueryDto {
   @IsOptional()

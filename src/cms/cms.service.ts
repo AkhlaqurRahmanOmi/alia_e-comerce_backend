@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HomepageManagementProvider } from './providers';
-import { HomepageSection } from '@prisma/client';
+import { HomepageSection } from '@/generated/prisma/client';
 
 /**
  * CmsService is a facade that coordinates CMS operations

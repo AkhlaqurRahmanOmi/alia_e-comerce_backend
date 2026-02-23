@@ -32,7 +32,7 @@ import {
   BookingSetting,
   BlockedDate,
   CustomSchedule,
-} from '@prisma/client';
+} from '@/generated/prisma/client';
 import { QueryOptions } from '../shared/types';
 
 @Injectable()

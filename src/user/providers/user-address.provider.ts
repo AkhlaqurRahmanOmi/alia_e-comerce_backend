@@ -4,7 +4,7 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
-import { UserAddress } from '@prisma/client';
+import { UserAddress } from '@/generated/prisma/client';
 import { UserAddressRepository } from '../repositories/user-address.repository';
 import { CreateAddressDto } from '../dtos/create-address.dto';
 import { UpdateAddressDto } from '../dtos/update-address.dto';

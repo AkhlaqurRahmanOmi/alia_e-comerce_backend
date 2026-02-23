@@ -1,5 +1,5 @@
 import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
-import { NotificationChannel as PrismaNotificationChannel } from '@prisma/client';
+import { NotificationChannel as PrismaNotificationChannel } from '@/generated/prisma/client';
 import { NotificationChannel, NotificationStatus } from '../enums';
 import {
   NotificationRepository,

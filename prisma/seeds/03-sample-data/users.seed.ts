@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../../src/generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 
 export async function seedSampleUsers(prisma: PrismaClient) {
@@ -84,7 +84,7 @@ export async function seedSampleUsers(prisma: PrismaClient) {
 
   for (let i = 0; i < customerNames.length; i++) {
     const customerData = customerNames[i];
-    const email = `customer${i + 1}@fashion.com`;
+      const email = `customer${i + 1}@fashion.com`;
 
     const customer = await prisma.user.upsert({
       where: { email },

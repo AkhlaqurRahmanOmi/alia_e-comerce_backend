@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Order } from '@prisma/client';
+import { Order } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { BaseRepository } from '../../shared/repository/base.repository';
 import { UnitOfWorkService } from '../../shared/services/unit-of-work.service';
