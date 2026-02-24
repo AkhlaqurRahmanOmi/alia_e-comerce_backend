@@ -10,14 +10,18 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { Auth } from '../auth/decorator/auth.decorator';
-import { AuthType } from '../auth/enums/auth-type.enum';
-import { Permissions } from '../auth/decorator/permissions.decorator';
-import { RelatedLinks } from '../shared/decorators/related-links.decorator';
-import { CacheTTL } from '../shared/decorators/cache-ttl.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { Auth } from '@/auth/decorator/auth.decorator';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { Permissions } from '@/auth/decorator/permissions.decorator';
+import { RelatedLinks } from '@/shared/decorators/related-links.decorator';
+import { CacheTTL } from '@/shared/decorators/cache-ttl.decorator';
+import { FileValidationPipe } from '@/shared/pipes/file-validation.pipe';
 
 import { CatalogService } from './catalog.service';
 import {
@@ -32,12 +36,13 @@ import {
   CreateVariantDto,
   CreateVariantImageDto,
   ProductFilterDto,
+  UploadProductImageDto,
   UpdateCategoryDto,
   UpdateProductDto,
   UpdateSegmentDto,
   UpdateVariantDto,
 } from './dtos';
-import { ActiveUser } from '../auth/decorator/active-user.decorator';
+import { ActiveUser } from '@/auth/decorator/active-user.decorator';
 
 @Controller('catalog')
 export class CatalogController {
@@ -275,6 +280,7 @@ export class CatalogController {
 
   // ============ Admin Product Endpoints ============
 
+  @Auth(AuthType.Bearer)
   @Post('products')
   @Permissions('products:create')
   @HttpCode(HttpStatus.CREATED)
@@ -445,6 +451,42 @@ export class CatalogController {
     return this.catalog.addProductImage({ ...createImageDto, productId });
   }
 
+  @Post('products/:id/images/upload')
+  @Permissions('products:create')
+  @UseInterceptors(FileInterceptor('file'))
+  @HttpCode(HttpStatus.CREATED)
+  @ApiBearerAuth('JWT-auth')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        altText: {
+          type: 'string',
+        },
+        position: {
+          type: 'number',
+          minimum: 1,
+        },
+        isMain: {
+          type: 'boolean',
+        },
+      },
+    },
+  })
+  uploadProductImage(
+    @Param('id', ParseIntPipe) productId: number,
+    @UploadedFile(FileValidationPipe) file: Express.Multer.File,
+    @Body() uploadDto: UploadProductImageDto,
+  ) {
+    return this.catalog.uploadProductImage(productId, file, uploadDto);
+  }
+
   @Delete('products/:productId/images/:imageId')
   @Permissions('products:delete')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -498,6 +540,7 @@ export class CatalogController {
     return this.catalog.createOptionValue({ ...createValueDto, optionId });
   }
 
+  @Auth(AuthType.Bearer)
   @Post('products/complete')
   @Permissions('products:create')
   @HttpCode(HttpStatus.CREATED)

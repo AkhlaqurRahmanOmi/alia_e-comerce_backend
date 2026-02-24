@@ -70,6 +70,7 @@ export async function seedFashionCategories(prisma: PrismaClient) {
   // Women's Clothing Subcategories
   await createCategory('Dresses', 'Women\'s dresses', womenClothing.id);
   await createCategory('Tops', 'Women\'s tops and blouses', womenClothing.id);
+  await createCategory('Kurtis', 'Women\'s kurtis and kurta sets', womenClothing.id);
   await createCategory('Skirts', 'Women\'s skirts', womenClothing.id);
   await createCategory('Pants', 'Women\'s pants and trousers', womenClothing.id);
   await createCategory('Jeans', 'Women\'s jeans and denim', womenClothing.id);

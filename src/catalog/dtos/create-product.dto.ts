@@ -7,8 +7,10 @@ import {
   MaxLength,
   IsArray,
   IsInt,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { CreateProductAttributeDto } from './create-product-attribute.dto';
 
 export class CreateProductDto {
   @IsString()
@@ -53,4 +55,10 @@ export class CreateProductDto {
   @IsOptional()
   @IsInt({ each: true })
   segmentIds?: number[];
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CreateProductAttributeDto)
+  attributes?: CreateProductAttributeDto[];
 }

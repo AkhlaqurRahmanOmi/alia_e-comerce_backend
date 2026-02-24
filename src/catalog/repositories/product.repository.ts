@@ -149,6 +149,7 @@ export class ProductRepository extends BaseRepository<Product, number> {
     images?: any[];
     categoryIds?: number[];
     segmentIds?: number[];
+    attributes?: Array<{ name: string; value: string }>;
   }): Promise<Product> {
     return this.prisma.$transaction(async (tx) => {
       // Update base product
@@ -223,6 +224,11 @@ export class ProductRepository extends BaseRepository<Product, number> {
 
       // Update/Create variants (UPSERT approach - no deletion!)
       if (data.variants !== undefined && data.variants.length > 0) {
+        const defaultLocation = await tx.location.findFirst({
+          orderBy: { id: 'asc' },
+          select: { id: true },
+        });
+
         // Get existing variants for this product
         const existingVariants = await tx.variant.findMany({
           where: { productId: id },
@@ -291,14 +297,29 @@ export class ProductRepository extends BaseRepository<Product, number> {
               });
             }
 
-            // Create initial inventory for new variant
-            if (variantData.initialStock !== undefined && variantData.locationId) {
-              await tx.variantInventory.create({
+            const targetLocationId = variantData.locationId ?? defaultLocation?.id;
+            if (!targetLocationId) {
+              continue;
+            }
+
+            const initialStock = variantData.initialStock ?? 0;
+
+            await tx.variantInventory.create({
+              data: {
+                variantId: newVariant.id,
+                locationId: targetLocationId,
+                quantity: initialStock,
+                reserved: 0,
+              },
+            });
+
+            if (initialStock > 0) {
+              await tx.inventoryMovement.create({
                 data: {
                   variantId: newVariant.id,
-                  locationId: variantData.locationId,
-                  quantity: variantData.initialStock,
-                  reserved: 0,
+                  locationId: targetLocationId,
+                  delta: initialStock,
+                  reason: 'INITIAL_STOCK',
                 },
               });
             }
@@ -345,6 +366,21 @@ export class ProductRepository extends BaseRepository<Product, number> {
             data: uniqueSegmentIds.map((segmentId) => ({
               productId: id,
               segmentId,
+            })),
+            skipDuplicates: true,
+          });
+        }
+      }
+
+      // Replace attributes if provided
+      if (data.attributes !== undefined) {
+        await tx.productAttribute.deleteMany({ where: { productId: id } });
+        if (data.attributes.length > 0) {
+          await tx.productAttribute.createMany({
+            data: data.attributes.map((attribute) => ({
+              productId: id,
+              name: attribute.name,
+              value: attribute.value,
             })),
             skipDuplicates: true,
           });

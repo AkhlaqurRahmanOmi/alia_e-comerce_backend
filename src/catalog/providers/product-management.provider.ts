@@ -20,7 +20,7 @@ export class ProductManagementProvider {
    * Create a new product
    */
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
-    const { segmentIds, ...productData } = createProductDto;
+    const { segmentIds, attributes, ...productData } = createProductDto;
 
     // Check if slug already exists
     if (productData.seoSlug) {
@@ -37,11 +37,28 @@ export class ProductManagementProvider {
     const normalizedSegmentIds = await this.validateSegmentIds(segmentIds);
     const createdProduct = await this.productRepository.create(productData);
 
-    if (normalizedSegmentIds && normalizedSegmentIds.length > 0) {
-      await this.productRepository.setProductSegments(
-        createdProduct.id,
-        normalizedSegmentIds,
-      );
+    if (attributes && attributes.length > 0) {
+      await this.prisma.productAttribute.createMany({
+        data: attributes.map((attribute) => ({
+          productId: createdProduct.id,
+          name: attribute.name,
+          value: attribute.value,
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    if (
+      (normalizedSegmentIds && normalizedSegmentIds.length > 0) ||
+      (attributes && attributes.length > 0)
+    ) {
+      if (normalizedSegmentIds && normalizedSegmentIds.length > 0) {
+        await this.productRepository.setProductSegments(
+          createdProduct.id,
+          normalizedSegmentIds,
+        );
+      }
+
       const hydratedProduct = await this.productRepository.findById(createdProduct.id);
       if (!hydratedProduct) {
         throw new NotFoundException(`Product with ID ${createdProduct.id} not found`);
@@ -77,7 +94,7 @@ export class ProductManagementProvider {
     }
 
     // Check if this is a complete update (with nested data)
-    const { options, variants, images, categoryIds, segmentIds, ...productData } =
+    const { options, variants, images, categoryIds, segmentIds, attributes, ...productData } =
       updateProductDto;
     const normalizedSegmentIds = await this.validateSegmentIds(segmentIds);
 
@@ -86,10 +103,11 @@ export class ProductManagementProvider {
       !variants &&
       !images &&
       !categoryIds &&
-      normalizedSegmentIds === undefined
+      normalizedSegmentIds === undefined &&
+      attributes === undefined
     ) {
       // Simple update - just product fields
-      return this.productRepository.update(id, updateProductDto);
+      return this.productRepository.update(id, productData);
     }
 
     // Complete update with nested data - use repository method
@@ -100,6 +118,7 @@ export class ProductManagementProvider {
       images,
       categoryIds,
       segmentIds: normalizedSegmentIds,
+      attributes,
     });
   }
 

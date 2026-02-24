@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { Permissions } from '../auth/decorator/permissions.decorator';
 import { CacheTTL } from '../shared/decorators/cache-ttl.decorator';
+import { RoleManagementProvider } from './providers/role-management.provider';
 
 import { RbacService } from './rbac.service';
 import {
@@ -21,11 +22,15 @@ import {
   CreatePermissionDto,
   UpdatePermissionDto,
   AssignPermissionsDto,
+  AssignUserRoleDto,
 } from './dtos';
 
 @Controller('rbac')
 export class RbacController {
-  constructor(private readonly rbacService: RbacService) {}
+  constructor(
+    private readonly rbacService: RbacService,
+    private readonly roleManagementProvider: RoleManagementProvider,
+  ) {}
 
   // ===========================
   // Role Management Endpoints
@@ -166,6 +171,63 @@ export class RbacController {
     @Param('permissionId', ParseIntPipe) permissionId: number,
   ) {
     return this.rbacService.removePermissionsFromRole(roleId, [permissionId]);
+  }
+
+  // ===========================
+  // User-Role Assignment Endpoints
+  // ===========================
+
+  /**
+   * Assign a role to a user
+   * Requires 'roles:assign' permission
+   */
+  @Post('users/:id/roles')
+  @Permissions('roles:assign')
+  @HttpCode(HttpStatus.OK)
+  async assignRoleToUser(
+    @Param('id', ParseIntPipe) userId: number,
+    @Body() assignUserRoleDto: AssignUserRoleDto,
+  ) {
+    return this.roleManagementProvider.assignRoleToUser(
+      userId,
+      assignUserRoleDto.roleName,
+    );
+  }
+
+  /**
+   * Remove a role from a user
+   * Requires 'roles:assign' permission
+   */
+  @Delete('users/:id/roles/:roleName')
+  @Permissions('roles:assign')
+  @HttpCode(HttpStatus.OK)
+  async removeRoleFromUser(
+    @Param('id', ParseIntPipe) userId: number,
+    @Param('roleName') roleName: string,
+  ) {
+    return this.roleManagementProvider.removeRoleFromUser(userId, roleName);
+  }
+
+  /**
+   * Get roles assigned to a user
+   * Requires 'roles:view' permission
+   */
+  @Get('users/:id/roles')
+  @Permissions('roles:view')
+  @HttpCode(HttpStatus.OK)
+  async getUserRoles(@Param('id', ParseIntPipe) userId: number) {
+    return this.roleManagementProvider.getUserRoles(userId);
+  }
+
+  /**
+   * Get effective permissions for a user
+   * Requires 'permissions:read' permission
+   */
+  @Get('users/:id/permissions')
+  @Permissions('permissions:read')
+  @HttpCode(HttpStatus.OK)
+  async getUserPermissions(@Param('id', ParseIntPipe) userId: number) {
+    return this.roleManagementProvider.getUserPermissions(userId);
   }
 
   // ===========================

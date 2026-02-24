@@ -1,8 +1,11 @@
 import { seedRolesAndPermissions } from './seeds/01-master/roles-permissions.seed';
 import { seedNotificationTemplates } from './seeds/01-master/notification-templates.seed';
 import { seedShippingMethods } from './seeds/01-master/shipping-methods.seed';
+import { seedLocations } from './seeds/01-master/locations.seed';
 import { seedFashionCategories } from './seeds/02-fashion-catalog/categories.seed';
+import { seedFashionSegments } from './seeds/02-fashion-catalog/segments.seed';
 import { seedFashionProducts } from './seeds/02-fashion-catalog/products.seed';
+import { seedFashionProductSegments } from './seeds/02-fashion-catalog/product-segments.seed';
 import { seedSampleUsers } from './seeds/03-sample-data/users.seed';
 import { seedSampleReviews } from './seeds/03-sample-data/reviews.seed';
 import { createSeedPrismaClient } from './seed-prisma-client';
@@ -26,13 +29,19 @@ async function main() {
     console.log('');
     await seedShippingMethods(prisma);
     console.log('');
+    await seedLocations(prisma);
+    console.log('');
 
     // PHASE 2: Fashion Catalog
     console.log('👗 PHASE 2: Fashion Catalog');
     console.log('─'.repeat(60));
     await seedFashionCategories(prisma);
     console.log('');
+    await seedFashionSegments(prisma);
+    console.log('');
     await seedFashionProducts(prisma);
+    console.log('');
+    await seedFashionProductSegments(prisma);
     console.log('');
 
     // PHASE 3: Sample Data
@@ -53,7 +62,9 @@ async function main() {
     const templates = await prisma.notificationTemplate.count();
     const shipping = await prisma.shippingMethod.count();
     const categories = await prisma.category.count();
+    const segments = await prisma.segment.count();
     const products = await prisma.product.count();
+    const productSegments = await prisma.productSegment.count();
     const variants = await prisma.variant.count();
     const users = await prisma.user.count();
     const reviews = await prisma.review.count();
@@ -63,7 +74,9 @@ async function main() {
     console.log(`✅ Notification Templates: ${templates}`);
     console.log(`✅ Shipping Methods:       ${shipping}`);
     console.log(`✅ Categories:             ${categories}`);
+    console.log(`✅ Segments:               ${segments}`);
     console.log(`✅ Products:               ${products}`);
+    console.log(`✅ Product Segments:       ${productSegments}`);
     console.log(`✅ Product Variants:       ${variants}`);
     console.log(`✅ Users:                  ${users}`);
     console.log(`✅ Reviews:                ${reviews}`);

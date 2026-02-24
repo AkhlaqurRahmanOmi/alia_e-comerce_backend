@@ -5,6 +5,34 @@ export async function seedFashionProducts(prisma: PrismaClient) {
 
   let productCount = 0;
   let variantCount = 0;
+  const defaultSeedStock = 10;
+
+  const resolveDefaultLocationId = async () => {
+    const existingLocation = await prisma.location.findFirst({
+      orderBy: { id: 'asc' },
+      select: { id: true },
+    });
+
+    if (existingLocation) {
+      return existingLocation.id;
+    }
+
+    const createdLocation = await prisma.location.create({
+      data: {
+        name: 'Main Warehouse',
+        addressLine1: 'Warehouse District 1',
+        city: 'Dhaka',
+        state: 'Dhaka',
+        postalCode: '1207',
+        country: 'BD',
+      },
+      select: { id: true },
+    });
+
+    return createdLocation.id;
+  };
+
+  const defaultLocationId = await resolveDefaultLocationId();
 
   // Helper to create product with variants
   const createProduct = async (
@@ -58,7 +86,7 @@ export async function seedFashionProducts(prisma: PrismaClient) {
 
     // Create variants
     for (const variantData of productData.variants) {
-      await prisma.variant.upsert({
+      const variant = await prisma.variant.upsert({
         where: { sku: variantData.sku },
         update: {},
         create: {
@@ -67,6 +95,239 @@ export async function seedFashionProducts(prisma: PrismaClient) {
           price: variantData.price,
           compareAtPrice: variantData.price * 1.2,
           isActive: true,
+        },
+      });
+
+      await prisma.variantInventory.upsert({
+        where: {
+          variantId_locationId: {
+            variantId: variant.id,
+            locationId: defaultLocationId,
+          },
+        },
+        update: {},
+        create: {
+          variantId: variant.id,
+          locationId: defaultLocationId,
+          quantity: defaultSeedStock,
+          reserved: 0,
+        },
+      });
+
+      variantCount++;
+    }
+  };
+
+  const upsertProductOption = async (
+    productId: number,
+    name: string,
+    position: number,
+  ) => {
+    const existingOption = await prisma.productOption.findFirst({
+      where: {
+        productId,
+        name,
+      },
+    });
+
+    if (existingOption) {
+      return prisma.productOption.update({
+        where: { id: existingOption.id },
+        data: { position },
+      });
+    }
+
+    return prisma.productOption.create({
+      data: {
+        productId,
+        name,
+        position,
+      },
+    });
+  };
+
+  const upsertOptionValue = async (
+    optionId: number,
+    value: string,
+    position: number,
+  ) => {
+    const existingValue = await prisma.optionValue.findFirst({
+      where: {
+        optionId,
+        value,
+      },
+    });
+
+    if (existingValue) {
+      return prisma.optionValue.update({
+        where: { id: existingValue.id },
+        data: { position },
+      });
+    }
+
+    return prisma.optionValue.create({
+      data: {
+        optionId,
+        value,
+        position,
+      },
+    });
+  };
+
+  const createKurtiProduct = async () => {
+    const categorySlug = 'kurtis';
+    const productName = 'Sunshine Check Two-Piece Kurti Set';
+    const shortDescription =
+      "A soft and elegant pastel yellow two-piece set designed for a fresh, graceful look. The check-textured kurti is finished with sheer organza details and delicate yellow lace work for a feminine touch. Lightweight and comfortable, it's perfect for daily wear or small occasions. A simple outfit that feels bright, classy, and effortless.";
+
+    const category = await prisma.category.findUnique({ where: { slug: categorySlug } });
+    if (!category) {
+      console.warn(`Category ${categorySlug} not found, skipping product ${productName}`);
+      return;
+    }
+
+    const seoSlug = productName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    const product = await prisma.product.upsert({
+      where: { seoSlug },
+      update: {
+        name: productName,
+        description: shortDescription,
+        isActive: true,
+      },
+      create: {
+        name: productName,
+        seoSlug,
+        description: shortDescription,
+        isActive: true,
+      },
+    });
+
+    await prisma.productCategory.upsert({
+      where: {
+        productId_categoryId: {
+          productId: product.id,
+          categoryId: category.id,
+        },
+      },
+      update: {},
+      create: {
+        productId: product.id,
+        categoryId: category.id,
+      },
+    });
+
+    // Keep this product scoped to the Kurti category on reseed.
+    await prisma.productCategory.deleteMany({
+      where: {
+        productId: product.id,
+        categoryId: {
+          not: category.id,
+        },
+      },
+    });
+
+    productCount++;
+
+    const attributes = [
+      { name: 'fabric', value: 'cotton blend with organza/net detailing' },
+      { name: 'set_type', value: 'Two-piece set (kurti + pant)' },
+      { name: 'design_detail', value: 'Soft check pattern fabric' },
+      { name: 'design_detail', value: 'Sheer organza neckline with bow detail' },
+      { name: 'design_detail', value: 'Organza flared sleeve cuffs' },
+      { name: 'design_detail', value: 'Yellow lace border on neckline, sleeves & hem' },
+      { name: 'design_detail', value: 'White straight pant included' },
+      { name: 'occasion', value: 'Casual outings' },
+      { name: 'occasion', value: 'Daytime events' },
+      { name: 'occasion', value: 'Office wear' },
+      { name: 'occasion', value: 'Festive mornings' },
+    ];
+
+    await prisma.productAttribute.deleteMany({
+      where: { productId: product.id },
+    });
+
+    await prisma.productAttribute.createMany({
+      data: attributes.map((attribute) => ({
+        productId: product.id,
+        name: attribute.name,
+        value: attribute.value,
+      })),
+      skipDuplicates: true,
+    });
+
+    const sizeOption = await upsertProductOption(product.id, 'Size', 1);
+    const colorOption = await upsertProductOption(product.id, 'Color', 2);
+
+    const sizeM = await upsertOptionValue(sizeOption.id, 'M (36-38 inches)', 1);
+    const sizeL = await upsertOptionValue(sizeOption.id, 'L (39-42 inches)', 2);
+    const pastelYellowWhite = await upsertOptionValue(
+      colorOption.id,
+      'Pastel Yellow & White',
+      1,
+    );
+
+    const variants = [
+      { sku: 'KURTI-SUNSHINE-M', price: 69.99, sizeValueId: sizeM.id },
+      { sku: 'KURTI-SUNSHINE-L', price: 69.99, sizeValueId: sizeL.id },
+    ];
+
+    for (const variantData of variants) {
+      const variant = await prisma.variant.upsert({
+        where: { sku: variantData.sku },
+        update: {
+          productId: product.id,
+          price: variantData.price,
+          compareAtPrice: Number((variantData.price * 1.2).toFixed(2)),
+          isActive: true,
+        },
+        create: {
+          productId: product.id,
+          sku: variantData.sku,
+          price: variantData.price,
+          compareAtPrice: Number((variantData.price * 1.2).toFixed(2)),
+          isActive: true,
+        },
+      });
+
+      await prisma.variantOptionValue.deleteMany({
+        where: {
+          variantId: variant.id,
+          optionId: {
+            in: [sizeOption.id, colorOption.id],
+          },
+        },
+      });
+
+      await prisma.variantOptionValue.createMany({
+        data: [
+          {
+            variantId: variant.id,
+            optionId: sizeOption.id,
+            optionValueId: variantData.sizeValueId,
+          },
+          {
+            variantId: variant.id,
+            optionId: colorOption.id,
+            optionValueId: pastelYellowWhite.id,
+          },
+        ],
+        skipDuplicates: true,
+      });
+
+      await prisma.variantInventory.upsert({
+        where: {
+          variantId_locationId: {
+            variantId: variant.id,
+            locationId: defaultLocationId,
+          },
+        },
+        update: {},
+        create: {
+          variantId: variant.id,
+          locationId: defaultLocationId,
+          quantity: defaultSeedStock,
+          reserved: 0,
         },
       });
 
@@ -306,6 +567,8 @@ export async function seedFashionProducts(prisma: PrismaClient) {
       { sku: 'SWEATER-L-NAVY', price: 59.99 },
     ],
   });
+
+  await createKurtiProduct();
 
   console.log('Creating Jewelry...');
 

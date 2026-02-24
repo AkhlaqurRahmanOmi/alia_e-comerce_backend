@@ -23,12 +23,14 @@ import {
   CreateCompleteProductDto,
   AddToWishlistDto,
   CreateSegmentDto,
+  UploadProductImageDto,
   UpdateSegmentDto,
 } from './dtos';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { MonitorClass } from '../shared/decorators/performance-monitor.decorator';
 import { UnitOfWorkService } from '../shared/services/unit-of-work.service';
+import { LocalFileStorageService } from '../shared/services/local-file-storage.service';
 
 /**
  * CatalogService is a facade that exposes a simplified API
@@ -46,8 +48,9 @@ export class CatalogService {
     private readonly segmentManagement: SegmentManagementProvider,
     private readonly imageManagement: ImageManagementProvider,
     private readonly optionManagement: OptionManagementProvider,
-    private readonly wishlistManagement : WishlistManagementProvider,
-    private readonly unitOfWork : UnitOfWorkService
+    private readonly wishlistManagement: WishlistManagementProvider,
+    private readonly unitOfWork: UnitOfWorkService,
+    private readonly localFileStorageService: LocalFileStorageService,
   ) {}
 
   // ---------- Read APIs (pass-through) ----------
@@ -183,6 +186,30 @@ export class CatalogService {
     return this.imageManagement.addProductImage(dto);
   }
 
+  async uploadProductImage(
+    productId: number,
+    file: Express.Multer.File,
+    uploadDto: UploadProductImageDto,
+  ) {
+    const uploadResult = await this.localFileStorageService.uploadFile(
+      file,
+      'products',
+    );
+
+    try {
+      return await this.imageManagement.addProductImage({
+        productId,
+        imageUrl: uploadResult.fileUrl,
+        altText: uploadDto.altText,
+        position: uploadDto.position,
+        isMain: uploadDto.isMain,
+      });
+    } catch (error) {
+      await this.localFileStorageService.deleteFile(uploadResult.fileUrl);
+      throw error;
+    }
+  }
+
   deleteProductImage(imageId: number) {
     return this.imageManagement.deleteProductImage(imageId);
   }
@@ -219,7 +246,7 @@ export class CatalogService {
    */
   async createCompleteProduct(data: CreateCompleteProductDto) {
     const productId = await this.unitOfWork.transaction(async (tx) => {
-      const { segmentIds, ...productData } = data.product;
+      const { segmentIds, attributes, ...productData } = data.product;
       const normalizedSegmentIds = [...new Set(segmentIds ?? [])];
 
       if (normalizedSegmentIds.length > 0) {
@@ -263,6 +290,19 @@ export class CatalogService {
         );
       }
 
+      if (attributes?.length) {
+        operations.push(
+          tx.productAttribute.createMany({
+            data: attributes.map((attribute) => ({
+              productId: product.id,
+              name: attribute.name,
+              value: attribute.value,
+            })),
+            skipDuplicates: true,
+          }),
+        );
+      }
+
       if (data.options?.length) {
         operations.push(
           tx.productOption.createMany({
@@ -270,23 +310,6 @@ export class CatalogService {
               productId: product.id,
               name: option.name,
               position: option.position ?? 1,
-            }))
-          })
-        );
-      }
-
-      if (data.variants?.length) {
-        operations.push(
-          tx.variant.createMany({
-            data: data.variants.map(variant => ({
-              productId: product.id,
-              sku: variant.sku,
-              price: variant.price,
-              compareAtPrice: variant.compareAtPrice,
-              currency: variant.currency,
-              barcode: variant.barcode,
-              weight: variant.weight,
-              isActive: variant.isActive ?? true,
             }))
           })
         );
@@ -309,6 +332,55 @@ export class CatalogService {
       // Execute all operations in parallel
       if (operations.length > 0) {
         await Promise.all(operations);
+      }
+
+      if (data.variants?.length) {
+        const defaultLocation = await tx.location.findFirst({
+          orderBy: { id: 'asc' },
+          select: { id: true },
+        });
+
+        for (const variant of data.variants) {
+          const createdVariant = await tx.variant.create({
+            data: {
+              productId: product.id,
+              sku: variant.sku,
+              price: variant.price,
+              compareAtPrice: variant.compareAtPrice,
+              currency: variant.currency,
+              barcode: variant.barcode,
+              weight: variant.weight,
+              isActive: variant.isActive ?? true,
+            },
+          });
+
+          const targetLocationId = variant.locationId ?? defaultLocation?.id;
+          if (!targetLocationId) {
+            continue;
+          }
+
+          const initialStock = variant.initialStock ?? 0;
+
+          await tx.variantInventory.create({
+            data: {
+              variantId: createdVariant.id,
+              locationId: targetLocationId,
+              quantity: initialStock,
+              reserved: 0,
+            },
+          });
+
+          if (initialStock > 0) {
+            await tx.inventoryMovement.create({
+              data: {
+                variantId: createdVariant.id,
+                locationId: targetLocationId,
+                delta: initialStock,
+                reason: 'INITIAL_STOCK',
+              },
+            });
+          }
+        }
       }
 
       return product.id;

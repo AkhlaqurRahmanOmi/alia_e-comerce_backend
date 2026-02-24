@@ -1,5 +1,8 @@
 import { seedFashionCategories } from './seeds/02-fashion-catalog/categories.seed';
+import { seedFashionSegments } from './seeds/02-fashion-catalog/segments.seed';
 import { seedFashionProducts } from './seeds/02-fashion-catalog/products.seed';
+import { seedFashionProductSegments } from './seeds/02-fashion-catalog/product-segments.seed';
+import { seedLocations } from './seeds/01-master/locations.seed';
 import { createSeedPrismaClient } from './seed-prisma-client';
 
 const { prisma, pool } = createSeedPrismaClient();
@@ -12,8 +15,20 @@ async function main() {
     await seedFashionCategories(prisma);
     console.log('');
 
+    // Seed segment master data
+    await seedFashionSegments(prisma);
+    console.log('');
+
+    // Seed default location(s) for inventory rows
+    await seedLocations(prisma);
+    console.log('');
+
     // Seed products
     await seedFashionProducts(prisma);
+    console.log('');
+
+    // Assign products to seeded segments
+    await seedFashionProductSegments(prisma);
     console.log('');
 
     console.log('✅ Fashion catalog seeding completed successfully!');

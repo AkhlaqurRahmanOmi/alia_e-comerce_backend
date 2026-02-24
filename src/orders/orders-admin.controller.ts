@@ -10,15 +10,16 @@ import {
   HttpStatus,
   UseInterceptors,
 } from '@nestjs/common';
-import { Auth } from '../auth/decorator/auth.decorator';
-import { AuthType } from '../auth/enums/auth-type.enum';
-import { Roles } from '../auth/decorator/roles.decorator';
-import { Permissions } from '../auth/decorator/permissions.decorator';
+import { Auth } from '@/auth/decorator/auth.decorator';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { Roles } from '@/auth/decorator/roles.decorator';
+import { Permissions } from '@/auth/decorator/permissions.decorator';
 import { OrdersService } from './orders.service';
 import { UpdateOrderStatusDto, OrderFilterDto } from './dtos';
-import { ReportFilterDto } from '../reports/dtos';
+import { ReportFilterDto } from '@/reports/dtos';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { CacheTTL } from '../shared/decorators/cache-ttl.decorator';
+import { CacheTTL } from '@/shared/decorators/cache-ttl.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 /**
  * Admin Controller for Order Management
@@ -27,7 +28,8 @@ import { CacheTTL } from '../shared/decorators/cache-ttl.decorator';
  */
 @Controller('admin/orders')
 @Auth(AuthType.Bearer)
-@Roles('admin')
+@ApiBearerAuth('JWT-auth')
+// @Roles('admin')
 export class OrdersAdminController {
   constructor(private readonly ordersService: OrdersService) {}
 

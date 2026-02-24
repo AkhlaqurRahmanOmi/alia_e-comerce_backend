@@ -48,15 +48,31 @@ export class UserController {
     return this.userService.findOne(user.sub);
   }
 
+  @Patch('profile')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @HttpCode(HttpStatus.OK)
+  public async updateMyProfile(
+    @ActiveUser('sub') userId: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.updateUser(userId, updateUserDto);
+  }
+
+  @Delete('profile')
+  @HttpCode(HttpStatus.OK)
+  public async deleteMyAccount(@ActiveUser('sub') userId: number) {
+    return this.userService.deleteUser(userId);
+  }
+
   @Get('all')
   @Permissions('users:view')
   public async getAllUsers(@Query() filterDto: UserFilterDto) {
     return this.userService.findAll(filterDto);
   }
 
-  @Auth(AuthType.None)
+  @Auth(AuthType.Bearer)
   @Get(':id')
-  // @Permissions('users:view')
+  @Permissions('users:view')
   @UseInterceptors(ClassSerializerInterceptor)
   public async getUserById(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(id);
@@ -68,12 +84,7 @@ export class UserController {
   public async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-    @ActiveUser() user: ActiveUserData,
   ) {
-    // Users can only update their own profile unless they have admin permission
-    if (id !== user.sub) {
-      throw new Error('Forbidden: You can only update your own profile');
-    }
     return this.userService.updateUser(id, updateUserDto);
   }
 
@@ -83,12 +94,7 @@ export class UserController {
   public async patchUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-    @ActiveUser() user: ActiveUserData,
   ) {
-    // Users can only update their own profile unless they have admin permission
-    if (id !== user.sub) {
-      throw new Error('Forbidden: You can only update your own profile');
-    }
     return this.userService.updateUser(id, updateUserDto);
   }
 
@@ -97,12 +103,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   public async deleteUser(
     @Param('id', ParseIntPipe) id: number,
-    @ActiveUser() user: ActiveUserData,
   ) {
-    // Users can only delete their own account unless they have admin permission
-    if (id !== user.sub) {
-      throw new Error('Forbidden: You can only delete your own account');
-    }
     return this.userService.deleteUser(id);
   }
 

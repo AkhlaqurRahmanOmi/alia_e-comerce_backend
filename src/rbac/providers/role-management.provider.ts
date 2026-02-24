@@ -3,8 +3,8 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/core/config/prisma/prisma.service';
-import { UnitOfWorkService } from 'src/shared/services/unit-of-work.service';
+import { PrismaService } from '@/core/config/prisma/prisma.service';
+import { UnitOfWorkService } from '@/shared/services/unit-of-work.service';
 
 /**
  * Provider for managing user roles and permissions
