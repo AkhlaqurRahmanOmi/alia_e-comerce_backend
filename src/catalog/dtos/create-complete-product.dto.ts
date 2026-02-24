@@ -6,8 +6,16 @@ import { OmitType } from '@nestjs/mapped-types';
 import { CreateVariantDto } from './create-variant.dto';
 import { CreateProductOptionDto } from './create-product-option.dto';
 import { CreateProductImageDto } from './create-product-image.dto';
+import { CreateOptionValueDto } from './create-option-value.dto';
 
-class CompleteProductOptionDto extends OmitType(CreateProductOptionDto, ['productId']) {}
+class CompleteOptionValueDto extends OmitType(CreateOptionValueDto, ['optionId']) {}
+class CompleteProductOptionDto extends OmitType(CreateProductOptionDto, ['productId']) {
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CompleteOptionValueDto)
+  values?: CompleteOptionValueDto[];
+}
 class CompleteProductVariantDto extends OmitType(CreateVariantDto, ['productId']) {}
 class CompleteProductImageDto extends OmitType(CreateProductImageDto, ['productId']) {}
 

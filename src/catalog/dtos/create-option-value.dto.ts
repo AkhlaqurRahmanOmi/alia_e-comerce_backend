@@ -1,4 +1,12 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional, MaxLength, Min } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  MaxLength,
+  Min,
+  IsObject,
+} from 'class-validator';
 
 export class CreateOptionValueDto {
   @IsNumber()
@@ -14,4 +22,8 @@ export class CreateOptionValueDto {
   @IsOptional()
   @Min(1)
   position?: number;
+
+  @IsObject()
+  @IsOptional()
+  meta?: Record<string, unknown>;
 }

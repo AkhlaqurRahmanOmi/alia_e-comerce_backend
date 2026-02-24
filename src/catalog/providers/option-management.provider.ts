@@ -3,13 +3,96 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { ProductOption, OptionValue } from '@/generated/prisma/client';
+import {
+  ProductOption,
+  OptionValue,
+  OptionDisplayType,
+  Prisma,
+} from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { CreateProductOptionDto, CreateOptionValueDto } from '../dtos';
 
 @Injectable()
 export class OptionManagementProvider {
   constructor(private readonly prisma: PrismaService) {}
+
+  private readonly hexColorRegex = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+  private normalizeMeta(meta: unknown): Record<string, unknown> | null {
+    if (meta === undefined || meta === null) {
+      return null;
+    }
+
+    if (typeof meta !== 'object' || Array.isArray(meta)) {
+      throw new BadRequestException('meta must be a JSON object when provided');
+    }
+
+    return meta as Record<string, unknown>;
+  }
+
+  private validateMetaForDisplayType(
+    displayType: OptionDisplayType,
+    meta: unknown,
+  ): void {
+    const parsedMeta = this.normalizeMeta(meta);
+
+    if (displayType === OptionDisplayType.text) {
+      return;
+    }
+
+    if (!parsedMeta) {
+      throw new BadRequestException(
+        `meta is required for displayType '${displayType}'`,
+      );
+    }
+
+    if (displayType === OptionDisplayType.color_swatch) {
+      const hex = parsedMeta.hex;
+      if (typeof hex !== 'string' || !this.hexColorRegex.test(hex.trim())) {
+        throw new BadRequestException(
+          "color_swatch requires meta.hex with a valid hex color (example: '#FF0000')",
+        );
+      }
+      return;
+    }
+
+    if (displayType === OptionDisplayType.image_swatch) {
+      const imageUrl = parsedMeta.imageUrl;
+      if (typeof imageUrl !== 'string' || imageUrl.trim().length === 0) {
+        throw new BadRequestException(
+          "image_swatch requires meta.imageUrl as a non-empty string",
+        );
+      }
+      return;
+    }
+
+    if (displayType === OptionDisplayType.pattern_swatch) {
+      const pattern = parsedMeta.pattern;
+      const imageUrl = parsedMeta.imageUrl;
+      const hasPattern = typeof pattern === 'string' && pattern.trim().length > 0;
+      const hasImageUrl =
+        typeof imageUrl === 'string' && imageUrl.trim().length > 0;
+
+      if (!hasPattern && !hasImageUrl) {
+        throw new BadRequestException(
+          'pattern_swatch requires meta.pattern or meta.imageUrl',
+        );
+      }
+      return;
+    }
+
+    if (displayType === OptionDisplayType.number) {
+      const numericValue = parsedMeta.numericValue;
+      if (
+        typeof numericValue !== 'number' ||
+        !Number.isFinite(numericValue)
+      ) {
+        throw new BadRequestException(
+          'number display type requires meta.numericValue as a finite number',
+        );
+      }
+    }
+  }
 
   // ============ Product Options ============
 
@@ -48,6 +131,7 @@ export class OptionManagementProvider {
         productId: createOptionDto.productId,
         name: createOptionDto.name,
         position: createOptionDto.position || 1,
+        displayType: createOptionDto.displayType || OptionDisplayType.text,
       },
       include: {
         optionValues: true,
@@ -129,6 +213,23 @@ export class OptionManagementProvider {
       }
     }
 
+    if (updateData.displayType && updateData.displayType !== option.displayType) {
+      const values = await this.prisma.optionValue.findMany({
+        where: { optionId },
+        select: { id: true, meta: true },
+      });
+
+      values.forEach((value) => {
+        try {
+          this.validateMetaForDisplayType(updateData.displayType!, value.meta);
+        } catch {
+          throw new BadRequestException(
+            `Cannot change displayType to '${updateData.displayType}' because option value ${value.id} is missing compatible meta`,
+          );
+        }
+      });
+    }
+
     return this.prisma.productOption.update({
       where: { id: optionId },
       data: updateData,
@@ -178,12 +279,15 @@ export class OptionManagementProvider {
     // Verify option exists
     const option = await this.prisma.productOption.findUnique({
       where: { id: createValueDto.optionId },
+      select: { id: true, displayType: true },
     });
     if (!option) {
       throw new NotFoundException(
         `Product option with ID ${createValueDto.optionId} not found`,
       );
     }
+
+    this.validateMetaForDisplayType(option.displayType, createValueDto.meta);
 
     // Check if value already exists for this option
     const existingValue = await this.prisma.optionValue.findFirst({
@@ -204,6 +308,7 @@ export class OptionManagementProvider {
         optionId: createValueDto.optionId,
         value: createValueDto.value,
         position: createValueDto.position || 1,
+        meta: createValueDto.meta as Prisma.InputJsonValue | undefined,
       },
       include: {
         productOption: true,
@@ -255,6 +360,11 @@ export class OptionManagementProvider {
   ): Promise<OptionValue> {
     const value = await this.prisma.optionValue.findUnique({
       where: { id: valueId },
+      include: {
+        productOption: {
+          select: { displayType: true },
+        },
+      },
     });
     if (!value) {
       throw new NotFoundException(`Option value with ID ${valueId} not found`);
@@ -277,9 +387,30 @@ export class OptionManagementProvider {
       }
     }
 
+    if (updateData.meta !== undefined) {
+      this.validateMetaForDisplayType(
+        value.productOption.displayType,
+        updateData.meta,
+      );
+    }
+
+    const updatePayload: Prisma.OptionValueUpdateInput = {};
+    if (updateData.value !== undefined) {
+      updatePayload.value = updateData.value;
+    }
+    if (updateData.position !== undefined) {
+      updatePayload.position = updateData.position;
+    }
+    if (updateData.meta !== undefined) {
+      updatePayload.meta =
+        updateData.meta === null
+          ? Prisma.JsonNull
+          : (updateData.meta as Prisma.InputJsonValue);
+    }
+
     return this.prisma.optionValue.update({
       where: { id: valueId },
-      data: updateData,
+      data: updatePayload,
       include: {
         productOption: true,
       },

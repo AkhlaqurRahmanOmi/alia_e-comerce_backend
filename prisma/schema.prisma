@@ -72,6 +72,14 @@ enum DiscountType {
   shipping
 }
 
+enum OptionDisplayType {
+  text
+  color_swatch
+  image_swatch
+  pattern_swatch
+  number
+}
+
 enum CartStatus {
   active
   converted
@@ -377,16 +385,18 @@ model VariantImage {
 }
 
 model ProductOption {
-  id        Int    @id @default(autoincrement())
-  productId Int    @map("product_id")
-  name      String @db.VarChar(50)
-  position  Int    @default(1)
+  id          Int               @id @default(autoincrement())
+  productId   Int               @map("product_id")
+  name        String            @db.VarChar(50)
+  position    Int               @default(1)
+  displayType OptionDisplayType @default(text) @map("display_type")
 
   // Relations
   product             Product              @relation(fields: [productId], references: [id])
   optionValues        OptionValue[]
   variantOptionValues VariantOptionValue[]
 
+  @@index([productId, position])
   @@map("ProductOption")
 }
 
@@ -395,11 +405,14 @@ model OptionValue {
   optionId Int    @map("option_id")
   value    String @db.VarChar(100)
   position Int    @default(1)
+  meta     Json?  @map("meta")
 
   // Relations
   productOption       ProductOption        @relation(fields: [optionId], references: [id])
   variantOptionValues VariantOptionValue[]
 
+  @@index([optionId, position])
+  @@index([optionId, value])
   @@map("OptionValue")
 }
 

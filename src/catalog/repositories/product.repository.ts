@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 // import { Product } from '../../generated/prisma/models/Product';
-import { Product } from '@/generated/prisma/client';
+import { OptionDisplayType, Product } from '@/generated/prisma/client';
 import Fuse  from 'fuse.js'
 import { PrismaService } from '@/core/config/prisma/prisma.service';
 import { BaseRepository } from '@/shared/repository/base.repository';
@@ -15,6 +15,74 @@ import {ProductFilterDto} from "../dtos";
 export class ProductRepository extends BaseRepository<Product, number> {
   constructor(private readonly prisma: PrismaService) {
     super();
+  }
+
+  private readonly hexColorRegex = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+  private validateOptionValueMeta(
+    displayType: OptionDisplayType,
+    meta: unknown,
+    optionName: string,
+    value: string,
+  ): void {
+    if (displayType === OptionDisplayType.text) {
+      return;
+    }
+
+    if (!meta || typeof meta !== 'object' || Array.isArray(meta)) {
+      throw new BadRequestException(
+        `Option '${optionName}' requires object meta for value '${value}'`,
+      );
+    }
+
+    const parsedMeta = meta as Record<string, unknown>;
+
+    if (displayType === OptionDisplayType.color_swatch) {
+      const hex = parsedMeta.hex;
+      if (typeof hex !== 'string' || !this.hexColorRegex.test(hex.trim())) {
+        throw new BadRequestException(
+          `Option '${optionName}' requires meta.hex with valid hex color for value '${value}'`,
+        );
+      }
+      return;
+    }
+
+    if (displayType === OptionDisplayType.image_swatch) {
+      const imageUrl = parsedMeta.imageUrl;
+      if (typeof imageUrl !== 'string' || imageUrl.trim().length === 0) {
+        throw new BadRequestException(
+          `Option '${optionName}' requires meta.imageUrl for value '${value}'`,
+        );
+      }
+      return;
+    }
+
+    if (displayType === OptionDisplayType.pattern_swatch) {
+      const pattern = parsedMeta.pattern;
+      const imageUrl = parsedMeta.imageUrl;
+      const hasPattern = typeof pattern === 'string' && pattern.trim().length > 0;
+      const hasImageUrl =
+        typeof imageUrl === 'string' && imageUrl.trim().length > 0;
+
+      if (!hasPattern && !hasImageUrl) {
+        throw new BadRequestException(
+          `Option '${optionName}' requires meta.pattern or meta.imageUrl for value '${value}'`,
+        );
+      }
+      return;
+    }
+
+    if (displayType === OptionDisplayType.number) {
+      const numericValue = parsedMeta.numericValue;
+      if (
+        typeof numericValue !== 'number' ||
+        !Number.isFinite(numericValue)
+      ) {
+        throw new BadRequestException(
+          `Option '${optionName}' requires meta.numericValue for value '${value}'`,
+        );
+      }
+    }
   }
 
   async findById(id: number): Promise<Product | null> {
@@ -174,6 +242,21 @@ export class ProductRepository extends BaseRepository<Product, number> {
         for (const optionData of data.options) {
           // Check if option exists by name
           const existingOption = existingOptions.find(o => o.name === optionData.name);
+          const displayType =
+            optionData.displayType ??
+            existingOption?.displayType ??
+            OptionDisplayType.text;
+
+          if (optionData.values && optionData.values.length > 0) {
+            optionData.values.forEach((val: any) => {
+              this.validateOptionValueMeta(
+                displayType,
+                val.meta,
+                optionData.name,
+                val.value,
+              );
+            });
+          }
 
           if (existingOption) {
             // UPDATE existing option
@@ -181,6 +264,7 @@ export class ProductRepository extends BaseRepository<Product, number> {
               where: { id: existingOption.id },
               data: {
                 position: optionData.position ?? 1,
+                displayType,
               },
             });
 
@@ -195,6 +279,7 @@ export class ProductRepository extends BaseRepository<Product, number> {
                   optionId: existingOption.id,
                   value: val.value,
                   position: val.position ?? 1,
+                  meta: val.meta,
                 })),
               });
             }
@@ -205,6 +290,7 @@ export class ProductRepository extends BaseRepository<Product, number> {
                 productId: id,
                 name: optionData.name,
                 position: optionData.position ?? 1,
+                displayType,
               },
             });
 
@@ -215,6 +301,7 @@ export class ProductRepository extends BaseRepository<Product, number> {
                   optionId: newOption.id,
                   value: val.value,
                   position: val.position ?? 1,
+                  meta: val.meta,
                 })),
               });
             }

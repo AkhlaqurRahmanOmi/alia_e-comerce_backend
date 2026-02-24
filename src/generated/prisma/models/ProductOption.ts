@@ -43,6 +43,7 @@ export type ProductOptionMinAggregateOutputType = {
   productId: number | null
   name: string | null
   position: number | null
+  displayType: $Enums.OptionDisplayType | null
 }
 
 export type ProductOptionMaxAggregateOutputType = {
@@ -50,6 +51,7 @@ export type ProductOptionMaxAggregateOutputType = {
   productId: number | null
   name: string | null
   position: number | null
+  displayType: $Enums.OptionDisplayType | null
 }
 
 export type ProductOptionCountAggregateOutputType = {
@@ -57,6 +59,7 @@ export type ProductOptionCountAggregateOutputType = {
   productId: number
   name: number
   position: number
+  displayType: number
   _all: number
 }
 
@@ -78,6 +81,7 @@ export type ProductOptionMinAggregateInputType = {
   productId?: true
   name?: true
   position?: true
+  displayType?: true
 }
 
 export type ProductOptionMaxAggregateInputType = {
@@ -85,6 +89,7 @@ export type ProductOptionMaxAggregateInputType = {
   productId?: true
   name?: true
   position?: true
+  displayType?: true
 }
 
 export type ProductOptionCountAggregateInputType = {
@@ -92,6 +97,7 @@ export type ProductOptionCountAggregateInputType = {
   productId?: true
   name?: true
   position?: true
+  displayType?: true
   _all?: true
 }
 
@@ -186,6 +192,7 @@ export type ProductOptionGroupByOutputType = {
   productId: number
   name: string
   position: number
+  displayType: $Enums.OptionDisplayType
   _count: ProductOptionCountAggregateOutputType | null
   _avg: ProductOptionAvgAggregateOutputType | null
   _sum: ProductOptionSumAggregateOutputType | null
@@ -216,6 +223,7 @@ export type ProductOptionWhereInput = {
   productId?: Prisma.IntFilter<"ProductOption"> | number
   name?: Prisma.StringFilter<"ProductOption"> | string
   position?: Prisma.IntFilter<"ProductOption"> | number
+  displayType?: Prisma.EnumOptionDisplayTypeFilter<"ProductOption"> | $Enums.OptionDisplayType
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   optionValues?: Prisma.OptionValueListRelationFilter
   variantOptionValues?: Prisma.VariantOptionValueListRelationFilter
@@ -226,6 +234,7 @@ export type ProductOptionOrderByWithRelationInput = {
   productId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  displayType?: Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
   optionValues?: Prisma.OptionValueOrderByRelationAggregateInput
   variantOptionValues?: Prisma.VariantOptionValueOrderByRelationAggregateInput
@@ -239,6 +248,7 @@ export type ProductOptionWhereUniqueInput = Prisma.AtLeast<{
   productId?: Prisma.IntFilter<"ProductOption"> | number
   name?: Prisma.StringFilter<"ProductOption"> | string
   position?: Prisma.IntFilter<"ProductOption"> | number
+  displayType?: Prisma.EnumOptionDisplayTypeFilter<"ProductOption"> | $Enums.OptionDisplayType
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   optionValues?: Prisma.OptionValueListRelationFilter
   variantOptionValues?: Prisma.VariantOptionValueListRelationFilter
@@ -249,6 +259,7 @@ export type ProductOptionOrderByWithAggregationInput = {
   productId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  displayType?: Prisma.SortOrder
   _count?: Prisma.ProductOptionCountOrderByAggregateInput
   _avg?: Prisma.ProductOptionAvgOrderByAggregateInput
   _max?: Prisma.ProductOptionMaxOrderByAggregateInput
@@ -264,11 +275,13 @@ export type ProductOptionScalarWhereWithAggregatesInput = {
   productId?: Prisma.IntWithAggregatesFilter<"ProductOption"> | number
   name?: Prisma.StringWithAggregatesFilter<"ProductOption"> | string
   position?: Prisma.IntWithAggregatesFilter<"ProductOption"> | number
+  displayType?: Prisma.EnumOptionDisplayTypeWithAggregatesFilter<"ProductOption"> | $Enums.OptionDisplayType
 }
 
 export type ProductOptionCreateInput = {
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
   product: Prisma.ProductCreateNestedOneWithoutProductOptionsInput
   optionValues?: Prisma.OptionValueCreateNestedManyWithoutProductOptionInput
   variantOptionValues?: Prisma.VariantOptionValueCreateNestedManyWithoutProductOptionInput
@@ -279,6 +292,7 @@ export type ProductOptionUncheckedCreateInput = {
   productId: number
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
   optionValues?: Prisma.OptionValueUncheckedCreateNestedManyWithoutProductOptionInput
   variantOptionValues?: Prisma.VariantOptionValueUncheckedCreateNestedManyWithoutProductOptionInput
 }
@@ -286,6 +300,7 @@ export type ProductOptionUncheckedCreateInput = {
 export type ProductOptionUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
   product?: Prisma.ProductUpdateOneRequiredWithoutProductOptionsNestedInput
   optionValues?: Prisma.OptionValueUpdateManyWithoutProductOptionNestedInput
   variantOptionValues?: Prisma.VariantOptionValueUpdateManyWithoutProductOptionNestedInput
@@ -296,6 +311,7 @@ export type ProductOptionUncheckedUpdateInput = {
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
   optionValues?: Prisma.OptionValueUncheckedUpdateManyWithoutProductOptionNestedInput
   variantOptionValues?: Prisma.VariantOptionValueUncheckedUpdateManyWithoutProductOptionNestedInput
 }
@@ -305,11 +321,13 @@ export type ProductOptionCreateManyInput = {
   productId: number
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
 }
 
 export type ProductOptionUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
 }
 
 export type ProductOptionUncheckedUpdateManyInput = {
@@ -317,6 +335,7 @@ export type ProductOptionUncheckedUpdateManyInput = {
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
 }
 
 export type ProductOptionListRelationFilter = {
@@ -334,6 +353,7 @@ export type ProductOptionCountOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  displayType?: Prisma.SortOrder
 }
 
 export type ProductOptionAvgOrderByAggregateInput = {
@@ -347,6 +367,7 @@ export type ProductOptionMaxOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  displayType?: Prisma.SortOrder
 }
 
 export type ProductOptionMinOrderByAggregateInput = {
@@ -354,6 +375,7 @@ export type ProductOptionMinOrderByAggregateInput = {
   productId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  displayType?: Prisma.SortOrder
 }
 
 export type ProductOptionSumOrderByAggregateInput = {
@@ -409,6 +431,10 @@ export type ProductOptionUncheckedUpdateManyWithoutProductNestedInput = {
   deleteMany?: Prisma.ProductOptionScalarWhereInput | Prisma.ProductOptionScalarWhereInput[]
 }
 
+export type EnumOptionDisplayTypeFieldUpdateOperationsInput = {
+  set?: $Enums.OptionDisplayType
+}
+
 export type ProductOptionCreateNestedOneWithoutOptionValuesInput = {
   create?: Prisma.XOR<Prisma.ProductOptionCreateWithoutOptionValuesInput, Prisma.ProductOptionUncheckedCreateWithoutOptionValuesInput>
   connectOrCreate?: Prisma.ProductOptionCreateOrConnectWithoutOptionValuesInput
@@ -440,6 +466,7 @@ export type ProductOptionUpdateOneRequiredWithoutVariantOptionValuesNestedInput 
 export type ProductOptionCreateWithoutProductInput = {
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
   optionValues?: Prisma.OptionValueCreateNestedManyWithoutProductOptionInput
   variantOptionValues?: Prisma.VariantOptionValueCreateNestedManyWithoutProductOptionInput
 }
@@ -448,6 +475,7 @@ export type ProductOptionUncheckedCreateWithoutProductInput = {
   id?: number
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
   optionValues?: Prisma.OptionValueUncheckedCreateNestedManyWithoutProductOptionInput
   variantOptionValues?: Prisma.VariantOptionValueUncheckedCreateNestedManyWithoutProductOptionInput
 }
@@ -486,11 +514,13 @@ export type ProductOptionScalarWhereInput = {
   productId?: Prisma.IntFilter<"ProductOption"> | number
   name?: Prisma.StringFilter<"ProductOption"> | string
   position?: Prisma.IntFilter<"ProductOption"> | number
+  displayType?: Prisma.EnumOptionDisplayTypeFilter<"ProductOption"> | $Enums.OptionDisplayType
 }
 
 export type ProductOptionCreateWithoutOptionValuesInput = {
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
   product: Prisma.ProductCreateNestedOneWithoutProductOptionsInput
   variantOptionValues?: Prisma.VariantOptionValueCreateNestedManyWithoutProductOptionInput
 }
@@ -500,6 +530,7 @@ export type ProductOptionUncheckedCreateWithoutOptionValuesInput = {
   productId: number
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
   variantOptionValues?: Prisma.VariantOptionValueUncheckedCreateNestedManyWithoutProductOptionInput
 }
 
@@ -522,6 +553,7 @@ export type ProductOptionUpdateToOneWithWhereWithoutOptionValuesInput = {
 export type ProductOptionUpdateWithoutOptionValuesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
   product?: Prisma.ProductUpdateOneRequiredWithoutProductOptionsNestedInput
   variantOptionValues?: Prisma.VariantOptionValueUpdateManyWithoutProductOptionNestedInput
 }
@@ -531,12 +563,14 @@ export type ProductOptionUncheckedUpdateWithoutOptionValuesInput = {
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
   variantOptionValues?: Prisma.VariantOptionValueUncheckedUpdateManyWithoutProductOptionNestedInput
 }
 
 export type ProductOptionCreateWithoutVariantOptionValuesInput = {
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
   product: Prisma.ProductCreateNestedOneWithoutProductOptionsInput
   optionValues?: Prisma.OptionValueCreateNestedManyWithoutProductOptionInput
 }
@@ -546,6 +580,7 @@ export type ProductOptionUncheckedCreateWithoutVariantOptionValuesInput = {
   productId: number
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
   optionValues?: Prisma.OptionValueUncheckedCreateNestedManyWithoutProductOptionInput
 }
 
@@ -568,6 +603,7 @@ export type ProductOptionUpdateToOneWithWhereWithoutVariantOptionValuesInput = {
 export type ProductOptionUpdateWithoutVariantOptionValuesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
   product?: Prisma.ProductUpdateOneRequiredWithoutProductOptionsNestedInput
   optionValues?: Prisma.OptionValueUpdateManyWithoutProductOptionNestedInput
 }
@@ -577,6 +613,7 @@ export type ProductOptionUncheckedUpdateWithoutVariantOptionValuesInput = {
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
   optionValues?: Prisma.OptionValueUncheckedUpdateManyWithoutProductOptionNestedInput
 }
 
@@ -584,11 +621,13 @@ export type ProductOptionCreateManyProductInput = {
   id?: number
   name: string
   position?: number
+  displayType?: $Enums.OptionDisplayType
 }
 
 export type ProductOptionUpdateWithoutProductInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
   optionValues?: Prisma.OptionValueUpdateManyWithoutProductOptionNestedInput
   variantOptionValues?: Prisma.VariantOptionValueUpdateManyWithoutProductOptionNestedInput
 }
@@ -597,6 +636,7 @@ export type ProductOptionUncheckedUpdateWithoutProductInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
   optionValues?: Prisma.OptionValueUncheckedUpdateManyWithoutProductOptionNestedInput
   variantOptionValues?: Prisma.VariantOptionValueUncheckedUpdateManyWithoutProductOptionNestedInput
 }
@@ -605,6 +645,7 @@ export type ProductOptionUncheckedUpdateManyWithoutProductInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  displayType?: Prisma.EnumOptionDisplayTypeFieldUpdateOperationsInput | $Enums.OptionDisplayType
 }
 
 
@@ -652,6 +693,7 @@ export type ProductOptionSelect<ExtArgs extends runtime.Types.Extensions.Interna
   productId?: boolean
   name?: boolean
   position?: boolean
+  displayType?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   optionValues?: boolean | Prisma.ProductOption$optionValuesArgs<ExtArgs>
   variantOptionValues?: boolean | Prisma.ProductOption$variantOptionValuesArgs<ExtArgs>
@@ -663,6 +705,7 @@ export type ProductOptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   productId?: boolean
   name?: boolean
   position?: boolean
+  displayType?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productOption"]>
 
@@ -671,6 +714,7 @@ export type ProductOptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   productId?: boolean
   name?: boolean
   position?: boolean
+  displayType?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productOption"]>
 
@@ -679,9 +723,10 @@ export type ProductOptionSelectScalar = {
   productId?: boolean
   name?: boolean
   position?: boolean
+  displayType?: boolean
 }
 
-export type ProductOptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "name" | "position", ExtArgs["result"]["productOption"]>
+export type ProductOptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "name" | "position" | "displayType", ExtArgs["result"]["productOption"]>
 export type ProductOptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   optionValues?: boolean | Prisma.ProductOption$optionValuesArgs<ExtArgs>
@@ -707,6 +752,7 @@ export type $ProductOptionPayload<ExtArgs extends runtime.Types.Extensions.Inter
     productId: number
     name: string
     position: number
+    displayType: $Enums.OptionDisplayType
   }, ExtArgs["result"]["productOption"]>
   composites: {}
 }
@@ -1137,6 +1183,7 @@ export interface ProductOptionFieldRefs {
   readonly productId: Prisma.FieldRef<"ProductOption", 'Int'>
   readonly name: Prisma.FieldRef<"ProductOption", 'String'>
   readonly position: Prisma.FieldRef<"ProductOption", 'Int'>
+  readonly displayType: Prisma.FieldRef<"ProductOption", 'OptionDisplayType'>
 }
     
 

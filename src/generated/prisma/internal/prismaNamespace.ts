@@ -5273,7 +5273,8 @@ export const ProductOptionScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   name: 'name',
-  position: 'position'
+  position: 'position',
+  displayType: 'displayType'
 } as const
 
 export type ProductOptionScalarFieldEnum = (typeof ProductOptionScalarFieldEnum)[keyof typeof ProductOptionScalarFieldEnum]
@@ -5283,7 +5284,8 @@ export const OptionValueScalarFieldEnum = {
   id: 'id',
   optionId: 'optionId',
   value: 'value',
-  position: 'position'
+  position: 'position',
+  meta: 'meta'
 } as const
 
 export type OptionValueScalarFieldEnum = (typeof OptionValueScalarFieldEnum)[keyof typeof OptionValueScalarFieldEnum]
@@ -6069,6 +6071,34 @@ export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMode
 
 
 /**
+ * Reference to a field of type 'OptionDisplayType'
+ */
+export type EnumOptionDisplayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OptionDisplayType'>
+    
+
+
+/**
+ * Reference to a field of type 'OptionDisplayType[]'
+ */
+export type ListEnumOptionDisplayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OptionDisplayType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'ShippingMethodType'
  */
 export type EnumShippingMethodTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShippingMethodType'>
@@ -6205,20 +6235,6 @@ export type EnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputTy
  * Reference to a field of type 'NotificationChannel[]'
  */
 export type ListEnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 

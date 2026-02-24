@@ -312,7 +312,8 @@ export const ProductOptionScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   name: 'name',
-  position: 'position'
+  position: 'position',
+  displayType: 'displayType'
 } as const
 
 export type ProductOptionScalarFieldEnum = (typeof ProductOptionScalarFieldEnum)[keyof typeof ProductOptionScalarFieldEnum]
@@ -322,7 +323,8 @@ export const OptionValueScalarFieldEnum = {
   id: 'id',
   optionId: 'optionId',
   value: 'value',
-  position: 'position'
+  position: 'position',
+  meta: 'meta'
 } as const
 
 export type OptionValueScalarFieldEnum = (typeof OptionValueScalarFieldEnum)[keyof typeof OptionValueScalarFieldEnum]

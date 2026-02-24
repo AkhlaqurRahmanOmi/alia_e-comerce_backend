@@ -1,4 +1,13 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional, MaxLength, Min } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  MaxLength,
+  Min,
+  IsEnum,
+} from 'class-validator';
+import { OptionDisplayType } from '@/generated/prisma/client';
 
 export class CreateProductOptionDto {
   @IsNumber()
@@ -14,4 +23,8 @@ export class CreateProductOptionDto {
   @IsOptional()
   @Min(1)
   position?: number;
+
+  @IsEnum(OptionDisplayType)
+  @IsOptional()
+  displayType?: OptionDisplayType;
 }

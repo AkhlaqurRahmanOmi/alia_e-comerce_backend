@@ -81,6 +81,17 @@ export const DiscountType = {
 export type DiscountType = (typeof DiscountType)[keyof typeof DiscountType]
 
 
+export const OptionDisplayType = {
+  text: 'text',
+  color_swatch: 'color_swatch',
+  image_swatch: 'image_swatch',
+  pattern_swatch: 'pattern_swatch',
+  number: 'number'
+} as const
+
+export type OptionDisplayType = (typeof OptionDisplayType)[keyof typeof OptionDisplayType]
+
+
 export const CartStatus = {
   active: 'active',
   converted: 'converted',

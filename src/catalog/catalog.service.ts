@@ -31,6 +31,7 @@ import { Logger } from 'winston';
 import { MonitorClass } from '../shared/decorators/performance-monitor.decorator';
 import { UnitOfWorkService } from '../shared/services/unit-of-work.service';
 import { LocalFileStorageService } from '../shared/services/local-file-storage.service';
+import { OptionDisplayType, Prisma } from '@/generated/prisma/client';
 
 /**
  * CatalogService is a facade that exposes a simplified API
@@ -304,15 +305,27 @@ export class CatalogService {
       }
 
       if (data.options?.length) {
-        operations.push(
-          tx.productOption.createMany({
-            data: data.options.map(option => ({
+        for (const option of data.options) {
+          const createdOption = await tx.productOption.create({
+            data: {
               productId: product.id,
               name: option.name,
               position: option.position ?? 1,
-            }))
-          })
-        );
+              displayType: option.displayType ?? OptionDisplayType.text,
+            },
+          });
+
+          if (option.values?.length) {
+            await tx.optionValue.createMany({
+              data: option.values.map((value) => ({
+                optionId: createdOption.id,
+                value: value.value,
+                position: value.position ?? 1,
+                meta: value.meta as Prisma.InputJsonValue | undefined,
+              })),
+            });
+          }
+        }
       }
 
       if (data.images?.length) {
@@ -424,11 +437,18 @@ export class CatalogService {
         productId: newProduct.id,
         name: option.name,
         position: option.position,
+        displayType: option.displayType ?? OptionDisplayType.text,
       });
       optionIdMap.set(option.id, createdOption.id);
 
       const optionWithValues = option as unknown as {
-        optionValues?: { id: number; value: string; position?: number }[];
+        displayType?: OptionDisplayType;
+        optionValues?: {
+          id: number;
+          value: string;
+          position?: number;
+          meta?: Record<string, unknown> | null;
+        }[];
       };
       if (optionWithValues.optionValues?.length) {
         for (const value of optionWithValues.optionValues) {
@@ -436,6 +456,7 @@ export class CatalogService {
             optionId: createdOption.id,
             value: value.value,
             position: value.position,
+            meta: value.meta ?? undefined,
           });
         }
       }

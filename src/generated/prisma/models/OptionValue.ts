@@ -57,6 +57,7 @@ export type OptionValueCountAggregateOutputType = {
   optionId: number
   value: number
   position: number
+  meta: number
   _all: number
 }
 
@@ -92,6 +93,7 @@ export type OptionValueCountAggregateInputType = {
   optionId?: true
   value?: true
   position?: true
+  meta?: true
   _all?: true
 }
 
@@ -186,6 +188,7 @@ export type OptionValueGroupByOutputType = {
   optionId: number
   value: string
   position: number
+  meta: runtime.JsonValue | null
   _count: OptionValueCountAggregateOutputType | null
   _avg: OptionValueAvgAggregateOutputType | null
   _sum: OptionValueSumAggregateOutputType | null
@@ -216,6 +219,7 @@ export type OptionValueWhereInput = {
   optionId?: Prisma.IntFilter<"OptionValue"> | number
   value?: Prisma.StringFilter<"OptionValue"> | string
   position?: Prisma.IntFilter<"OptionValue"> | number
+  meta?: Prisma.JsonNullableFilter<"OptionValue">
   productOption?: Prisma.XOR<Prisma.ProductOptionScalarRelationFilter, Prisma.ProductOptionWhereInput>
   variantOptionValues?: Prisma.VariantOptionValueListRelationFilter
 }
@@ -225,6 +229,7 @@ export type OptionValueOrderByWithRelationInput = {
   optionId?: Prisma.SortOrder
   value?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  meta?: Prisma.SortOrderInput | Prisma.SortOrder
   productOption?: Prisma.ProductOptionOrderByWithRelationInput
   variantOptionValues?: Prisma.VariantOptionValueOrderByRelationAggregateInput
 }
@@ -237,6 +242,7 @@ export type OptionValueWhereUniqueInput = Prisma.AtLeast<{
   optionId?: Prisma.IntFilter<"OptionValue"> | number
   value?: Prisma.StringFilter<"OptionValue"> | string
   position?: Prisma.IntFilter<"OptionValue"> | number
+  meta?: Prisma.JsonNullableFilter<"OptionValue">
   productOption?: Prisma.XOR<Prisma.ProductOptionScalarRelationFilter, Prisma.ProductOptionWhereInput>
   variantOptionValues?: Prisma.VariantOptionValueListRelationFilter
 }, "id">
@@ -246,6 +252,7 @@ export type OptionValueOrderByWithAggregationInput = {
   optionId?: Prisma.SortOrder
   value?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  meta?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.OptionValueCountOrderByAggregateInput
   _avg?: Prisma.OptionValueAvgOrderByAggregateInput
   _max?: Prisma.OptionValueMaxOrderByAggregateInput
@@ -261,11 +268,13 @@ export type OptionValueScalarWhereWithAggregatesInput = {
   optionId?: Prisma.IntWithAggregatesFilter<"OptionValue"> | number
   value?: Prisma.StringWithAggregatesFilter<"OptionValue"> | string
   position?: Prisma.IntWithAggregatesFilter<"OptionValue"> | number
+  meta?: Prisma.JsonNullableWithAggregatesFilter<"OptionValue">
 }
 
 export type OptionValueCreateInput = {
   value: string
   position?: number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   productOption: Prisma.ProductOptionCreateNestedOneWithoutOptionValuesInput
   variantOptionValues?: Prisma.VariantOptionValueCreateNestedManyWithoutOptionValueInput
 }
@@ -275,12 +284,14 @@ export type OptionValueUncheckedCreateInput = {
   optionId: number
   value: string
   position?: number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   variantOptionValues?: Prisma.VariantOptionValueUncheckedCreateNestedManyWithoutOptionValueInput
 }
 
 export type OptionValueUpdateInput = {
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   productOption?: Prisma.ProductOptionUpdateOneRequiredWithoutOptionValuesNestedInput
   variantOptionValues?: Prisma.VariantOptionValueUpdateManyWithoutOptionValueNestedInput
 }
@@ -290,6 +301,7 @@ export type OptionValueUncheckedUpdateInput = {
   optionId?: Prisma.IntFieldUpdateOperationsInput | number
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   variantOptionValues?: Prisma.VariantOptionValueUncheckedUpdateManyWithoutOptionValueNestedInput
 }
 
@@ -298,11 +310,13 @@ export type OptionValueCreateManyInput = {
   optionId: number
   value: string
   position?: number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type OptionValueUpdateManyMutationInput = {
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type OptionValueUncheckedUpdateManyInput = {
@@ -310,6 +324,7 @@ export type OptionValueUncheckedUpdateManyInput = {
   optionId?: Prisma.IntFieldUpdateOperationsInput | number
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type OptionValueListRelationFilter = {
@@ -327,6 +342,7 @@ export type OptionValueCountOrderByAggregateInput = {
   optionId?: Prisma.SortOrder
   value?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  meta?: Prisma.SortOrder
 }
 
 export type OptionValueAvgOrderByAggregateInput = {
@@ -419,6 +435,7 @@ export type OptionValueUpdateOneRequiredWithoutVariantOptionValuesNestedInput = 
 export type OptionValueCreateWithoutProductOptionInput = {
   value: string
   position?: number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   variantOptionValues?: Prisma.VariantOptionValueCreateNestedManyWithoutOptionValueInput
 }
 
@@ -426,6 +443,7 @@ export type OptionValueUncheckedCreateWithoutProductOptionInput = {
   id?: number
   value: string
   position?: number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   variantOptionValues?: Prisma.VariantOptionValueUncheckedCreateNestedManyWithoutOptionValueInput
 }
 
@@ -463,11 +481,13 @@ export type OptionValueScalarWhereInput = {
   optionId?: Prisma.IntFilter<"OptionValue"> | number
   value?: Prisma.StringFilter<"OptionValue"> | string
   position?: Prisma.IntFilter<"OptionValue"> | number
+  meta?: Prisma.JsonNullableFilter<"OptionValue">
 }
 
 export type OptionValueCreateWithoutVariantOptionValuesInput = {
   value: string
   position?: number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   productOption: Prisma.ProductOptionCreateNestedOneWithoutOptionValuesInput
 }
 
@@ -476,6 +496,7 @@ export type OptionValueUncheckedCreateWithoutVariantOptionValuesInput = {
   optionId: number
   value: string
   position?: number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type OptionValueCreateOrConnectWithoutVariantOptionValuesInput = {
@@ -497,6 +518,7 @@ export type OptionValueUpdateToOneWithWhereWithoutVariantOptionValuesInput = {
 export type OptionValueUpdateWithoutVariantOptionValuesInput = {
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   productOption?: Prisma.ProductOptionUpdateOneRequiredWithoutOptionValuesNestedInput
 }
 
@@ -505,17 +527,20 @@ export type OptionValueUncheckedUpdateWithoutVariantOptionValuesInput = {
   optionId?: Prisma.IntFieldUpdateOperationsInput | number
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type OptionValueCreateManyProductOptionInput = {
   id?: number
   value: string
   position?: number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type OptionValueUpdateWithoutProductOptionInput = {
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   variantOptionValues?: Prisma.VariantOptionValueUpdateManyWithoutOptionValueNestedInput
 }
 
@@ -523,6 +548,7 @@ export type OptionValueUncheckedUpdateWithoutProductOptionInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   variantOptionValues?: Prisma.VariantOptionValueUncheckedUpdateManyWithoutOptionValueNestedInput
 }
 
@@ -530,6 +556,7 @@ export type OptionValueUncheckedUpdateManyWithoutProductOptionInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   value?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 
@@ -568,6 +595,7 @@ export type OptionValueSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   optionId?: boolean
   value?: boolean
   position?: boolean
+  meta?: boolean
   productOption?: boolean | Prisma.ProductOptionDefaultArgs<ExtArgs>
   variantOptionValues?: boolean | Prisma.OptionValue$variantOptionValuesArgs<ExtArgs>
   _count?: boolean | Prisma.OptionValueCountOutputTypeDefaultArgs<ExtArgs>
@@ -578,6 +606,7 @@ export type OptionValueSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   optionId?: boolean
   value?: boolean
   position?: boolean
+  meta?: boolean
   productOption?: boolean | Prisma.ProductOptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["optionValue"]>
 
@@ -586,6 +615,7 @@ export type OptionValueSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   optionId?: boolean
   value?: boolean
   position?: boolean
+  meta?: boolean
   productOption?: boolean | Prisma.ProductOptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["optionValue"]>
 
@@ -594,9 +624,10 @@ export type OptionValueSelectScalar = {
   optionId?: boolean
   value?: boolean
   position?: boolean
+  meta?: boolean
 }
 
-export type OptionValueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "optionId" | "value" | "position", ExtArgs["result"]["optionValue"]>
+export type OptionValueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "optionId" | "value" | "position" | "meta", ExtArgs["result"]["optionValue"]>
 export type OptionValueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productOption?: boolean | Prisma.ProductOptionDefaultArgs<ExtArgs>
   variantOptionValues?: boolean | Prisma.OptionValue$variantOptionValuesArgs<ExtArgs>
@@ -620,6 +651,7 @@ export type $OptionValuePayload<ExtArgs extends runtime.Types.Extensions.Interna
     optionId: number
     value: string
     position: number
+    meta: runtime.JsonValue | null
   }, ExtArgs["result"]["optionValue"]>
   composites: {}
 }
@@ -1049,6 +1081,7 @@ export interface OptionValueFieldRefs {
   readonly optionId: Prisma.FieldRef<"OptionValue", 'Int'>
   readonly value: Prisma.FieldRef<"OptionValue", 'String'>
   readonly position: Prisma.FieldRef<"OptionValue", 'Int'>
+  readonly meta: Prisma.FieldRef<"OptionValue", 'Json'>
 }
     
 
