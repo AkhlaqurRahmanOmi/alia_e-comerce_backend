@@ -52,7 +52,7 @@ export class RbacController {
    * Get all roles
    * Returns list of all roles with permissions and user count
    * Cached for 5 minutes
-   * Requires 'roles:read' permission
+   * Requires 'roles:view' permission
    */
   @Get('roles')
   @Permissions('roles:view')
@@ -66,7 +66,7 @@ export class RbacController {
    * Get role by ID
    * Fetch role details including assigned permissions and user count
    * Cached for 5 minutes
-   * Requires 'roles:read' permission
+   * Requires 'roles:view' permission
    */
   @Get('roles/:id')
   @Permissions('roles:view')
@@ -80,7 +80,7 @@ export class RbacController {
    * Get role by name
    * Fetch role details using role name
    * Cached for 5 minutes
-   * Requires 'roles:read' permission
+   * Requires 'roles:view' permission
    */
   @Get('roles/name/:name')
   @Permissions('roles:view')
@@ -221,10 +221,10 @@ export class RbacController {
 
   /**
    * Get effective permissions for a user
-   * Requires 'permissions:read' permission
+   * Requires 'permissions:view' permission
    */
   @Get('users/:id/permissions')
-  @Permissions('permissions:read')
+  @Permissions('permissions:view')
   @HttpCode(HttpStatus.OK)
   async getUserPermissions(@Param('id', ParseIntPipe) userId: number) {
     return this.roleManagementProvider.getUserPermissions(userId);
@@ -251,10 +251,10 @@ export class RbacController {
    * Get all permissions
    * Returns list of all permissions with role assignments
    * Cached for 5 minutes
-   * Requires 'permissions:read' permission
+   * Requires 'permissions:view' permission
    */
   @Get('permissions')
-  @Permissions('permissions:read')
+  @Permissions('permissions:view')
   @CacheTTL(300000)
   @HttpCode(HttpStatus.OK)
   async getAllPermissions() {
@@ -265,10 +265,10 @@ export class RbacController {
    * Get permission by ID
    * Fetch permission details including assigned roles
    * Cached for 5 minutes
-   * Requires 'permissions:read' permission
+   * Requires 'permissions:view' permission
    */
   @Get('permissions/:id')
-  @Permissions('permissions:read')
+  @Permissions('permissions:view')
   @CacheTTL(300000)
   @HttpCode(HttpStatus.OK)
   async getPermissionById(@Param('id', ParseIntPipe) id: number) {
@@ -279,10 +279,10 @@ export class RbacController {
    * Get permission by name
    * Fetch permission details using permission name
    * Cached for 5 minutes
-   * Requires 'permissions:read' permission
+   * Requires 'permissions:view' permission
    */
   @Get('permissions/name/:name')
-  @Permissions('permissions:read')
+  @Permissions('permissions:view')
   @CacheTTL(300000)
   @HttpCode(HttpStatus.OK)
   async getPermissionByName(@Param('name') name: string) {
@@ -325,10 +325,10 @@ export class RbacController {
    * Search roles and permissions
    * Searches both roles and permissions by name or description
    * Cached for 2 minutes
-   * Requires 'roles:read' or 'permissions:read' permission
+   * Requires 'roles:view' or 'permissions:view' permission
    */
   @Get('search')
-  @Permissions('roles:read')
+  @Permissions('roles:view')
   @CacheTTL(120000)
   @HttpCode(HttpStatus.OK)
   async search(@Query('q') query: string) {

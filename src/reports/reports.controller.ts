@@ -8,7 +8,7 @@ import { Permissions } from '../auth/decorator/permissions.decorator';
 
 /**
  * Admin Controller for Reports
- * All endpoints require admin role and reports:read permission
+ * All endpoints require admin role and reports:view permission
  * Route prefix: /admin/reports
  */
 @Controller('admin/reports')
@@ -24,7 +24,7 @@ export class ReportsController {
    * Get comprehensive sales overview
    */
   @Get('sales/overview')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getSalesOverview(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -36,7 +36,7 @@ export class ReportsController {
    * Get top customers by revenue
    */
   @Get('sales/top-customers')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getTopCustomers(
     @Query() filterDto: ReportFilterDto,
@@ -55,7 +55,7 @@ export class ReportsController {
    * Get best selling products
    */
   @Get('sales/best-selling-products')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getBestSellingProducts(
     @Query() filterDto: ReportFilterDto,
@@ -74,7 +74,7 @@ export class ReportsController {
    * Get revenue breakdown by category
    */
   @Get('sales/by-category')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getRevenueByCategory(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -86,7 +86,7 @@ export class ReportsController {
    * Get average order value trends
    */
   @Get('sales/aov-trends')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getAOVTrends(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -100,7 +100,7 @@ export class ReportsController {
    * Get order status distribution
    */
   @Get('orders/status')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getOrderStatusReport(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -114,7 +114,7 @@ export class ReportsController {
    * Get cart conversion and abandonment statistics
    */
   @Get('carts/statistics')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getCartStatistics(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -126,7 +126,7 @@ export class ReportsController {
    * Get abandoned cart details
    */
   @Get('carts/abandoned')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getAbandonedCartDetails(
     @Query() filterDto: ReportFilterDto,
@@ -145,7 +145,7 @@ export class ReportsController {
    * Get average cart value
    */
   @Get('carts/average-value')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getAverageCartValue(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -157,7 +157,7 @@ export class ReportsController {
    * Get comprehensive cart report
    */
   @Get('carts/overview')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getCartReport(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -171,7 +171,7 @@ export class ReportsController {
    * Get comprehensive dashboard summary
    */
   @Get('dashboard')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getDashboardSummary(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();

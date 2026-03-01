@@ -26,9 +26,11 @@
     "prisma:seed": "ts-node prisma/seed.ts",
     "prisma:seed:master": "ts-node prisma/seed-master.ts",
     "prisma:seed:fashion": "ts-node prisma/seed-fashion.ts",
+    "prisma:seed:alia-atelier": "ts-node prisma/seed-alia-atelier.ts",
     "prisma:seed:sample": "ts-node prisma/seed-sample-data.ts",
     "prisma:seed:full": "npm run prisma:seed:master && npm run prisma:seed:fashion && npm run prisma:seed:sample",
-    "logs:clear": "echo 'Clearing log files...' &&  > logs/combined1.log && > logs/error.log && > logs/warn.log && echo 'Log files cleared successfully!'"
+    "logs:clear": "echo 'Clearing log files...' &&  > logs/combined1.log && > logs/error.log && > logs/warn.log && echo 'Log files cleared successfully!'",
+    "prisma:seed:production-access": "ts-node prisma/seed-production-access.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

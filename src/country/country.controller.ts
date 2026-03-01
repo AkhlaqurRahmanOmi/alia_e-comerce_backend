@@ -60,10 +60,10 @@ export class CountryController {
   /**
    * Get all countries including inactive (Admin only)
    * Returns complete list for admin management
-   * Requires 'countries:read' permission
+   * Requires 'countries:view' permission
    */
   @Get('admin/all')
-  @Permissions('countries:read')
+  @Permissions('countries:view')
   @HttpCode(HttpStatus.OK)
   async getAllCountriesForAdmin() {
     return this.countryService.getAllCountriesForAdmin();
@@ -98,10 +98,10 @@ export class CountryController {
   /**
    * Get total count of all countries including inactive (Admin only)
    * Returns the total number of all countries in the system
-   * Requires 'countries:read' permission
+   * Requires 'countries:view' permission
    */
   @Get('admin/count')
-  @Permissions('countries:read')
+  @Permissions('countries:view')
   @HttpCode(HttpStatus.OK)
   async getAllCountriesCount() {
     return this.countryService.getAllCountriesCount();

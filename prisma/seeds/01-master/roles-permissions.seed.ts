@@ -18,7 +18,7 @@ export async function seedRolesAndPermissions(prisma: PrismaClient) {
     { name: 'orders:view', description: 'View orders' },
     { name: 'orders:update', description: 'Update orders' },
     { name: 'orders:cancel', description: 'Cancel orders' },
-    { name: 'carts:read', description: 'Read carts' },
+    { name: 'carts:view', description: 'View carts' },
     { name: 'carts:update', description: 'Update carts' },
     { name: 'carts:delete', description: 'Delete carts' },
 
@@ -40,14 +40,12 @@ export async function seedRolesAndPermissions(prisma: PrismaClient) {
     { name: 'roles:update', description: 'Update roles' },
     { name: 'roles:delete', description: 'Delete roles' },
     { name: 'roles:assign', description: 'Assign roles to users' },
-    { name: 'roles:read', description: 'Read roles' },
     { name: 'permissions:create', description: 'Create permissions' },
-    { name: 'permissions:read', description: 'Read permissions' },
+    { name: 'permissions:view', description: 'View permissions' },
     { name: 'permissions:update', description: 'Update permissions' },
     { name: 'permissions:delete', description: 'Delete permissions' },
 
     // Reports
-    { name: 'reports:read', description: 'Read reports' },
     { name: 'reports:view', description: 'View reports' },
 
     // Coupons
@@ -69,7 +67,7 @@ export async function seedRolesAndPermissions(prisma: PrismaClient) {
     { name: 'notifications:delete', description: 'Delete notifications' },
 
     // CMS
-    { name: 'cms:read', description: 'Read CMS content' },
+    { name: 'cms:view', description: 'View CMS content' },
     { name: 'cms:update', description: 'Update CMS content' },
 
     // Blog
@@ -98,7 +96,7 @@ export async function seedRolesAndPermissions(prisma: PrismaClient) {
     { name: 'shipping:delete', description: 'Delete shipping methods' },
 
     // Countries
-    { name: 'countries:read', description: 'Read countries' },
+    { name: 'countries:view', description: 'View countries' },
     { name: 'countries:create', description: 'Create countries' },
     { name: 'countries:update', description: 'Update countries' },
     { name: 'countries:delete', description: 'Delete countries' },
@@ -171,10 +169,10 @@ export async function seedRolesAndPermissions(prisma: PrismaClient) {
     'products:create', 'products:update', 'products:delete',
     'categories:create', 'categories:update', 'categories:delete',
     'orders:create', 'orders:view', 'orders:update', 'orders:cancel',
-    'carts:read', 'carts:update', 'carts:delete',
+    'carts:view', 'carts:update', 'carts:delete',
     'inventory:create', 'inventory:view', 'inventory:update', 'inventory:delete',
     'inventory:adjust', 'inventory:transfer',
-    'reports:read', 'reports:view',
+    'reports:view',
     'coupons:create', 'coupons:view', 'coupons:update', 'coupons:delete', 'coupons:assign',
     'bundles:create', 'bundles:update', 'bundles:delete',
     'reviews:create', 'reviews:update', 'reviews:delete', 'reviews:approve',
@@ -206,7 +204,7 @@ export async function seedRolesAndPermissions(prisma: PrismaClient) {
   // Customer permissions (basic access)
   const customerPermissionNames = [
     'orders:create', 'orders:view', 'orders:cancel',
-    'carts:read', 'carts:update',
+    'carts:view', 'carts:update',
     'reviews:create', 'reviews:update', 'reviews:delete',
   ];
 
@@ -232,3 +230,4 @@ export async function seedRolesAndPermissions(prisma: PrismaClient) {
   console.log(`✅ Assigned customer permissions to Customer role`);
   console.log('✅ Roles and permissions seeding completed!');
 }
+

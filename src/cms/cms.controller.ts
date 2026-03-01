@@ -41,7 +41,7 @@ export class CmsController {
    * Returns full database record with all sections
    */
   @Get('admin/homepage')
-  @Permissions('cms:read')
+  @Permissions('cms:view')
   @HttpCode(HttpStatus.OK)
   async getHomepageForAdmin() {
     return this.cmsService.getHomepageForAdmin();

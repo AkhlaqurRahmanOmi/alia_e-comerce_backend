@@ -34,7 +34,7 @@ export class CartAdminController {
    * Supports pagination, status filtering, etc.
    */
   @Get()
-  @Permissions('carts:read')
+  @Permissions('carts:view')
   @HttpCode(HttpStatus.OK)
   async getAllCarts(@Query() filterDto: CartFilterDto) {
     return this.cartService.getAllCarts(filterDto);
@@ -45,7 +45,7 @@ export class CartAdminController {
    * Retrieve carts that haven't been updated in specified days
    */
   @Get('abandoned')
-  @Permissions('carts:read')
+  @Permissions('carts:view')
   @HttpCode(HttpStatus.OK)
   async getAbandonedCarts(@Query('days') days?: string) {
     const daysParam = days ? parseInt(days) : 1;
@@ -56,7 +56,7 @@ export class CartAdminController {
    * Get cart count with optional status filter
    */
   @Get('count')
-  @Permissions('carts:read')
+  @Permissions('carts:view')
   @HttpCode(HttpStatus.OK)
   async getCartCount(@Query('status') status?: string) {
     return this.cartService.getCartCount(status ? { status } : undefined);
@@ -114,7 +114,7 @@ export class CartAdminController {
    * Get cart conversion and abandonment statistics
    */
   @Get('reports/statistics')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getCartStatistics(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -126,7 +126,7 @@ export class CartAdminController {
    * Get detailed abandoned cart information
    */
   @Get('reports/abandoned-details')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getAbandonedCartDetails(
     @Query() filterDto: ReportFilterDto,
@@ -145,7 +145,7 @@ export class CartAdminController {
    * Get average cart value
    */
   @Get('reports/average-value')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getAverageCartValue(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
@@ -157,7 +157,7 @@ export class CartAdminController {
    * Get comprehensive cart report with all metrics
    */
   @Get('reports/overview')
-  @Permissions('reports:read')
+  @Permissions('reports:view')
   @HttpCode(HttpStatus.OK)
   async getCartReport(@Query() filterDto: ReportFilterDto) {
     const { startDate, endDate } = filterDto.getDateRange();
