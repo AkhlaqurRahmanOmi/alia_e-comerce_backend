@@ -61,7 +61,7 @@ export class PaymentRepository {
         eventType: 'payment_initiated',
         amount: payment.amount,
         status: payment.status,
-        payload: JSON.stringify({ gateway: data.gateway }),
+        payload: { gateway: data.gateway },
       });
 
       return payment;
@@ -119,6 +119,22 @@ export class PaymentRepository {
     });
   }
 
+  async findCodPaymentByOrderId(orderId: number): Promise<Payment | null> {
+    return this.prisma.payment.findFirst({
+      where: {
+        orderId,
+        gateway: 'cash',
+      },
+      include: {
+        order: true,
+        transactionLogs: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   /**
    * Update payment status
    */
@@ -148,7 +164,7 @@ export class PaymentRepository {
         eventType: 'status_update',
         amount: payment.amount,
         status: data.status,
-        payload: data.metadata ? JSON.stringify(data.metadata) : null,
+        payload: data.metadata,
       });
 
       return payment;
@@ -174,7 +190,12 @@ export class PaymentRepository {
           eventType: data.eventType,
           amount: data.amount,
           status: data.status,
-          payload: data.payload ? JSON.stringify(data.payload) : null,
+          payload:
+            data.payload == null
+              ? null
+              : typeof data.payload === 'string'
+                ? data.payload
+                : JSON.stringify(data.payload),
         },
       });
     } catch (error) {
@@ -278,5 +299,38 @@ export class PaymentRepository {
       );
       throw error;
     }
+  }
+
+  async settleCodPayment(
+    transactionId: string,
+    status: typeof PaymentStatus.captured | typeof PaymentStatus.voided,
+    note?: string,
+  ): Promise<Payment> {
+    const payment = await this.prisma.payment.update({
+      where: { transactionId },
+      data: {
+        status,
+        updatedAt: new Date(),
+      },
+      include: {
+        order: true,
+        transactionLogs: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+
+    await this.createTransactionLog({
+      paymentId: payment.id,
+      eventType:
+        status === PaymentStatus.captured
+          ? 'payment_captured'
+          : 'payment_voided',
+      amount: payment.amount,
+      status,
+      payload: note ? { note } : null,
+    });
+
+    return payment;
   }
 }

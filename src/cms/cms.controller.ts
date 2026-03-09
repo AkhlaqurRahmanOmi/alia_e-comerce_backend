@@ -6,13 +6,19 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { CmsService } from './cms.service';
 import { Auth } from '../auth/decorator/auth.decorator';
 import { AuthType } from '../auth/enums/auth-type.enum';
 import { Permissions } from '../auth/decorator/permissions.decorator';
 import { CacheTTL } from '../shared/decorators/cache-ttl.decorator';
 import { UpdateSectionDto } from './dto/update-section.dto';
+import { CmsMediaFileValidationPipe } from './pipes/cms-media-file-validation.pipe';
 
 @Controller('cms')
 export class CmsController {
@@ -72,5 +78,35 @@ export class CmsController {
     @Body() dto: UpdateSectionDto,
   ) {
     return this.cmsService.updateSection(sectionName, dto.content);
+  }
+
+  @Post('admin/media/upload')
+  @Permissions('cms:update')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 50 * 1024 * 1024,
+      },
+    }),
+  )
+  @HttpCode(HttpStatus.CREATED)
+  @ApiBearerAuth('JWT-auth')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  async uploadMediaAsset(
+    @UploadedFile(CmsMediaFileValidationPipe) file: Express.Multer.File,
+  ) {
+    return this.cmsService.uploadMediaAsset(file);
   }
 }

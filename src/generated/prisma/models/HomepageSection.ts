@@ -50,6 +50,9 @@ export type HomepageSectionCountAggregateOutputType = {
   id: number
   header: number
   heroBanner: number
+  mediaCarouselPrimary: number
+  mediaCarouselSecondary: number
+  mediaCarouselTertiary: number
   featuresBar: number
   ourStory: number
   storeLocations: number
@@ -84,6 +87,9 @@ export type HomepageSectionCountAggregateInputType = {
   id?: true
   header?: true
   heroBanner?: true
+  mediaCarouselPrimary?: true
+  mediaCarouselSecondary?: true
+  mediaCarouselTertiary?: true
   featuresBar?: true
   ourStory?: true
   storeLocations?: true
@@ -183,6 +189,9 @@ export type HomepageSectionGroupByOutputType = {
   id: number
   header: runtime.JsonValue | null
   heroBanner: runtime.JsonValue | null
+  mediaCarouselPrimary: runtime.JsonValue | null
+  mediaCarouselSecondary: runtime.JsonValue | null
+  mediaCarouselTertiary: runtime.JsonValue | null
   featuresBar: runtime.JsonValue | null
   ourStory: runtime.JsonValue | null
   storeLocations: runtime.JsonValue | null
@@ -218,6 +227,9 @@ export type HomepageSectionWhereInput = {
   id?: Prisma.IntFilter<"HomepageSection"> | number
   header?: Prisma.JsonNullableFilter<"HomepageSection">
   heroBanner?: Prisma.JsonNullableFilter<"HomepageSection">
+  mediaCarouselPrimary?: Prisma.JsonNullableFilter<"HomepageSection">
+  mediaCarouselSecondary?: Prisma.JsonNullableFilter<"HomepageSection">
+  mediaCarouselTertiary?: Prisma.JsonNullableFilter<"HomepageSection">
   featuresBar?: Prisma.JsonNullableFilter<"HomepageSection">
   ourStory?: Prisma.JsonNullableFilter<"HomepageSection">
   storeLocations?: Prisma.JsonNullableFilter<"HomepageSection">
@@ -230,6 +242,9 @@ export type HomepageSectionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   header?: Prisma.SortOrderInput | Prisma.SortOrder
   heroBanner?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaCarouselPrimary?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaCarouselSecondary?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaCarouselTertiary?: Prisma.SortOrderInput | Prisma.SortOrder
   featuresBar?: Prisma.SortOrderInput | Prisma.SortOrder
   ourStory?: Prisma.SortOrderInput | Prisma.SortOrder
   storeLocations?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -245,6 +260,9 @@ export type HomepageSectionWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.HomepageSectionWhereInput | Prisma.HomepageSectionWhereInput[]
   header?: Prisma.JsonNullableFilter<"HomepageSection">
   heroBanner?: Prisma.JsonNullableFilter<"HomepageSection">
+  mediaCarouselPrimary?: Prisma.JsonNullableFilter<"HomepageSection">
+  mediaCarouselSecondary?: Prisma.JsonNullableFilter<"HomepageSection">
+  mediaCarouselTertiary?: Prisma.JsonNullableFilter<"HomepageSection">
   featuresBar?: Prisma.JsonNullableFilter<"HomepageSection">
   ourStory?: Prisma.JsonNullableFilter<"HomepageSection">
   storeLocations?: Prisma.JsonNullableFilter<"HomepageSection">
@@ -257,6 +275,9 @@ export type HomepageSectionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   header?: Prisma.SortOrderInput | Prisma.SortOrder
   heroBanner?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaCarouselPrimary?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaCarouselSecondary?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaCarouselTertiary?: Prisma.SortOrderInput | Prisma.SortOrder
   featuresBar?: Prisma.SortOrderInput | Prisma.SortOrder
   ourStory?: Prisma.SortOrderInput | Prisma.SortOrder
   storeLocations?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -277,6 +298,9 @@ export type HomepageSectionScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"HomepageSection"> | number
   header?: Prisma.JsonNullableWithAggregatesFilter<"HomepageSection">
   heroBanner?: Prisma.JsonNullableWithAggregatesFilter<"HomepageSection">
+  mediaCarouselPrimary?: Prisma.JsonNullableWithAggregatesFilter<"HomepageSection">
+  mediaCarouselSecondary?: Prisma.JsonNullableWithAggregatesFilter<"HomepageSection">
+  mediaCarouselTertiary?: Prisma.JsonNullableWithAggregatesFilter<"HomepageSection">
   featuresBar?: Prisma.JsonNullableWithAggregatesFilter<"HomepageSection">
   ourStory?: Prisma.JsonNullableWithAggregatesFilter<"HomepageSection">
   storeLocations?: Prisma.JsonNullableWithAggregatesFilter<"HomepageSection">
@@ -288,6 +312,9 @@ export type HomepageSectionScalarWhereWithAggregatesInput = {
 export type HomepageSectionCreateInput = {
   header?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   heroBanner?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselPrimary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselSecondary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselTertiary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   featuresBar?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ourStory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   storeLocations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -300,6 +327,9 @@ export type HomepageSectionUncheckedCreateInput = {
   id?: number
   header?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   heroBanner?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselPrimary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselSecondary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselTertiary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   featuresBar?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ourStory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   storeLocations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -311,6 +341,9 @@ export type HomepageSectionUncheckedCreateInput = {
 export type HomepageSectionUpdateInput = {
   header?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   heroBanner?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselPrimary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselSecondary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselTertiary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   featuresBar?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ourStory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   storeLocations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -323,6 +356,9 @@ export type HomepageSectionUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   header?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   heroBanner?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselPrimary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselSecondary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselTertiary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   featuresBar?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ourStory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   storeLocations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -335,6 +371,9 @@ export type HomepageSectionCreateManyInput = {
   id?: number
   header?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   heroBanner?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselPrimary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselSecondary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselTertiary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   featuresBar?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ourStory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   storeLocations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -346,6 +385,9 @@ export type HomepageSectionCreateManyInput = {
 export type HomepageSectionUpdateManyMutationInput = {
   header?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   heroBanner?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselPrimary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselSecondary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselTertiary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   featuresBar?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ourStory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   storeLocations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -358,6 +400,9 @@ export type HomepageSectionUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   header?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   heroBanner?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselPrimary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselSecondary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mediaCarouselTertiary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   featuresBar?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   ourStory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   storeLocations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -370,6 +415,9 @@ export type HomepageSectionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   header?: Prisma.SortOrder
   heroBanner?: Prisma.SortOrder
+  mediaCarouselPrimary?: Prisma.SortOrder
+  mediaCarouselSecondary?: Prisma.SortOrder
+  mediaCarouselTertiary?: Prisma.SortOrder
   featuresBar?: Prisma.SortOrder
   ourStory?: Prisma.SortOrder
   storeLocations?: Prisma.SortOrder
@@ -404,6 +452,9 @@ export type HomepageSectionSelect<ExtArgs extends runtime.Types.Extensions.Inter
   id?: boolean
   header?: boolean
   heroBanner?: boolean
+  mediaCarouselPrimary?: boolean
+  mediaCarouselSecondary?: boolean
+  mediaCarouselTertiary?: boolean
   featuresBar?: boolean
   ourStory?: boolean
   storeLocations?: boolean
@@ -416,6 +467,9 @@ export type HomepageSectionSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   header?: boolean
   heroBanner?: boolean
+  mediaCarouselPrimary?: boolean
+  mediaCarouselSecondary?: boolean
+  mediaCarouselTertiary?: boolean
   featuresBar?: boolean
   ourStory?: boolean
   storeLocations?: boolean
@@ -428,6 +482,9 @@ export type HomepageSectionSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   header?: boolean
   heroBanner?: boolean
+  mediaCarouselPrimary?: boolean
+  mediaCarouselSecondary?: boolean
+  mediaCarouselTertiary?: boolean
   featuresBar?: boolean
   ourStory?: boolean
   storeLocations?: boolean
@@ -440,6 +497,9 @@ export type HomepageSectionSelectScalar = {
   id?: boolean
   header?: boolean
   heroBanner?: boolean
+  mediaCarouselPrimary?: boolean
+  mediaCarouselSecondary?: boolean
+  mediaCarouselTertiary?: boolean
   featuresBar?: boolean
   ourStory?: boolean
   storeLocations?: boolean
@@ -448,7 +508,7 @@ export type HomepageSectionSelectScalar = {
   updatedAt?: boolean
 }
 
-export type HomepageSectionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "header" | "heroBanner" | "featuresBar" | "ourStory" | "storeLocations" | "footer" | "createdAt" | "updatedAt", ExtArgs["result"]["homepageSection"]>
+export type HomepageSectionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "header" | "heroBanner" | "mediaCarouselPrimary" | "mediaCarouselSecondary" | "mediaCarouselTertiary" | "featuresBar" | "ourStory" | "storeLocations" | "footer" | "createdAt" | "updatedAt", ExtArgs["result"]["homepageSection"]>
 
 export type $HomepageSectionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "HomepageSection"
@@ -457,6 +517,9 @@ export type $HomepageSectionPayload<ExtArgs extends runtime.Types.Extensions.Int
     id: number
     header: runtime.JsonValue | null
     heroBanner: runtime.JsonValue | null
+    mediaCarouselPrimary: runtime.JsonValue | null
+    mediaCarouselSecondary: runtime.JsonValue | null
+    mediaCarouselTertiary: runtime.JsonValue | null
     featuresBar: runtime.JsonValue | null
     ourStory: runtime.JsonValue | null
     storeLocations: runtime.JsonValue | null
@@ -889,6 +952,9 @@ export interface HomepageSectionFieldRefs {
   readonly id: Prisma.FieldRef<"HomepageSection", 'Int'>
   readonly header: Prisma.FieldRef<"HomepageSection", 'Json'>
   readonly heroBanner: Prisma.FieldRef<"HomepageSection", 'Json'>
+  readonly mediaCarouselPrimary: Prisma.FieldRef<"HomepageSection", 'Json'>
+  readonly mediaCarouselSecondary: Prisma.FieldRef<"HomepageSection", 'Json'>
+  readonly mediaCarouselTertiary: Prisma.FieldRef<"HomepageSection", 'Json'>
   readonly featuresBar: Prisma.FieldRef<"HomepageSection", 'Json'>
   readonly ourStory: Prisma.FieldRef<"HomepageSection", 'Json'>
   readonly storeLocations: Prisma.FieldRef<"HomepageSection", 'Json'>

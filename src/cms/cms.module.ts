@@ -4,9 +4,11 @@ import { CmsService } from './cms.service';
 import { HomepageManagementProvider } from './providers';
 import { HomepageSectionRepository } from './repositories/homepage-section.repository';
 import { PrismaModule } from '../core/config/prisma/prisma.module';
+import { SharedModule } from '../shared/shared.module';
+import { CmsMediaFileValidationPipe } from './pipes/cms-media-file-validation.pipe';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, SharedModule],
   controllers: [CmsController],
   providers: [
     CmsService,
@@ -14,6 +16,7 @@ import { PrismaModule } from '../core/config/prisma/prisma.module';
     HomepageSectionRepository,
     // Provider
     HomepageManagementProvider,
+    CmsMediaFileValidationPipe,
   ],
   exports: [CmsService], // Export for other modules if needed
 })

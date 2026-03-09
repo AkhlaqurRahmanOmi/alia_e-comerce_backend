@@ -7,6 +7,7 @@ import {
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { PrismaModule } from './core/config/prisma/prisma.module';
 import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
@@ -27,6 +28,11 @@ import { GlobalResponseInterceptor } from './shared/interceptors/global-response
 import { GlobalExceptionFilter } from './shared/filters/global-exception.filter';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TraceIdMiddleware } from './shared/middleware/trace-id.middleware';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+import { mkdirSync } from 'fs';
+import { randomUUID } from 'crypto';
 
 // Organizational Modules
 import { CoreModule } from './modules/core.module';
@@ -56,6 +62,28 @@ import { BlogModule } from './blog/blog.module';
         max: config.max,
       }),
       inject: [cacheConfig.KEY],
+    }),
+    MulterModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        storage: diskStorage({
+          destination: (_req, _file, callback) => {
+            const uploadPath =
+              configService.get<string>('storage.local.uploadPath') ||
+              './uploads';
+            const tempPath = join(uploadPath, 'tmp');
+            mkdirSync(tempPath, { recursive: true });
+            callback(null, tempPath);
+          },
+          filename: (_req, file, callback) => {
+            callback(null, `${randomUUID()}${extname(file.originalname)}`);
+          },
+        }),
+        limits: {
+          fileSize:
+            configService.get<number>('storage.upload.maxFileSize') || 5242880,
+        },
+      }),
     }),
 
     // Infrastructure Modules

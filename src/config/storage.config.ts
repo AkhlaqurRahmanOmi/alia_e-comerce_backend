@@ -9,7 +9,7 @@ export default registerAs('storage', () => ({
   local: {
     uploadPath: process.env.UPLOAD_PATH || './uploads',
     baseUrl: process.env.BASE_URL || 'http://localhost:4000',
-    allowedFolders: ['reviews', 'products', 'variants', 'test'],
+    allowedFolders: ['reviews', 'products', 'variants', 'categories', 'cms-media', 'test'],
   },
 
   // File Upload Configuration

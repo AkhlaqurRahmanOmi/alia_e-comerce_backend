@@ -242,6 +242,85 @@ export class CategoryRepository extends BaseRepository<Category, number> {
     });
   }
 
+  async findAllCategoryNodes(): Promise<
+    Array<{
+      id: number;
+      name: string;
+      slug: string;
+      iconUrl: string | null;
+      parentId: number | null;
+    }>
+  > {
+    return this.prisma.category.findMany({
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        iconUrl: true,
+        parentId: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+  }
+
+  async findActiveProductAssignmentsByCategoryIds(categoryIds: number[]) {
+    if (categoryIds.length === 0) {
+      return [];
+    }
+
+    return this.prisma.productCategory.findMany({
+      where: {
+        categoryId: {
+          in: categoryIds,
+        },
+        product: {
+          deletedAt: null,
+          isActive: true,
+        },
+      },
+      select: {
+        categoryId: true,
+        productId: true,
+      },
+    });
+  }
+
+  async findActiveVariantFilterData(productIds: number[]) {
+    if (productIds.length === 0) {
+      return [];
+    }
+
+    return this.prisma.variant.findMany({
+      where: {
+        productId: {
+          in: productIds,
+        },
+        isActive: true,
+      },
+      select: {
+        id: true,
+        productId: true,
+        price: true,
+        variantOptionValues: {
+          select: {
+            productOption: {
+              select: {
+                name: true,
+              },
+            },
+            optionValue: {
+              select: {
+                value: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   async findCategoryTree(): Promise<any[]> {
     const categories = await this.prisma.category.findMany({
       include: {
@@ -263,7 +342,9 @@ export class CategoryRepository extends BaseRepository<Category, number> {
     const productCountsMap = await this.batchCountProducts(categoryDescendantsMap);
 
     // Build tree with counts
-    const addCounts = (cat: any): any => ({
+    const addCounts = (
+      cat: Category & { children?: Array<Category & { children?: Category[] }> },
+    ): any => ({
       ...cat,
       productCount: productCountsMap.get(cat.id) || 0,
       children: cat.children ? cat.children.map(addCounts) : [],
@@ -276,8 +357,13 @@ export class CategoryRepository extends BaseRepository<Category, number> {
   /**
    * Build a map of category ID to all its descendant IDs (including itself)
    */
-  private buildDescendantsMap(categories: any[]): Map<number, number[]> {
-    const categoryMap = new Map<number, any>();
+  private buildDescendantsMap(
+    categories: Array<Category & { children?: Array<Category & { children?: Category[] }> }>,
+  ): Map<number, number[]> {
+    const categoryMap = new Map<
+      number,
+      Category & { children?: Array<Category & { children?: Category[] }> }
+    >();
     categories.forEach(cat => categoryMap.set(cat.id, cat));
 
     const descendantsMap = new Map<number, number[]>();
@@ -293,7 +379,7 @@ export class CategoryRepository extends BaseRepository<Category, number> {
       const descendants = [categoryId];
 
       if (category.children && category.children.length > 0) {
-        category.children.forEach((child: any) => {
+        category.children.forEach((child) => {
           descendants.push(...getDescendants(child.id));
         });
       }

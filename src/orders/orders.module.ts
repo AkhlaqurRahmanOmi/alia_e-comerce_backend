@@ -8,10 +8,17 @@ import { OrderRepository } from './repositories/order.repository';
 import { InventoryModule } from '../inventory/inventory.module';
 import { BundlesModule } from '../bundles/bundles.module';
 import { ShippingModule } from '../shipping/shipping.module';
+import { PaymentsModule } from '../payments/payments.module';
 import { PrismaModule } from '../core/config/prisma/prisma.module';
 
 @Module({
-  imports: [PrismaModule, InventoryModule, BundlesModule, ShippingModule],
+  imports: [
+    PrismaModule,
+    InventoryModule,
+    BundlesModule,
+    ShippingModule,
+    PaymentsModule,
+  ],
   controllers: [OrdersController, OrdersAdminController],
   providers: [
     OrdersService,

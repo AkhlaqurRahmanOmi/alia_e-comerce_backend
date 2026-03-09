@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { HomepageSection } from '@/generated/prisma/client';
 import { HomepageSectionRepository } from '../repositories/homepage-section.repository';
+import { LocalFileStorageService } from '@/shared/services/local-file-storage.service';
 
 /**
  * HomepageManagementProvider - Business logic for CMS homepage sections
@@ -20,6 +21,9 @@ export class HomepageManagementProvider {
   private readonly SECTION_MAP = {
     'header': 'header',
     'hero-banner': 'heroBanner',
+    'media-carousel-primary': 'mediaCarouselPrimary',
+    'media-carousel-secondary': 'mediaCarouselSecondary',
+    'media-carousel-tertiary': 'mediaCarouselTertiary',
     'features-bar': 'featuresBar',
     'our-story': 'ourStory',
     'store-locations': 'storeLocations',
@@ -28,6 +32,7 @@ export class HomepageManagementProvider {
 
   constructor(
     private readonly homepageSectionRepo: HomepageSectionRepository,
+    private readonly localFileStorageService: LocalFileStorageService,
   ) {}
 
   /**
@@ -47,6 +52,9 @@ export class HomepageManagementProvider {
     return {
       header: homepage.header || null,
       heroBanner: homepage.heroBanner || null,
+      mediaCarouselPrimary: homepage.mediaCarouselPrimary || null,
+      mediaCarouselSecondary: homepage.mediaCarouselSecondary || null,
+      mediaCarouselTertiary: homepage.mediaCarouselTertiary || null,
       featuresBar: homepage.featuresBar || null,
       ourStory: homepage.ourStory || null,
       storeLocations: homepage.storeLocations || null,
@@ -115,5 +123,14 @@ export class HomepageManagementProvider {
     // if (sectionName === 'hero-banner' && !content.slides) {
     //   throw new BadRequestException('Hero banner must have slides');
     // }
+    // Note: media-carousel-* sections remain intentionally flexible here so
+    // admin-uploaded video/gif/avif-backed content can be stored as JSON
+    // without image-only rules.
+  }
+
+  async uploadMediaAsset(file: Express.Multer.File) {
+    this.logger.log(`Uploading CMS media asset: ${file.originalname}`);
+
+    return this.localFileStorageService.uploadFile(file, 'cms-media');
   }
 }

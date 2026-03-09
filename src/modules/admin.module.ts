@@ -57,7 +57,7 @@ import { RbacModule } from '../rbac/rbac.module';
     ReportsModule,
 
     // Content Management
-    // CmsModule,
+    CmsModule,
 
     // Bookings & Reservations - Removed
     // BookingsModule,
@@ -73,7 +73,7 @@ import { RbacModule } from '../rbac/rbac.module';
     CouponsModule,
     ShippingModule,
     ReportsModule,
-    // CmsModule,
+    CmsModule,
     // BookingsModule, // Removed - not needed for this client
   ],
 })

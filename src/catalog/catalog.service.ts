@@ -84,6 +84,10 @@ export class CatalogService {
     return this.categoryManagement.getCategoryById(id);
   }
 
+  getCategoryFilters(categoryId: number) {
+    return this.categoryManagement.getCategoryFilters(categoryId);
+  }
+
   getCategoryProducts(categoryId: number) {
     return this.productManagement.getProductsByCategory(categoryId);
   }
@@ -161,6 +165,37 @@ export class CatalogService {
 
   updateCategory(id: number, dto: UpdateCategoryDto) {
     return this.categoryManagement.updateCategory(id, dto);
+  }
+
+  async uploadCategoryIcon(categoryId: number, file: Express.Multer.File) {
+    const category = await this.categoryManagement.getCategoryById(categoryId);
+
+    const uploadResult = await this.localFileStorageService.uploadFile(
+      file,
+      'categories',
+    );
+
+    try {
+      const updatedCategory = await this.categoryManagement.updateCategory(
+        categoryId,
+        {
+          iconUrl: uploadResult.fileUrl,
+        },
+      );
+
+      if (
+        category.iconUrl &&
+        category.iconUrl !== uploadResult.fileUrl &&
+        category.iconUrl.includes('/uploads/categories/')
+      ) {
+        await this.localFileStorageService.deleteFile(category.iconUrl);
+      }
+
+      return updatedCategory;
+    } catch (error) {
+      await this.localFileStorageService.deleteFile(uploadResult.fileUrl);
+      throw error;
+    }
   }
 
   async deleteCategory(id: number) {

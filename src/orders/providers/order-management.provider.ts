@@ -18,6 +18,8 @@ import { InventoryService } from '../../inventory/inventory.service';
 import { BundlesService } from '../../bundles/bundles.service';
 import { UnitOfWorkService } from '../../shared/services/unit-of-work.service';
 import { ShippingService } from '../../shipping/shipping.service';
+import { PaymentsService } from '../../payments/payments.service';
+import { PaymentGateway } from '../../payments/dtos/initiate-payment.dto';
 
 @Injectable()
 export class OrderManagementProvider {
@@ -28,16 +30,21 @@ export class OrderManagementProvider {
     private readonly bundles: BundlesService,
     private readonly unitOfWork: UnitOfWorkService,
     private readonly shippingService: ShippingService,
+    private readonly paymentsService: PaymentsService,
   ) {}
 
   /**
    * Create a new order
    */
   async createOrder(createOrderDto: CreateOrderDto): Promise<Order> {
+    const paymentGateway = this.resolvePaymentGateway(
+      createOrderDto.paymentGateway,
+    );
+
     // Step 1: Pre-transaction validation
     await this.validateUserAddresses(createOrderDto);
     await this.validateShippingMethod(createOrderDto);
-    await this.validateAndPrepareInventory(createOrderDto);
+    await this.validateAndPrepareInventory(createOrderDto.items);
 
     // Step 2: Create order in transaction
     const order = await this.createOrderInTransaction(createOrderDto);
@@ -45,7 +52,10 @@ export class OrderManagementProvider {
     // Step 3: Reserve inventory outside transaction
     await this.reserveInventoryForOrder(order, createOrderDto);
 
-    // Step 4: Return order with full relations
+    // Step 4: Create COD payment after successful reservation
+    await this.createCodPaymentForOrder(order.id, paymentGateway, createOrderDto);
+
+    // Step 5: Return order with full relations
     return this.getOrderWithRelations(order.id);
   }
 
@@ -201,9 +211,9 @@ export class OrderManagementProvider {
    * Validate inventory and prepare fulfillment locations
    */
   private async validateAndPrepareInventory(
-    dto: CreateOrderDto,
+    items: Array<Record<string, any>>,
   ): Promise<void> {
-    for (const item of dto.items) {
+    for (const item of items) {
       // Validate that either variantId or bundleId is provided
       if (!item.variantId && !item.bundleId) {
         throw new BadRequestException(
@@ -243,7 +253,7 @@ export class OrderManagementProvider {
     return this.unitOfWork.transaction(async (tx) => {
       // Calculate order totals
       const { subtotal, variants, shippingCost } =
-        await this.calculateOrderTotals(tx, dto);
+        await this.calculateOrderTotals(tx, dto.items, dto.shippingMethodId);
 
       // Generate unique order reference
       const externalRef = await this.generateOrderReference(tx);
@@ -275,12 +285,16 @@ export class OrderManagementProvider {
   /**
    * Calculate order totals and validate variants
    */
-  private async calculateOrderTotals(tx: any, dto: CreateOrderDto) {
+  private async calculateOrderTotals(
+    tx: any,
+    items: Array<Record<string, any>>,
+    shippingMethodId?: number,
+  ) {
     let subtotal = 0;
     let totalWeight = 0;
     const variants = new Map();
 
-    for (const item of dto.items) {
+    for (const item of items) {
       const variant = await tx.variant.findUnique({
         where: { id: item.variantId },
         include: { product: true },
@@ -297,9 +311,9 @@ export class OrderManagementProvider {
 
     // Calculate shipping cost
     let shippingCost = 0;
-    if (dto.shippingMethodId) {
+    if (shippingMethodId) {
       const shippingRate = await this.shippingService.calculateRate({
-        shippingMethodId: dto.shippingMethodId,
+        shippingMethodId,
         subtotal,
         weight: totalWeight,
       });
@@ -456,7 +470,7 @@ export class OrderManagementProvider {
    */
   private async reserveInventoryForOrder(
     order: Order,
-    dto: CreateOrderDto,
+    dto: { items: Array<Record<string, any>> },
   ): Promise<void> {
     try {
       for (const item of dto.items) {
@@ -600,6 +614,39 @@ export class OrderManagementProvider {
     return createdOrder;
   }
 
+  private resolvePaymentGateway(
+    paymentGateway?: PaymentGateway,
+  ): PaymentGateway {
+    return paymentGateway ?? PaymentGateway.CASH_ON_DELIVERY;
+  }
+
+  private async createCodPaymentForOrder(
+    orderId: number,
+    paymentGateway: PaymentGateway,
+    dto: CreateOrderDto | GuestCreateOrderDto,
+  ): Promise<void> {
+    if (paymentGateway !== PaymentGateway.CASH_ON_DELIVERY) {
+      throw new BadRequestException(
+        `Payment gateway '${paymentGateway}' is not supported`,
+      );
+    }
+
+    try {
+      await this.paymentsService.createOrReuseCodPayment(orderId, undefined, {
+        source: 'order_checkout',
+        shippingMethodId: dto.shippingMethodId,
+      });
+    } catch (error) {
+      await this.releaseInventoryForOrder(orderId);
+      await this.orderRepository.updateStatus(
+        orderId,
+        OrderStatus.cancelled,
+        'COD payment creation failed',
+      );
+      throw error;
+    }
+  }
+
   // ============================================
   // GUEST ORDER METHODS
   // ============================================
@@ -608,6 +655,8 @@ export class OrderManagementProvider {
    * Create a guest order (without user account)
    */
   async createGuestOrder(dto: GuestCreateOrderDto): Promise<Order> {
+    const paymentGateway = this.resolvePaymentGateway(dto.paymentGateway);
+
     // Step 1: Validate shipping method if provided
     if (dto.shippingMethodId) {
       const shippingMethod = await this.shippingService.getShippingMethodById(
@@ -621,59 +670,13 @@ export class OrderManagementProvider {
     }
 
     // Step 2: Validate inventory
-    for (const item of dto.items) {
-      if (!item.variantId && !item.bundleId) {
-        throw new BadRequestException(
-          `Either variantId or bundleId is required for order item`,
-        );
-      }
-
-      if (item.bundleId) {
-        await this.bundles.validateBundleForOrder(item.bundleId, item.quantity);
-        item['_isBundle'] = true;
-        continue;
-      }
-
-      if (item.variantId) {
-        const locationId = await this.inventory.findBestLocationForFulfillment(
-          item.variantId,
-          item.quantity,
-        );
-
-        if (!locationId) {
-          throw new BadRequestException(
-            `Insufficient inventory for variant ${item.variantId}. Requested: ${item.quantity}`,
-          );
-        }
-
-        item['_fulfillmentLocationId'] = locationId;
-      }
-    }
+    await this.validateAndPrepareInventory(dto.items as Array<Record<string, any>>);
 
     // Step 3: Create order in transaction
     const order = await this.unitOfWork.transaction(async (tx) => {
       // Calculate order totals
-      let subtotal = 0;
-      const variants = new Map();
-
-      for (const item of dto.items) {
-        if (!item.variantId) continue;
-
-        const variant = await tx.variant.findUnique({
-          where: { id: item.variantId },
-          include: { product: true },
-        });
-
-        if (!variant) {
-          throw new NotFoundException(`Variant ${item.variantId} not found`);
-        }
-
-        variants.set(item.variantId, variant);
-        subtotal += variant.price * item.quantity;
-      }
-
-      // Calculate shipping cost (simplified for now)
-      const shippingCost = 0; // TODO: Calculate based on shipping method
+      const { subtotal, variants, shippingCost } =
+        await this.calculateOrderTotals(tx, dto.items, dto.shippingMethodId);
 
       // Generate unique order reference
       const timestamp = Date.now();
@@ -765,38 +768,12 @@ export class OrderManagementProvider {
     });
 
     // Step 4: Reserve inventory
-    try {
-      for (const item of dto.items) {
-        if (item['_isBundle'] && item.bundleId) {
-          await this.bundles.reserveBundleInventory(
-            item.bundleId,
-            item.quantity,
-            order.id,
-          );
-          continue;
-        }
+    await this.reserveInventoryForOrder(order, dto);
 
-        if (item.variantId && item['_fulfillmentLocationId']) {
-          await this.inventory.reserveStock({
-            variantId: item.variantId,
-            locationId: item['_fulfillmentLocationId'],
-            quantity: item.quantity,
-            orderId: order.id,
-          });
-        }
-      }
-    } catch (error) {
-      await this.orderRepository.updateStatus(
-        order.id,
-        OrderStatus.cancelled,
-        'Inventory reservation failed',
-      );
-      throw new BadRequestException(
-        `Failed to reserve inventory: ${error.message}`,
-      );
-    }
+    // Step 5: Create COD payment after successful reservation
+    await this.createCodPaymentForOrder(order.id, paymentGateway, dto);
 
-    // Step 5: Return order with full relations
+    // Step 6: Return order with full relations
     return this.getOrderWithRelations(order.id);
   }
 

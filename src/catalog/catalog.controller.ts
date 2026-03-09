@@ -199,6 +199,13 @@ export class CatalogController {
     return this.catalog.getCategoryById(id);
   }
 
+  @Get('categories/:id/filters')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.OK)
+  getCategoryFilters(@Param('id', ParseIntPipe) categoryId: number) {
+    return this.catalog.getCategoryFilters(categoryId);
+  }
+
   @Get('categories/:id/products')
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(600000)
@@ -428,6 +435,31 @@ export class CatalogController {
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
     return this.catalog.updateCategory(id, updateCategoryDto);
+  }
+
+  @Post('categories/:id/icon/upload')
+  @Permissions('categories:update')
+  @UseInterceptors(FileInterceptor('file'))
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth('JWT-auth')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  uploadCategoryIcon(
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile(FileValidationPipe) file: Express.Multer.File,
+  ) {
+    return this.catalog.uploadCategoryIcon(id, file);
   }
 
   @Delete('categories/:id')

@@ -434,6 +434,7 @@ model Category {
   id          Int      @id @default(autoincrement())
   name        String   @db.VarChar(100)
   description String?
+  iconUrl     String?  @map("icon_url") @db.VarChar(255)
   slug        String   @unique @db.VarChar(150)
   parentId    Int?     @map("parent_id")
   createdAt   DateTime @default(now()) @map("created_at")
@@ -1200,12 +1201,15 @@ model HomepageSection {
   id Int @id @default(autoincrement())
 
   // STATIC SECTIONS ONLY (Full content stored in JSON)
-  header         Json? @map("header") @db.JsonB // Logo, navigation menu, top bar
-  heroBanner     Json? @map("hero_banner") @db.JsonB // Carousel with slides, images, buttons
-  featuresBar    Json? @map("features_bar") @db.JsonB // 4 features (365 days return, free shipping, etc)
-  ourStory       Json? @map("our_story") @db.JsonB // About section with text and images
-  storeLocations Json? @map("store_locations") @db.JsonB // Wine Shop & Liquor Shop maps
-  footer         Json? @map("footer") @db.JsonB // Footer links, social media, copyright
+  header                  Json? @map("header") @db.JsonB // Logo, navigation menu, top bar
+  heroBanner              Json? @map("hero_banner") @db.JsonB // Carousel with slides, images, buttons
+  mediaCarouselPrimary    Json? @map("media_carousel_primary") @db.JsonB // Primary homepage media carousel cards/videos
+  mediaCarouselSecondary  Json? @map("media_carousel_secondary") @db.JsonB // Secondary homepage media carousel cards/videos
+  mediaCarouselTertiary   Json? @map("media_carousel_tertiary") @db.JsonB // Tertiary homepage media carousel cards/videos
+  featuresBar             Json? @map("features_bar") @db.JsonB // 4 features (365 days return, free shipping, etc)
+  ourStory                Json? @map("our_story") @db.JsonB // About section with text and images
+  storeLocations          Json? @map("store_locations") @db.JsonB // Wine Shop & Liquor Shop maps
+  footer                  Json? @map("footer") @db.JsonB // Footer links, social media, copyright
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

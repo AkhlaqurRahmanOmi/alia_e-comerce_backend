@@ -7,13 +7,43 @@ import {
 import { Category } from '@/generated/prisma/client';
 import { CategoryRepository } from '../repositories/category.repository';
 import { CreateCategoryDto, UpdateCategoryDto } from '../dtos';
-import { PrismaService } from '../../core/config/prisma/prisma.service';
+
+type CategoryNode = {
+  id: number;
+  name: string;
+  slug: string;
+  iconUrl: string | null;
+  parentId: number | null;
+};
+
+type CategoryFilterResponse = {
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+    iconUrl: string | null;
+  };
+  priceRange: {
+    min: number | null;
+    max: number | null;
+  };
+  subcategories: Array<{
+    id: number;
+    name: string;
+    slug: string;
+    iconUrl: string | null;
+    productCount: number;
+  }>;
+  sizes: Array<{
+    value: string;
+    productCount: number;
+  }>;
+};
 
 @Injectable()
 export class CategoryManagementProvider {
   constructor(
     private readonly categoryRepository: CategoryRepository,
-    private readonly prisma: PrismaService,
   ) {}
 
   /**
@@ -195,6 +225,93 @@ export class CategoryManagementProvider {
     return this.categoryRepository.findCategoryTree()
   }
 
+  async getCategoryFilters(categoryId: number): Promise<CategoryFilterResponse> {
+    const categoryNodes = await this.categoryRepository.findAllCategoryNodes();
+
+    const category = categoryNodes.find((node) => node.id === categoryId);
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${categoryId} not found`);
+    }
+
+    const descendantsMap = this.buildDescendantsMap(categoryNodes);
+    const categoryScopeIds = descendantsMap.get(categoryId) ?? [categoryId];
+    const productAssignments =
+      await this.categoryRepository.findActiveProductAssignmentsByCategoryIds(
+        categoryScopeIds,
+      );
+    const scopedAssignments = productAssignments.filter((assignment) =>
+      categoryScopeIds.includes(assignment.categoryId),
+    );
+
+    const productIds = Array.from(
+      new Set(scopedAssignments.map((assignment) => assignment.productId)),
+    );
+    const variants =
+      await this.categoryRepository.findActiveVariantFilterData(productIds);
+
+    const subcategories = (categoryNodes.filter(
+      (node) => node.parentId === categoryId,
+    ) as CategoryNode[]).map((child) => {
+      const childScopeIds = descendantsMap.get(child.id) ?? [child.id];
+      const childProductIds = new Set(
+        scopedAssignments
+          .filter((assignment) => childScopeIds.includes(assignment.categoryId))
+          .map((assignment) => assignment.productId),
+      );
+
+      return {
+        id: child.id,
+        name: child.name,
+        slug: child.slug,
+        iconUrl: child.iconUrl,
+        productCount: childProductIds.size,
+      };
+    });
+
+    const prices = variants.map((variant) => variant.price);
+    const sizeProductMap = new Map<string, Set<number>>();
+
+    for (const variant of variants) {
+      for (const optionRow of variant.variantOptionValues) {
+        const optionName = optionRow.productOption.name.trim().toLowerCase();
+        if (optionName !== 'size' && optionName !== 'sizes') {
+          continue;
+        }
+
+        const value = optionRow.optionValue.value.trim();
+        if (!value) {
+          continue;
+        }
+
+        const existing = sizeProductMap.get(value) ?? new Set<number>();
+        existing.add(variant.productId);
+        sizeProductMap.set(value, existing);
+      }
+    }
+
+    const sizes = Array.from(sizeProductMap.entries())
+      .map(([value, matchingProducts]) => ({
+        value,
+        productCount: matchingProducts.size,
+      }))
+      .sort((a, b) => a.value.localeCompare(b.value));
+
+    return {
+      category: {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        iconUrl: category.iconUrl,
+      },
+      priceRange: {
+        min: prices.length > 0 ? Math.min(...prices) : null,
+        max: prices.length > 0 ? Math.max(...prices) : null,
+      },
+      subcategories,
+      sizes,
+    };
+  }
+
   /**
    * Get category path (breadcrumb)
    */
@@ -252,6 +369,40 @@ export class CategoryManagementProvider {
       _count: undefined,
       children: category.children?.map((c: any) => this.transformWithProductCount(c)),
     };
+  }
+
+  private buildDescendantsMap(categories: CategoryNode[]): Map<number, number[]> {
+    const childrenByParent = new Map<number | null, CategoryNode[]>();
+
+    for (const category of categories) {
+      const siblings = childrenByParent.get(category.parentId) ?? [];
+      siblings.push(category);
+      childrenByParent.set(category.parentId, siblings);
+    }
+
+    const descendantsMap = new Map<number, number[]>();
+
+    const collect = (categoryId: number): number[] => {
+      if (descendantsMap.has(categoryId)) {
+        return descendantsMap.get(categoryId)!;
+      }
+
+      const descendants = [categoryId];
+      const children = childrenByParent.get(categoryId) ?? [];
+
+      for (const child of children) {
+        descendants.push(...collect(child.id));
+      }
+
+      descendantsMap.set(categoryId, descendants);
+      return descendants;
+    };
+
+    for (const category of categories) {
+      collect(category.id);
+    }
+
+    return descendantsMap;
   }
 
 }

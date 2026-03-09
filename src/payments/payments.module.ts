@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PaymentsController } from './payments.controller';
+import { PaymentsAdminController } from './payments-admin.controller';
 import { PaymentsService } from './payments.service';
 import { PaymentRepository } from './repositories/payment.repository';
 // import { PesapalProvider } from './providers/pesapal.provider';
@@ -15,7 +16,7 @@ import { PaymentRepository } from './repositories/payment.repository';
  */
 @Module({
   imports: [ConfigModule],
-  controllers: [PaymentsController],
+  controllers: [PaymentsController, PaymentsAdminController],
   providers: [
     PaymentsService,
     PaymentRepository,

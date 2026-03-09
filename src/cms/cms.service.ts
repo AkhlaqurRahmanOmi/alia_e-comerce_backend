@@ -39,4 +39,8 @@ export class CmsService {
   async updateSection(sectionName: string, content: any): Promise<any> {
     return this.homepageManagement.updateSection(sectionName, content);
   }
+
+  async uploadMediaAsset(file: Express.Multer.File) {
+    return this.homepageManagement.uploadMediaAsset(file);
+  }
 }

@@ -3,17 +3,16 @@ import {
   Logger,
   NotFoundException,
   BadRequestException,
-  Optional,
 } from '@nestjs/common';
-import { OrderStatus, PaymentStatus } from '@/generated/prisma/client';
+import { Payment, PaymentStatus } from '@/generated/prisma/client';
 import { PrismaService } from '../core/config/prisma/prisma.service';
-// import { PaymentGatewayFactory } from './providers/payment-gateway.factory';
 import { PaymentRepository } from './repositories/payment.repository';
 import {
   InitiatePaymentDto,
   PaymentGateway,
 } from './dtos/initiate-payment.dto';
 import { VerifyPaymentDto } from './dtos/verify-payment.dto';
+import { UpdateCodPaymentStatusDto } from './dtos/update-cod-payment-status.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -34,49 +33,13 @@ export class PaymentsService {
         `Initiating payment for order ${dto.orderId} via ${dto.gateway}`,
       );
 
-      // Verify order exists and is not already paid
-      const order = await this.prisma.order.findUnique({
-        where: { id: dto.orderId },
-        include: { payments: true },
-      });
-
-      if (!order) {
-        throw new NotFoundException(`Order ${dto.orderId} not found`);
-      }
-
-      // Check if order already has a successful payment
-      const successfulPayment =
-        await this.paymentRepository.findSuccessfulPaymentByOrderId(
-          dto.orderId,
-        );
-
-      if (successfulPayment) {
-        throw new BadRequestException('Order already has a successful payment');
-      }
-
       // Handle Cash-On-Delivery payment
       if (dto.gateway === PaymentGateway.CASH_ON_DELIVERY) {
-        // Generate a simple transaction ID for COD
-        const transactionId = `COD-${Date.now()}-${dto.orderId}`;
-
-        // Create payment record in database with pending status
-        const payment = await this.paymentRepository.createPayment({
-          orderId: dto.orderId,
-          amount: dto.amount,
-          gateway: dto.gateway,
-          provider: 'Cash On Delivery',
-          transactionId: transactionId,
-          status: PaymentStatus.pending, // Will be marked as captured when cash is received
-        });
-
-        // Log the initiation
-        await this.paymentRepository.createTransactionLog({
-          paymentId: payment.id,
-          eventType: 'payment_initiated',
-          amount: dto.amount,
-          status: 'pending',
-          payload: { method: 'cash_on_delivery', ...dto.metadata },
-        });
+        const payment = await this.createOrReuseCodPayment(
+          dto.orderId,
+          dto.amount,
+          dto.metadata,
+        );
 
         return {
           success: true,
@@ -238,35 +201,98 @@ export class PaymentsService {
     };
   }
 
-  /**
-   * Update order status
-   */
-  private async updateOrderStatus(orderId: number, status: OrderStatus) {
-    try {
-      await this.prisma.order.update({
-        where: { id: orderId },
-        data: {
-          currentStatus: status,
-          updatedAt: new Date(),
-        },
-      });
+  async createOrReuseCodPayment(
+    orderId: number,
+    _requestedAmount?: number,
+    _metadata?: Record<string, any>,
+  ): Promise<Payment> {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
 
-      // Create order status history
-      await this.prisma.orderStatusHistory.create({
-        data: {
-          orderId,
-          status: status.toString(),
-          note: `Order status updated after payment`,
-        },
-      });
-
-      this.logger.log(`Order ${orderId} status updated to ${status}`);
-    } catch (error) {
-      this.logger.error(
-        `Failed to update order status: ${error.message}`,
-        error.stack,
-      );
-      // Don't throw - payment was successful, order update is secondary
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
     }
+
+    const existingPayment =
+      await this.paymentRepository.findCodPaymentByOrderId(orderId);
+
+    if (existingPayment) {
+      if (
+        existingPayment.status === PaymentStatus.pending ||
+        existingPayment.status === PaymentStatus.captured
+      ) {
+        return existingPayment;
+      }
+
+      if (existingPayment.status === PaymentStatus.voided) {
+        throw new BadRequestException(
+          'A voided COD payment already exists for this order',
+        );
+      }
+    }
+
+    return this.paymentRepository.createPayment({
+      orderId,
+      amount: order.totalAmount,
+      gateway: PaymentGateway.CASH_ON_DELIVERY,
+      provider: 'Cash On Delivery',
+      transactionId: `COD-${orderId}-${Date.now()}`,
+      status: PaymentStatus.pending,
+    });
+  }
+
+  async settleCodPayment(
+    transactionId: string,
+    dto: UpdateCodPaymentStatusDto,
+  ) {
+    const payment = await this.paymentRepository.findByTransactionId(
+      transactionId,
+    );
+
+    if (!payment) {
+      throw new NotFoundException(
+        `Payment with transaction ID ${transactionId} not found`,
+      );
+    }
+
+    if (payment.gateway !== PaymentGateway.CASH_ON_DELIVERY) {
+      throw new BadRequestException(
+        'Only Cash-On-Delivery payments can be settled here',
+      );
+    }
+
+    if (payment.status !== PaymentStatus.pending) {
+      throw new BadRequestException(
+        `Only pending COD payments can be updated. Current status: ${payment.status}`,
+      );
+    }
+
+    if (
+      dto.status !== PaymentStatus.captured &&
+      dto.status !== PaymentStatus.voided
+    ) {
+      throw new BadRequestException('Invalid COD settlement status');
+    }
+
+    const settledPayment = await this.paymentRepository.settleCodPayment(
+      transactionId,
+      dto.status,
+      dto.note,
+    );
+
+    return {
+      id: settledPayment.id,
+      orderId: settledPayment.orderId,
+      transactionId: settledPayment.transactionId,
+      amount: settledPayment.amount,
+      status:
+        settledPayment.status === PaymentStatus.captured
+          ? 'completed'
+          : settledPayment.status,
+      gateway: settledPayment.gateway,
+      provider: settledPayment.provider,
+      updatedAt: settledPayment.updatedAt,
+    };
   }
 }

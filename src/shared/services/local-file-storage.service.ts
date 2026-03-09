@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs/promises';
+import { existsSync } from 'fs';
 
 export interface UploadResult {
   fileUrl: string;
@@ -31,10 +32,10 @@ export class LocalFileStorageService {
       'http://localhost:4000';
     this.allowedFolders = this.configService.get<string[]>(
       'storage.local.allowedFolders',
-    ) || ['reviews', 'products', 'variants', 'test'];
+    ) || ['reviews', 'products', 'variants', 'categories', 'cms-media', 'test'];
 
     // Ensure base upload directory exists on service initialization
-    this.ensureUploadDirectoryExists();
+    void this.ensureUploadDirectoryExists();
   }
 
   private async ensureUploadDirectoryExists(): Promise<void> {
@@ -73,20 +74,26 @@ export class LocalFileStorageService {
     file: Express.Multer.File,
     folder: string = 'uploads',
   ): Promise<UploadResult> {
+    let filePath: string | null = null;
+
     try {
       this.validateFolder(folder);
 
       // Generate unique filename
       const fileExtension = path.extname(file.originalname);
       const fileName = `${folder}/${uuidv4()}${fileExtension}`;
-      const filePath = this.getFullPath(fileName);
+      filePath = this.getFullPath(fileName);
 
       // Ensure folder exists
       const folderPath = path.join(this.uploadPath, folder);
       await fs.mkdir(folderPath, { recursive: true });
 
-      // Write file to disk
-      await fs.writeFile(filePath, file.buffer);
+      // Move temp file into place when Multer uses disk storage.
+      if (file.path) {
+        await fs.rename(file.path, filePath);
+      } else {
+        await fs.writeFile(filePath, file.buffer);
+      }
 
       // Generate file URL
       const fileUrl = this.generateFileUrl(fileName);
@@ -100,6 +107,8 @@ export class LocalFileStorageService {
         mimeType: file.mimetype,
       };
     } catch (error) {
+      await this.cleanupTempFile(file);
+      await this.cleanupFailedUpload(filePath);
       this.logger.error(`Failed to upload file: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         'Failed to upload file to local storage',
@@ -181,6 +190,34 @@ export class LocalFileStorageService {
     } catch (error) {
       this.logger.error(`Failed to parse file URL: ${fileUrl}`, error.stack);
       throw new BadRequestException('Invalid file URL');
+    }
+  }
+
+  private async cleanupTempFile(file: Express.Multer.File): Promise<void> {
+    if (!file.path) {
+      return;
+    }
+
+    try {
+      await fs.unlink(file.path);
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        this.logger.warn(`Failed to delete temp file ${file.path}`);
+      }
+    }
+  }
+
+  private async cleanupFailedUpload(filePath: string | null): Promise<void> {
+    if (!filePath || !existsSync(filePath)) {
+      return;
+    }
+
+    try {
+      await fs.unlink(filePath);
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        this.logger.warn(`Failed to delete incomplete upload ${filePath}`);
+      }
     }
   }
 }

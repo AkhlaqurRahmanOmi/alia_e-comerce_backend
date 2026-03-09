@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsString, IsNotEmpty, IsOptional, IsNumber, MaxLength } from 'class-validator';
 
 export class CreateCategoryDto {
@@ -8,7 +9,28 @@ export class CreateCategoryDto {
 
   @IsString()
   @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  })
   description?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(255)
+  @Transform(({ value }) => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  })
+  iconUrl?: string | null;
 
   @IsString()
   @IsNotEmpty()
