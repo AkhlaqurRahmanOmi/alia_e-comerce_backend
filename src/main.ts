@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { swaggerConfig } from './config/swagger.config';
-import { join } from 'path';
+import { isAbsolute, resolve } from 'path';
 import { OpenApiModule } from './openapi/open-api.module';
 
 async function bootstrap() {
@@ -17,13 +17,18 @@ async function bootstrap() {
   //using etag for cache validation
   app.set('etag', 'weak');
 
-  // Serve uploaded files as static assets
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
-  });
-
   // Get configuration service
   const configService = app.get(ConfigService);
+  const configuredUploadPath =
+    configService.get<string>('storage.local.uploadPath') || './uploads';
+  const staticUploadPath = isAbsolute(configuredUploadPath)
+    ? configuredUploadPath
+    : resolve(process.cwd(), configuredUploadPath);
+
+  // Serve uploaded files as static assets from the configured storage path
+  app.useStaticAssets(staticUploadPath, {
+    prefix: '/uploads/',
+  });
 
   // Get Winston logger instance
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);

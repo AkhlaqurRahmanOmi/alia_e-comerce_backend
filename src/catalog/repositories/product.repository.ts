@@ -558,6 +558,23 @@ export class ProductRepository extends BaseRepository<Product, number> {
       ...filters,
     };
 
+    const segmentKey =
+      typeof filters.segmentKey === 'string' ? filters.segmentKey.trim() : '';
+    if (filters.segmentKey !== undefined) {
+      delete where.segmentKey;
+    }
+
+    if (segmentKey) {
+      where.productSegments = {
+        some: {
+          segment: {
+            key: segmentKey,
+            isActive: true,
+          },
+        },
+      };
+    }
+
     // Add search functionality
     if (search?.query) {
       where.OR = search.fields.map((field) => ({

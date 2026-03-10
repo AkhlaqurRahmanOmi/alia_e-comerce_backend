@@ -15,6 +15,10 @@ export class ProductFilterDto extends BasePaginationDto {
   search?: string;
 
   @IsOptional()
+  @IsString()
+  segmentKey?: string;
+
+  @IsOptional()
   @IsNumber()
   @Type(() => Number)
   categoryId?: number;

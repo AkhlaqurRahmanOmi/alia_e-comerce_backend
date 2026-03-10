@@ -16,6 +16,19 @@ export class ProductManagementProvider {
     private readonly prisma: PrismaService,
   ) {}
 
+  private normalizeSegmentKey(value?: string): string | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const normalized = value
+      .trim()
+      .toLowerCase()
+      .replace(/[\s_]+/g, '-');
+
+    return normalized || undefined;
+  }
+
   /**
    * Create a new product
    */
@@ -230,6 +243,8 @@ export class ProductManagementProvider {
       throw new ConflictException('minPrice cannot be greater than maxPrice');
     }
 
+    const segmentKey = this.normalizeSegmentKey(filterDto.segmentKey);
+
     const categoryIds = filterDto.categoryId
       ? await this.getDescendantCategoryIds(filterDto.categoryId)
       : [];
@@ -245,6 +260,7 @@ export class ProductManagementProvider {
         maxPrice: filterDto.maxPrice,
         minRating: filterDto.minRating, // ✅ FIXED: was using maxRating
         countryId: filterDto.countryId,
+        segmentKey,
         ...categoryFilter,
       },
       pagination: {
