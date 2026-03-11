@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   ProductManagementProvider,
   VariantManagementProvider,
@@ -276,14 +276,98 @@ export class CatalogService {
 
   // ---------- Orchestrated flows ----------
 
+  private normalizeOptionLookupKey(value: string): string {
+    return value.trim().toLowerCase();
+  }
+
+  private async validateCategoryIdsInTransaction(
+    tx: Prisma.TransactionClient,
+    categoryIds?: number[],
+  ): Promise<number[] | undefined> {
+    if (categoryIds === undefined) {
+      return undefined;
+    }
+
+    const uniqueCategoryIds = [...new Set(categoryIds)];
+    if (uniqueCategoryIds.length === 0) {
+      return [];
+    }
+
+    const existingCategories = await tx.category.findMany({
+      where: { id: { in: uniqueCategoryIds } },
+      select: { id: true },
+    });
+
+    const existingIds = new Set(existingCategories.map((category) => category.id));
+    const missingCategoryIds = uniqueCategoryIds.filter(
+      (categoryId) => !existingIds.has(categoryId),
+    );
+
+    if (missingCategoryIds.length > 0) {
+      throw new NotFoundException(
+        `Category(s) not found: ${missingCategoryIds.join(', ')}`,
+      );
+    }
+
+    return uniqueCategoryIds;
+  }
+
+  private resolveVariantOptionLinks(
+    variant: {
+      sku: string;
+      optionSelections?: Array<{ optionName: string; optionValue: string }>;
+    },
+    optionLookup: Map<
+      string,
+      { id: number; valuesByKey: Map<string, { id: number; value: string }> }
+    >,
+  ): Array<{ optionId: number; optionValueId: number }> {
+    if (!variant.optionSelections || variant.optionSelections.length === 0) {
+      return [];
+    }
+
+    const resolvedLinks = new Map<string, { optionId: number; optionValueId: number }>();
+
+    for (const selection of variant.optionSelections) {
+      const optionKey = this.normalizeOptionLookupKey(selection.optionName);
+      const optionRecord = optionLookup.get(optionKey);
+
+      if (!optionRecord) {
+        throw new BadRequestException(
+          `Variant '${variant.sku}' references unknown option '${selection.optionName}'.`,
+        );
+      }
+
+      const valueKey = this.normalizeOptionLookupKey(selection.optionValue);
+      const valueRecord = optionRecord.valuesByKey.get(valueKey);
+
+      if (!valueRecord) {
+        throw new BadRequestException(
+          `Variant '${variant.sku}' references unknown value '${selection.optionValue}' for option '${selection.optionName}'.`,
+        );
+      }
+
+      resolvedLinks.set(`${optionRecord.id}:${valueRecord.id}`, {
+        optionId: optionRecord.id,
+        optionValueId: valueRecord.id,
+      });
+    }
+
+    return Array.from(resolvedLinks.values());
+  }
+
   /**
-   * Create a product with options, variants, and images atomically.
+   * Create a product with options, variants, images, and categories atomically.
    * Uses Unit of Work pattern to ensure all operations succeed or rollback.
    */
   async createCompleteProduct(data: CreateCompleteProductDto) {
     const productId = await this.unitOfWork.transaction(async (tx) => {
       const { segmentIds, attributes, ...productData } = data.product;
       const normalizedSegmentIds = [...new Set(segmentIds ?? [])];
+      const normalizedCategoryIds = await this.validateCategoryIdsInTransaction(
+        tx,
+        data.categoryIds,
+      );
 
       if (normalizedSegmentIds.length > 0) {
         const existingSegments = await tx.segment.findMany({
@@ -303,7 +387,6 @@ export class CatalogService {
         }
       }
 
-      // Create product
       const product = await tx.product.create({
         data: {
           ...productData,
@@ -311,8 +394,19 @@ export class CatalogService {
         },
       });
 
-      // Type the operations array explicitly
-      const operations: Promise<any>[] = [];
+      const operations: Promise<unknown>[] = [];
+
+      if (normalizedCategoryIds && normalizedCategoryIds.length > 0) {
+        operations.push(
+          tx.productCategory.createMany({
+            data: normalizedCategoryIds.map((categoryId) => ({
+              productId: product.id,
+              categoryId,
+            })),
+            skipDuplicates: true,
+          }),
+        );
+      }
 
       if (normalizedSegmentIds.length > 0) {
         operations.push(
@@ -339,6 +433,11 @@ export class CatalogService {
         );
       }
 
+      const createdOptionsByKey = new Map<
+        string,
+        { id: number; valuesByKey: Map<string, { id: number; value: string }> }
+      >();
+
       if (data.options?.length) {
         for (const option of data.options) {
           const createdOption = await tx.productOption.create({
@@ -350,16 +449,31 @@ export class CatalogService {
             },
           });
 
+          const valuesByKey = new Map<string, { id: number; value: string }>();
+
           if (option.values?.length) {
-            await tx.optionValue.createMany({
-              data: option.values.map((value) => ({
-                optionId: createdOption.id,
-                value: value.value,
-                position: value.position ?? 1,
-                meta: value.meta as Prisma.InputJsonValue | undefined,
-              })),
-            });
+            for (let index = 0; index < option.values.length; index += 1) {
+              const value = option.values[index];
+              const createdValue = await tx.optionValue.create({
+                data: {
+                  optionId: createdOption.id,
+                  value: value.value,
+                  position: value.position ?? index + 1,
+                  meta: value.meta as Prisma.InputJsonValue | undefined,
+                },
+              });
+
+              valuesByKey.set(this.normalizeOptionLookupKey(value.value), {
+                id: createdValue.id,
+                value: createdValue.value,
+              });
+            }
           }
+
+          createdOptionsByKey.set(this.normalizeOptionLookupKey(option.name), {
+            id: createdOption.id,
+            valuesByKey,
+          });
         }
       }
 
@@ -372,12 +486,11 @@ export class CatalogService {
               altText: image.altText,
               position: image.position ?? index,
               isMain: image.isMain ?? index === 0,
-            }))
-          })
+            })),
+          }),
         );
       }
 
-      // Execute all operations in parallel
       if (operations.length > 0) {
         await Promise.all(operations);
       }
@@ -401,6 +514,22 @@ export class CatalogService {
               isActive: variant.isActive ?? true,
             },
           });
+
+          const resolvedOptionLinks = this.resolveVariantOptionLinks(
+            variant,
+            createdOptionsByKey,
+          );
+
+          if (resolvedOptionLinks.length > 0) {
+            await tx.variantOptionValue.createMany({
+              data: resolvedOptionLinks.map((optionLink) => ({
+                variantId: createdVariant.id,
+                optionId: optionLink.optionId,
+                optionValueId: optionLink.optionValueId,
+              })),
+              skipDuplicates: true,
+            });
+          }
 
           const targetLocationId = variant.locationId ?? defaultLocation?.id;
           if (!targetLocationId) {
@@ -436,10 +565,6 @@ export class CatalogService {
 
     return this.getProductById(productId);
   }
-
-
-
-
   /**
    * Duplicate a product with its options (and values), variants, and images.
    * Assumes variants do not need remapping to new optionValueIds; add mapping if needed.
@@ -549,3 +674,4 @@ export class CatalogService {
     return this.wishlistManagement.clearMyWishlist(userId);
   }
 }
+

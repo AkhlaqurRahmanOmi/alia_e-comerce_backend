@@ -99,6 +99,12 @@ export class ProductRepository extends BaseRepository<Product, number> {
         variants: {
           include: {
             variantInventories: true,
+            variantOptionValues: {
+              include: {
+                productOption: true,
+                optionValue: true,
+              },
+            },
           },
         },
         productCategories: {
@@ -200,7 +206,17 @@ export class ProductRepository extends BaseRepository<Product, number> {
           },
         },
         productImages: true,
-        variants: true,
+        variants: {
+          include: {
+            variantInventories: true,
+            variantOptionValues: {
+              include: {
+                productOption: true,
+                optionValue: true,
+              },
+            },
+          },
+        },
         productCategories: {
           include: {
             category: true,
@@ -315,22 +331,92 @@ export class ProductRepository extends BaseRepository<Product, number> {
           orderBy: { id: 'asc' },
           select: { id: true },
         });
-
-        // Get existing variants for this product
         const existingVariants = await tx.variant.findMany({
           where: { productId: id },
           include: {
             variantOptionValues: true,
           },
         });
+        const currentOptions = await tx.productOption.findMany({
+          where: { productId: id },
+          include: {
+            optionValues: true,
+          },
+        });
 
-        // Process each variant from the payload
+        const optionLookup = new Map(
+          currentOptions.map((option) => [
+            option.name.trim().toLowerCase(),
+            {
+              id: option.id,
+              valuesByKey: new Map(
+                option.optionValues.map((value) => [
+                  value.value.trim().toLowerCase(),
+                  { id: value.id, value: value.value },
+                ]),
+              ),
+            },
+          ]),
+        );
+
+        const resolveVariantOptionLinks = (variantData: any) => {
+          if (Array.isArray(variantData.optionValues) && variantData.optionValues.length > 0) {
+            const uniqueLinks = new Map<string, { optionId: number; optionValueId: number }>();
+            for (const optionValue of variantData.optionValues) {
+              if (!optionValue?.optionId || !optionValue?.optionValueId) {
+                continue;
+              }
+
+              uniqueLinks.set(`${optionValue.optionId}:${optionValue.optionValueId}`, {
+                optionId: optionValue.optionId,
+                optionValueId: optionValue.optionValueId,
+              });
+            }
+
+            return Array.from(uniqueLinks.values());
+          }
+
+          if (!Array.isArray(variantData.optionSelections) || variantData.optionSelections.length === 0) {
+            return [];
+          }
+
+          const uniqueLinks = new Map<string, { optionId: number; optionValueId: number }>();
+
+          for (const selection of variantData.optionSelections) {
+            const optionKey = selection.optionName?.trim().toLowerCase();
+            const valueKey = selection.optionValue?.trim().toLowerCase();
+            const optionRecord = optionKey ? optionLookup.get(optionKey) : undefined;
+
+            if (!optionRecord) {
+              throw new BadRequestException(
+                `Variant '${variantData.sku}' references unknown option '${selection.optionName}'.`,
+              );
+            }
+
+            const valueRecord = valueKey
+              ? optionRecord.valuesByKey.get(valueKey)
+              : undefined;
+
+            if (!valueRecord) {
+              throw new BadRequestException(
+                `Variant '${variantData.sku}' references unknown value '${selection.optionValue}' for option '${selection.optionName}'.`,
+              );
+            }
+
+            uniqueLinks.set(`${optionRecord.id}:${valueRecord.id}`, {
+              optionId: optionRecord.id,
+              optionValueId: valueRecord.id,
+            });
+          }
+
+          return Array.from(uniqueLinks.values());
+        };
+
         for (const variantData of data.variants) {
-          // Check if variant exists by SKU
           const existingVariant = existingVariants.find(v => v.sku === variantData.sku);
+          const resolvedOptionLinks = resolveVariantOptionLinks(variantData);
 
           if (existingVariant) {
-            // UPDATE existing variant
             await tx.variant.update({
               where: { id: existingVariant.id },
               data: {
@@ -344,22 +430,20 @@ export class ProductRepository extends BaseRepository<Product, number> {
               },
             });
 
-            // Update variant option values (delete old, create new)
             await tx.variantOptionValue.deleteMany({
               where: { variantId: existingVariant.id },
             });
 
-            if (variantData.optionValues && variantData.optionValues.length > 0) {
+            if (resolvedOptionLinks.length > 0) {
               await tx.variantOptionValue.createMany({
-                data: variantData.optionValues.map((ov: any) => ({
+                data: resolvedOptionLinks.map((optionLink) => ({
                   variantId: existingVariant.id,
-                  optionId: ov.optionId,
-                  optionValueId: ov.optionValueId,
+                  optionId: optionLink.optionId,
+                  optionValueId: optionLink.optionValueId,
                 })),
               });
             }
           } else {
-            // CREATE new variant
             const newVariant = await tx.variant.create({
               data: {
                 productId: id,
@@ -373,13 +457,12 @@ export class ProductRepository extends BaseRepository<Product, number> {
               },
             });
 
-            // Create variant option values
-            if (variantData.optionValues && variantData.optionValues.length > 0) {
+            if (resolvedOptionLinks.length > 0) {
               await tx.variantOptionValue.createMany({
-                data: variantData.optionValues.map((ov: any) => ({
+                data: resolvedOptionLinks.map((optionLink) => ({
                   variantId: newVariant.id,
-                  optionId: ov.optionId,
-                  optionValueId: ov.optionValueId,
+                  optionId: optionLink.optionId,
+                  optionValueId: optionLink.optionValueId,
                 })),
               });
             }
@@ -413,7 +496,6 @@ export class ProductRepository extends BaseRepository<Product, number> {
           }
         }
       }
-
       // Replace images if provided
       if (data.images !== undefined) {
         await tx.productImage.deleteMany({ where: { productId: id } });
@@ -880,7 +962,17 @@ export class ProductRepository extends BaseRepository<Product, number> {
           },
         },
         productImages: true,
-        variants: true,
+        variants: {
+          include: {
+            variantInventories: true,
+            variantOptionValues: {
+              include: {
+                productOption: true,
+                optionValue: true,
+              },
+            },
+          },
+        },
         productCategories: {
           include: {
             category: true,
@@ -1105,3 +1197,4 @@ export class ProductRepository extends BaseRepository<Product, number> {
   }
 
 }
+

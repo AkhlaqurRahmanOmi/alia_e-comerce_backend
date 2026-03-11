@@ -1,16 +1,21 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { CreateProductDto } from './create-product.dto';
 import { Type } from 'class-transformer';
-import { IsArray, IsInt, IsOptional, IsString, MaxLength, Min, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { CreateProductDto } from './create-product.dto';
 import { CreateVariantDto } from './create-variant.dto';
 import { CreateProductOptionDto } from './create-product-option.dto';
 import { CreateProductImageDto } from './create-product-image.dto';
 import { CreateOptionValueDto } from './create-option-value.dto';
 
-// Nested DTO for option values (without optionId since it will be set by parent)
-class UpdateOptionValueDto extends OmitType(CreateOptionValueDto, ['optionId']) {}
+class UpdateOptionValueDto extends OmitType(CreateOptionValueDto, ['optionId'] as const) {}
 
-// Nested DTO for variant option values
 class UpdateVariantOptionValueDto {
   @IsInt()
   optionId: number;
@@ -19,8 +24,17 @@ class UpdateVariantOptionValueDto {
   optionValueId: number;
 }
 
-// Extended option DTO with nested values
-class UpdateProductOptionDto extends OmitType(CreateProductOptionDto, ['productId']) {
+class UpdateVariantOptionSelectionDto {
+  @IsString()
+  @IsNotEmpty()
+  optionName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  optionValue: string;
+}
+
+class UpdateProductOptionDto extends OmitType(CreateProductOptionDto, ['productId'] as const) {
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
@@ -28,16 +42,21 @@ class UpdateProductOptionDto extends OmitType(CreateProductOptionDto, ['productI
   values?: UpdateOptionValueDto[];
 }
 
-// Extended variant DTO with option values
-class UpdateProductVariantDto extends OmitType(CreateVariantDto, ['productId']) {
+class UpdateProductVariantDto extends OmitType(CreateVariantDto, ['productId'] as const) {
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => UpdateVariantOptionValueDto)
   optionValues?: UpdateVariantOptionValueDto[];
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateVariantOptionSelectionDto)
+  optionSelections?: UpdateVariantOptionSelectionDto[];
 }
 
-class UpdateProductImageDto extends OmitType(CreateProductImageDto, ['productId']) {}
+class UpdateProductImageDto extends OmitType(CreateProductImageDto, ['productId'] as const) {}
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
   @IsArray()
@@ -62,5 +81,4 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
   @IsOptional()
   @IsInt({ each: true })
   categoryIds?: number[];
-
 }
