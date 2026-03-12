@@ -19,13 +19,18 @@ export class EmailProvider {
 
   constructor(private readonly configService: ConfigService) {
     const smtpHost = this.configService.get<string>('SMTP_HOST');
-    const smtpPort = this.configService.get<number>('SMTP_PORT', 587);
+    const smtpPortValue = this.configService.get<string | number>('SMTP_PORT');
     const smtpUser = this.configService.get<string>('SMTP_USER');
     const smtpPass = this.configService.get<string>('SMTP_PASSWORD');
     this.fromEmail = this.configService.get<string>(
       'SMTP_FROM_EMAIL',
       'noreply@example.com',
     );
+    const smtpPort =
+      typeof smtpPortValue === 'number'
+        ? smtpPortValue
+        : Number.parseInt(smtpPortValue ?? '587', 10);
+    const normalizedSmtpPort = Number.isNaN(smtpPort) ? 587 : smtpPort;
 
     if (!smtpHost || !smtpUser || !smtpPass) {
       this.logger.warn(
@@ -40,8 +45,8 @@ export class EmailProvider {
     } else {
       this.transporter = nodemailer.createTransport({
         host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465, // true for 465, false for other ports
+        port: normalizedSmtpPort,
+        secure: normalizedSmtpPort === 465, // true for 465, false for other ports
         auth: {
           user: smtpUser,
           pass: smtpPass,
@@ -49,13 +54,20 @@ export class EmailProvider {
       });
 
       // Verify transporter configuration
-      this.transporter.verify((error) => {
-        if (error) {
-          this.logger.error('SMTP connection failed:', error);
-        } else {
+      void this.transporter
+        .verify()
+        .then(() => {
           this.logger.log('SMTP connection successful');
-        }
-      });
+        })
+        .catch((error: Error & { code?: string; command?: string }) => {
+          this.logger.error(
+            `SMTP connection failed${error.code ? ` (${error.code})` : ''}: ${error.message}`,
+          );
+
+          if (error.command) {
+            this.logger.error(`SMTP command: ${error.command}`);
+          }
+        });
     }
   }
 

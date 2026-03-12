@@ -11,6 +11,7 @@ export default Joi.object({
     .default('development'),
   PORT: Joi.number().default(4000),
   API_VERSION: Joi.string().default('1.0.0'),
+  FRONTEND_URL: Joi.string().uri().optional(),
 
   // Database Configuration
   DATABASE_URL: Joi.string().uri().required(),
@@ -25,6 +26,18 @@ export default Joi.object({
   // Google OAuth Configuration
   GOOGLE_CLIENT_ID: Joi.string().required(),
   GOOGLE_CLIENT_SECRET: Joi.string().required(),
+
+  // Email Configuration
+  SMTP_HOST: Joi.string().optional(),
+  SMTP_PORT: Joi.number().optional(),
+  SMTP_USER: Joi.string().optional(),
+  SMTP_PASSWORD: Joi.string().optional(),
+  SMTP_FROM_EMAIL: Joi.string().email().optional(),
+  CONTACT_EMAIL: Joi.string().email().optional(),
+  EMAIL_BRAND_NAME: Joi.string().optional(),
+  EMAIL_BRAND_HOME_URL: Joi.string().uri().optional(),
+  EMAIL_BRAND_LOGO_URL: Joi.string().uri().optional(),
+  DEFAULT_CURRENCY: Joi.string().length(3).uppercase().optional(),
 
   // Logging Configuration
   LOG_LEVEL: Joi.string()

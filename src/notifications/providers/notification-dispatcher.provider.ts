@@ -46,12 +46,13 @@ export class NotificationDispatcherProvider {
     }
 
     // Critical events that bypass user preferences
-    const isCriticalEvent = this.isCriticalEvent(dto.event);
+    const shouldBypassPreferences =
+      dto.bypassPreferences || this.isCriticalEvent(dto.event);
 
     // Dispatch to each channel
     for (const channel of dto.channels) {
       // Filter users based on their preferences (skip for critical events)
-      const enabledUserIds = isCriticalEvent
+      const enabledUserIds = shouldBypassPreferences
         ? userIds
         : await this.filterByPreferences(userIds, dto.event, channel);
 
@@ -183,6 +184,17 @@ export class NotificationDispatcherProvider {
         );
         subject = rendered.subject;
         body = rendered.body;
+      } else {
+        const rendered = this.tryRenderTemplateFile(
+          dto.templateName,
+          dto.data || {},
+        );
+
+        if (rendered) {
+          subject =
+            dto.title || rendered.subject || this.extractHtmlTitle(rendered.body);
+          body = rendered.body;
+        }
       }
     } else if (!dto.message) {
       // Try to find template by event
@@ -203,6 +215,25 @@ export class NotificationDispatcherProvider {
     }
 
     return { subject, body };
+  }
+
+  private tryRenderTemplateFile(
+    templateName: string,
+    data: Record<string, any>,
+  ): { subject: string; body: string } | null {
+    try {
+      return this.templateRenderer.renderFileWithSubject(null, templateName, data);
+    } catch (error) {
+      this.logger.debug(
+        `Template file fallback unavailable for ${templateName}: ${error?.message ?? error}`,
+      );
+      return null;
+    }
+  }
+
+  private extractHtmlTitle(html: string): string {
+    const match = html.match(/<title>(.*?)<\/title>/i);
+    return match?.[1]?.trim() || 'Notification';
   }
 
   /**

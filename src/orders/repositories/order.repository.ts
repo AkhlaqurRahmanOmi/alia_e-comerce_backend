@@ -24,6 +24,7 @@ export class OrderRepository extends BaseRepository<Order, number> {
       where: { id },
       include: {
         user: true,
+        shippingMethod: true,
         orderItems: {
           include: {
             variant: {

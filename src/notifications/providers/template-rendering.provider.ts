@@ -1,9 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { existsSync, readFileSync } from 'fs';
+import { join, resolve } from 'path';
 import * as Handlebars from 'handlebars';
 
 @Injectable()
 export class TemplateRenderingProvider {
   private readonly logger = new Logger(TemplateRenderingProvider.name);
+  private readonly templateCache = new Map<string, string>();
+  private readonly templateDirectories = [
+    join(process.cwd(), 'src', 'shared', 'templates'),
+    join(process.cwd(), 'dist', 'shared', 'templates'),
+    resolve(__dirname, '..', '..', 'shared', 'templates'),
+  ];
 
   constructor() {
     // Register custom Handlebars helpers
@@ -61,13 +69,44 @@ export class TemplateRenderingProvider {
     });
   }
 
+  loadTemplateFromFile(templateName: string): string {
+    const normalizedTemplateName = this.normalizeTemplateName(templateName);
+    const cachedTemplate = this.templateCache.get(normalizedTemplateName);
+
+    if (cachedTemplate) {
+      return cachedTemplate;
+    }
+
+    const templatePath = this.resolveTemplatePath(normalizedTemplateName);
+    const template = readFileSync(templatePath, 'utf8');
+
+    this.templateCache.set(normalizedTemplateName, template);
+
+    return template;
+  }
+
   render(template: string, data: Record<string, any>): string {
     try {
       const compiledTemplate = Handlebars.compile(template);
       return compiledTemplate(data);
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Template rendering failed:', error);
-      throw new Error(`Failed to render template: ${error.message}`);
+      throw new Error(`Failed to render template: ${this.getErrorMessage(error)}`);
+    }
+  }
+
+  renderFile(templateName: string, data: Record<string, any>): string {
+    try {
+      const template = this.loadTemplateFromFile(templateName);
+      return this.render(template, data);
+    } catch (error: unknown) {
+      this.logger.error(
+        `Template file rendering failed for ${templateName}:`,
+        error,
+      );
+      throw new Error(
+        `Failed to render template file ${this.normalizeTemplateName(templateName)}: ${this.getErrorMessage(error)}`,
+      );
     }
   }
 
@@ -81,8 +120,24 @@ export class TemplateRenderingProvider {
       const body = this.render(bodyTemplate, data);
 
       return { subject, body };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Template rendering with subject failed:', error);
+      throw error;
+    }
+  }
+
+  renderFileWithSubject(
+    subjectTemplate: string | null,
+    templateName: string,
+    data: Record<string, any>,
+  ): { subject: string; body: string } {
+    try {
+      const body = this.renderFile(templateName, data);
+      const subject = subjectTemplate ? this.render(subjectTemplate, data) : '';
+
+      return { subject, body };
+    } catch (error: unknown) {
+      this.logger.error('Template file rendering with subject failed:', error);
       throw error;
     }
   }
@@ -91,10 +146,22 @@ export class TemplateRenderingProvider {
     try {
       Handlebars.compile(template);
       return { valid: true };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         valid: false,
-        error: error.message,
+        error: this.getErrorMessage(error),
+      };
+    }
+  }
+
+  validateTemplateFile(templateName: string): { valid: boolean; error?: string } {
+    try {
+      const template = this.loadTemplateFromFile(templateName);
+      return this.validateTemplate(template);
+    } catch (error: unknown) {
+      return {
+        valid: false,
+        error: this.getErrorMessage(error),
       };
     }
   }
@@ -111,5 +178,30 @@ export class TemplateRenderingProvider {
     }
 
     return Array.from(placeholders);
+  }
+
+  extractPlaceholdersFromFile(templateName: string): string[] {
+    const template = this.loadTemplateFromFile(templateName);
+    return this.extractPlaceholders(template);
+  }
+
+  private normalizeTemplateName(templateName: string): string {
+    return templateName.endsWith('.hbs') ? templateName : `${templateName}.hbs`;
+  }
+
+  private resolveTemplatePath(templateName: string): string {
+    for (const directory of this.templateDirectories) {
+      const templatePath = join(directory, templateName);
+
+      if (existsSync(templatePath)) {
+        return templatePath;
+      }
+    }
+
+    throw new Error(`Template file not found: ${templateName}`);
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
   }
 }

@@ -20,6 +20,7 @@ import { UnitOfWorkService } from '../../shared/services/unit-of-work.service';
 import { ShippingService } from '../../shipping/shipping.service';
 import { PaymentsService } from '../../payments/payments.service';
 import { PaymentGateway } from '../../payments/dtos/initiate-payment.dto';
+import { OrderNotificationProvider } from './order-notification.provider';
 
 @Injectable()
 export class OrderManagementProvider {
@@ -31,6 +32,7 @@ export class OrderManagementProvider {
     private readonly unitOfWork: UnitOfWorkService,
     private readonly shippingService: ShippingService,
     private readonly paymentsService: PaymentsService,
+    private readonly orderNotifications: OrderNotificationProvider,
   ) {}
 
   /**
@@ -56,7 +58,10 @@ export class OrderManagementProvider {
     await this.createCodPaymentForOrder(order.id, paymentGateway, createOrderDto);
 
     // Step 5: Return order with full relations
-    return this.getOrderWithRelations(order.id);
+    const createdOrder = await this.getOrderWithRelations(order.id);
+    await this.orderNotifications.sendOrderCreated(createdOrder);
+
+    return createdOrder;
   }
 
   /**
@@ -71,19 +76,25 @@ export class OrderManagementProvider {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
 
+    if (order.currentStatus === updateStatusDto.status) {
+      return order;
+    }
+
     // If status is changing to 'shipped', fulfill the reserved inventory
-    if (
-      updateStatusDto.status === OrderStatus.shipped &&
-      order.currentStatus !== OrderStatus.shipped
-    ) {
+    if (updateStatusDto.status === OrderStatus.shipped) {
       await this.fulfillInventoryForOrder(id);
     }
 
-    return this.orderRepository.updateStatus(
+    await this.orderRepository.updateStatus(
       id,
       updateStatusDto.status,
       updateStatusDto.note,
     );
+
+    const updatedOrder = await this.getOrderWithRelations(id);
+    await this.orderNotifications.sendOrderStatusChanged(updatedOrder);
+
+    return updatedOrder;
   }
 
   /**
@@ -108,11 +119,16 @@ export class OrderManagementProvider {
     // Release reserved inventory before cancelling
     await this.releaseInventoryForOrder(id);
 
-    return this.orderRepository.updateStatus(
+    await this.orderRepository.updateStatus(
       id,
       OrderStatus.cancelled,
       cancelDto.reason,
     );
+
+    const cancelledOrder = await this.getOrderWithRelations(id);
+    await this.orderNotifications.sendOrderStatusChanged(cancelledOrder);
+
+    return cancelledOrder;
   }
 
   /**
@@ -774,7 +790,10 @@ export class OrderManagementProvider {
     await this.createCodPaymentForOrder(order.id, paymentGateway, dto);
 
     // Step 6: Return order with full relations
-    return this.getOrderWithRelations(order.id);
+    const createdOrder = await this.getOrderWithRelations(order.id);
+    await this.orderNotifications.sendOrderCreated(createdOrder);
+
+    return createdOrder;
   }
 
   /**

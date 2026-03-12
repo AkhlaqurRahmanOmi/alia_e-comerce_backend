@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsObject,
   IsArray,
+  IsBoolean,
 } from 'class-validator';
 import { NotificationChannel } from '../enums';
 
@@ -43,4 +44,8 @@ export class SendNotificationDto {
   @IsString()
   @IsOptional()
   templateName?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  bypassPreferences?: boolean;
 }

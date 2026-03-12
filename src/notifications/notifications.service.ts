@@ -19,6 +19,17 @@ import {
   MarkAsReadDto,
 } from './dtos';
 import { PaginatedResult } from '../shared/types';
+import { EmailProvider, TemplateRenderingProvider } from './providers';
+
+export interface SendTemplateFileEmailOptions {
+  to: string | string[];
+  templateName: string;
+  data: Record<string, any>;
+  subject?: string;
+  subjectTemplate?: string | null;
+  from?: string;
+  text?: string;
+}
 
 @Injectable()
 export class NotificationsService {
@@ -27,6 +38,8 @@ export class NotificationsService {
     private readonly templateRepo: NotificationTemplateRepository,
     private readonly preferenceRepo: NotificationPreferenceRepository,
     private readonly dispatcher: NotificationDispatcherProvider,
+    private readonly emailProvider: EmailProvider,
+    private readonly templateRenderer: TemplateRenderingProvider,
   ) {}
 
   // ========================
@@ -35,6 +48,42 @@ export class NotificationsService {
 
   async send(dto: SendNotificationDto) {
     return this.dispatcher.dispatch(dto);
+  }
+
+  renderTemplateFile(templateName: string, data: Record<string, any>) {
+    return this.templateRenderer.renderFile(templateName, data);
+  }
+
+  renderTemplateFileWithSubject(
+    templateName: string,
+    data: Record<string, any>,
+    subjectTemplate?: string | null,
+  ) {
+    return this.templateRenderer.renderFileWithSubject(
+      subjectTemplate ?? null,
+      templateName,
+      data,
+    );
+  }
+
+  async sendTemplateFileEmail(
+    options: SendTemplateFileEmailOptions,
+  ): Promise<boolean> {
+    const rendered = this.renderTemplateFileWithSubject(
+      options.templateName,
+      options.data,
+      options.subjectTemplate,
+    );
+
+    const subject = options.subject || rendered.subject || 'Notification';
+
+    return this.emailProvider.sendEmail({
+      to: options.to,
+      from: options.from,
+      subject,
+      html: rendered.body,
+      text: options.text,
+    });
   }
 
   // ========================
