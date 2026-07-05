@@ -124,6 +124,7 @@
       "<rootDir>/src/"
     ],
     "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
       "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
       "^@app/repository(|/.*)$": "<rootDir>/libs/repository/src/$1"
     }

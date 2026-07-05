@@ -36,7 +36,10 @@ export class CmsService {
    * @param sectionName - URL-friendly section name (e.g., 'hero-banner')
    * @param content - Section content as JSON
    */
-  async updateSection(sectionName: string, content: any): Promise<any> {
+  async updateSection(
+    sectionName: string,
+    content: Record<string, unknown>,
+  ): Promise<any> {
     return this.homepageManagement.updateSection(sectionName, content);
   }
 
