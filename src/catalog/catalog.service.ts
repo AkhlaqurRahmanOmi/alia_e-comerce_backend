@@ -24,6 +24,7 @@ import {
   AddToWishlistDto,
   CreateSegmentDto,
   UploadProductImageDto,
+  UploadVariantImageDto,
   UpdateSegmentDto,
 } from './dtos';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -252,6 +253,33 @@ export class CatalogService {
 
   addVariantImage(dto: CreateVariantImageDto) {
     return this.imageManagement.addVariantImage(dto);
+  }
+
+  getVariantImages(variantId: number) {
+    return this.imageManagement.getVariantImages(variantId);
+  }
+
+  async uploadVariantImage(
+    variantId: number,
+    file: Express.Multer.File,
+    uploadDto: UploadVariantImageDto,
+  ) {
+    const uploadResult = await this.localFileStorageService.uploadFile(
+      file,
+      'variants',
+    );
+
+    try {
+      return await this.imageManagement.addVariantImage({
+        variantId,
+        imageUrl: uploadResult.fileUrl,
+        altText: uploadDto.altText,
+        position: uploadDto.position,
+      });
+    } catch (error) {
+      await this.localFileStorageService.deleteFile(uploadResult.fileUrl);
+      throw error;
+    }
   }
 
   deleteVariantImage(imageId: number) {
@@ -528,6 +556,17 @@ export class CatalogService {
                 optionValueId: optionLink.optionValueId,
               })),
               skipDuplicates: true,
+            });
+          }
+
+          if (variant.images?.length) {
+            await tx.variantImage.createMany({
+              data: variant.images.map((image, index) => ({
+                variantId: createdVariant.id,
+                imageUrl: image.imageUrl,
+                altText: image.altText,
+                position: image.position ?? index + 1,
+              })),
             });
           }
 

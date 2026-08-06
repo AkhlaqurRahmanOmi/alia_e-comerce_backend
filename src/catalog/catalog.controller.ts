@@ -37,6 +37,7 @@ import {
   CreateVariantImageDto,
   ProductFilterDto,
   UploadProductImageDto,
+  UploadVariantImageDto,
   UpdateCategoryDto,
   UpdateProductDto,
   UpdateSegmentDto,
@@ -276,6 +277,15 @@ export class CatalogController {
   @CacheTTL(30000)
   getProductImages(@Param('id', ParseIntPipe) productId: number) {
     return this.catalog.getProductImages(productId);
+  }
+
+  @Get('variants/:id/images')
+  @Auth(AuthType.None)
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(30000)
+  getVariantImages(@Param('id', ParseIntPipe) variantId: number) {
+    return this.catalog.getVariantImages(variantId);
   }
 
   @Get('products/:id/options')
@@ -534,6 +544,39 @@ export class CatalogController {
     @Body() createImageDto: CreateVariantImageDto,
   ) {
     return this.catalog.addVariantImage({ ...createImageDto, variantId });
+  }
+
+  @Post('variants/:id/images/upload')
+  @Permissions('products:create')
+  @UseInterceptors(FileInterceptor('file'))
+  @HttpCode(HttpStatus.CREATED)
+  @ApiBearerAuth('JWT-auth')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        altText: {
+          type: 'string',
+        },
+        position: {
+          type: 'number',
+          minimum: 1,
+        },
+      },
+    },
+  })
+  uploadVariantImage(
+    @Param('id', ParseIntPipe) variantId: number,
+    @UploadedFile(FileValidationPipe) file: Express.Multer.File,
+    @Body() uploadDto: UploadVariantImageDto,
+  ) {
+    return this.catalog.uploadVariantImage(variantId, file, uploadDto);
   }
 
   @Delete('variants/:variantId/images/:imageId')

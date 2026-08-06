@@ -99,6 +99,9 @@ export class ProductRepository extends BaseRepository<Product, number> {
         variants: {
           include: {
             variantInventories: true,
+            variantImages: {
+              orderBy: { position: 'asc' },
+            },
             variantOptionValues: {
               include: {
                 productOption: true,
@@ -209,6 +212,9 @@ export class ProductRepository extends BaseRepository<Product, number> {
         variants: {
           include: {
             variantInventories: true,
+            variantImages: {
+              orderBy: { position: 'asc' },
+            },
             variantOptionValues: {
               include: {
                 productOption: true,
@@ -412,6 +418,29 @@ export class ProductRepository extends BaseRepository<Product, number> {
           return Array.from(uniqueLinks.values());
         };
 
+        // Replace the image set of a variant when the payload carries one
+        const replaceVariantImages = async (
+          variantId: number,
+          images?: any[],
+        ) => {
+          if (images === undefined) {
+            return;
+          }
+
+          await tx.variantImage.deleteMany({ where: { variantId } });
+
+          if (images.length > 0) {
+            await tx.variantImage.createMany({
+              data: images.map((image: any, index: number) => ({
+                variantId,
+                imageUrl: image.imageUrl,
+                altText: image.altText,
+                position: image.position ?? index + 1,
+              })),
+            });
+          }
+        };
+
         for (const variantData of data.variants) {
           const existingVariant = existingVariants.find(v => v.sku === variantData.sku);
           const resolvedOptionLinks = resolveVariantOptionLinks(variantData);
@@ -443,6 +472,8 @@ export class ProductRepository extends BaseRepository<Product, number> {
                 })),
               });
             }
+
+            await replaceVariantImages(existingVariant.id, variantData.images);
           } else {
             const newVariant = await tx.variant.create({
               data: {
@@ -466,6 +497,8 @@ export class ProductRepository extends BaseRepository<Product, number> {
                 })),
               });
             }
+
+            await replaceVariantImages(newVariant.id, variantData.images);
 
             const targetLocationId = variantData.locationId ?? defaultLocation?.id;
             if (!targetLocationId) {
@@ -570,6 +603,9 @@ export class ProductRepository extends BaseRepository<Product, number> {
           variants: {
             include: {
               variantInventories: true,
+              variantImages: {
+                orderBy: { position: 'asc' },
+              },
               variantOptionValues: {
                 include: {
                   productOption: true,
@@ -965,6 +1001,9 @@ export class ProductRepository extends BaseRepository<Product, number> {
         variants: {
           include: {
             variantInventories: true,
+            variantImages: {
+              orderBy: { position: 'asc' },
+            },
             variantOptionValues: {
               include: {
                 productOption: true,

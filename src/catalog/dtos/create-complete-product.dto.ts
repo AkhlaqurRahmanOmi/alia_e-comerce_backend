@@ -13,6 +13,7 @@ import { CreateProductDto } from './create-product.dto';
 import { CreateVariantDto } from './create-variant.dto';
 import { CreateProductOptionDto } from './create-product-option.dto';
 import { CreateProductImageDto } from './create-product-image.dto';
+import { CreateVariantImageDto } from './create-variant-image.dto';
 import { CreateOptionValueDto } from './create-option-value.dto';
 
 class CompleteOptionValueDto extends OmitType(CreateOptionValueDto, ['optionId'] as const) {}
@@ -35,12 +36,20 @@ class CompleteVariantOptionSelectionDto {
   optionValue: string;
 }
 
+class CompleteVariantImageDto extends OmitType(CreateVariantImageDto, ['variantId'] as const) {}
+
 class CompleteProductVariantDto extends OmitType(CreateVariantDto, ['productId'] as const) {
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CompleteVariantOptionSelectionDto)
   optionSelections?: CompleteVariantOptionSelectionDto[];
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CompleteVariantImageDto)
+  images?: CompleteVariantImageDto[];
 }
 
 class CompleteProductImageDto extends OmitType(CreateProductImageDto, ['productId'] as const) {}

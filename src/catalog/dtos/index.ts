@@ -8,6 +8,7 @@ export * from './update-category.dto';
 export * from './create-product-image.dto';
 export * from './upload-product-image.dto';
 export * from './create-variant-image.dto';
+export * from './upload-variant-image.dto';
 export * from './create-product-option.dto';
 export * from './create-option-value.dto';
 export * from './product-filter.dto';
