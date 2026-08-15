@@ -83,8 +83,8 @@ export class OrdersService {
     return this.orderManagement.createGuestOrder(dto);
   }
 
-  lookupGuestOrder(email: string, orderReference: string) {
-    return this.orderManagement.lookupGuestOrder(email, orderReference);
+  lookupGuestOrder(phone: string, orderReference: string) {
+    return this.orderManagement.lookupGuestOrder(phone, orderReference);
   }
 
   linkGuestOrdersToUser(email: string, userId: number) {

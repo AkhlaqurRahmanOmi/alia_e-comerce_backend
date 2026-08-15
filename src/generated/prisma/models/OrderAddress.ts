@@ -265,16 +265,16 @@ export type OrderAddressGroupByOutputType = {
   type: string
   sourceUserAddressId: number | null
   firstName: string
-  lastName: string
+  lastName: string | null
   company: string | null
   email: string | null
   phone: string | null
   addressLine1: string
   addressLine2: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city: string | null
+  state: string | null
+  postalCode: string | null
+  country: string | null
   createdAt: Date
   updatedAt: Date
   _count: OrderAddressCountAggregateOutputType | null
@@ -308,16 +308,16 @@ export type OrderAddressWhereInput = {
   type?: Prisma.StringFilter<"OrderAddress"> | string
   sourceUserAddressId?: Prisma.IntNullableFilter<"OrderAddress"> | number | null
   firstName?: Prisma.StringFilter<"OrderAddress"> | string
-  lastName?: Prisma.StringFilter<"OrderAddress"> | string
+  lastName?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   company?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   email?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   phone?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   addressLine1?: Prisma.StringFilter<"OrderAddress"> | string
   addressLine2?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
-  city?: Prisma.StringFilter<"OrderAddress"> | string
-  state?: Prisma.StringFilter<"OrderAddress"> | string
-  postalCode?: Prisma.StringFilter<"OrderAddress"> | string
-  country?: Prisma.StringFilter<"OrderAddress"> | string
+  city?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  state?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  postalCode?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  country?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OrderAddress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrderAddress"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
@@ -332,16 +332,16 @@ export type OrderAddressOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   sourceUserAddressId?: Prisma.SortOrderInput | Prisma.SortOrder
   firstName?: Prisma.SortOrder
-  lastName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrderInput | Prisma.SortOrder
   company?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   addressLine1?: Prisma.SortOrder
   addressLine2?: Prisma.SortOrderInput | Prisma.SortOrder
-  city?: Prisma.SortOrder
-  state?: Prisma.SortOrder
-  postalCode?: Prisma.SortOrder
-  country?: Prisma.SortOrder
+  city?: Prisma.SortOrderInput | Prisma.SortOrder
+  state?: Prisma.SortOrderInput | Prisma.SortOrder
+  postalCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  country?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   order?: Prisma.OrderOrderByWithRelationInput
@@ -360,16 +360,16 @@ export type OrderAddressWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.StringFilter<"OrderAddress"> | string
   sourceUserAddressId?: Prisma.IntNullableFilter<"OrderAddress"> | number | null
   firstName?: Prisma.StringFilter<"OrderAddress"> | string
-  lastName?: Prisma.StringFilter<"OrderAddress"> | string
+  lastName?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   company?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   email?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   phone?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   addressLine1?: Prisma.StringFilter<"OrderAddress"> | string
   addressLine2?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
-  city?: Prisma.StringFilter<"OrderAddress"> | string
-  state?: Prisma.StringFilter<"OrderAddress"> | string
-  postalCode?: Prisma.StringFilter<"OrderAddress"> | string
-  country?: Prisma.StringFilter<"OrderAddress"> | string
+  city?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  state?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  postalCode?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  country?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OrderAddress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrderAddress"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
@@ -384,16 +384,16 @@ export type OrderAddressOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   sourceUserAddressId?: Prisma.SortOrderInput | Prisma.SortOrder
   firstName?: Prisma.SortOrder
-  lastName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrderInput | Prisma.SortOrder
   company?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   addressLine1?: Prisma.SortOrder
   addressLine2?: Prisma.SortOrderInput | Prisma.SortOrder
-  city?: Prisma.SortOrder
-  state?: Prisma.SortOrder
-  postalCode?: Prisma.SortOrder
-  country?: Prisma.SortOrder
+  city?: Prisma.SortOrderInput | Prisma.SortOrder
+  state?: Prisma.SortOrderInput | Prisma.SortOrder
+  postalCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  country?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OrderAddressCountOrderByAggregateInput
@@ -412,16 +412,16 @@ export type OrderAddressScalarWhereWithAggregatesInput = {
   type?: Prisma.StringWithAggregatesFilter<"OrderAddress"> | string
   sourceUserAddressId?: Prisma.IntNullableWithAggregatesFilter<"OrderAddress"> | number | null
   firstName?: Prisma.StringWithAggregatesFilter<"OrderAddress"> | string
-  lastName?: Prisma.StringWithAggregatesFilter<"OrderAddress"> | string
+  lastName?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
   company?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
   addressLine1?: Prisma.StringWithAggregatesFilter<"OrderAddress"> | string
   addressLine2?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
-  city?: Prisma.StringWithAggregatesFilter<"OrderAddress"> | string
-  state?: Prisma.StringWithAggregatesFilter<"OrderAddress"> | string
-  postalCode?: Prisma.StringWithAggregatesFilter<"OrderAddress"> | string
-  country?: Prisma.StringWithAggregatesFilter<"OrderAddress"> | string
+  city?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
+  state?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
+  postalCode?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
+  country?: Prisma.StringNullableWithAggregatesFilter<"OrderAddress"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OrderAddress"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OrderAddress"> | Date | string
 }
@@ -429,16 +429,16 @@ export type OrderAddressScalarWhereWithAggregatesInput = {
 export type OrderAddressCreateInput = {
   type: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderAddressesInput
@@ -453,16 +453,16 @@ export type OrderAddressUncheckedCreateInput = {
   type: string
   sourceUserAddressId?: number | null
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   billingOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutBillingAddressInput
@@ -472,16 +472,16 @@ export type OrderAddressUncheckedCreateInput = {
 export type OrderAddressUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderAddressesNestedInput
@@ -496,16 +496,16 @@ export type OrderAddressUncheckedUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUserAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   billingOrders?: Prisma.OrderUncheckedUpdateManyWithoutBillingAddressNestedInput
@@ -518,16 +518,16 @@ export type OrderAddressCreateManyInput = {
   type: string
   sourceUserAddressId?: number | null
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -535,16 +535,16 @@ export type OrderAddressCreateManyInput = {
 export type OrderAddressUpdateManyMutationInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -555,16 +555,16 @@ export type OrderAddressUncheckedUpdateManyInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUserAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -780,16 +780,16 @@ export type OrderAddressUncheckedUpdateManyWithoutSourceUserAddressNestedInput =
 export type OrderAddressCreateWithoutBillingOrdersInput = {
   type: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderAddressesInput
@@ -803,16 +803,16 @@ export type OrderAddressUncheckedCreateWithoutBillingOrdersInput = {
   type: string
   sourceUserAddressId?: number | null
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   shippingOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutShippingAddressInput
@@ -826,16 +826,16 @@ export type OrderAddressCreateOrConnectWithoutBillingOrdersInput = {
 export type OrderAddressCreateWithoutShippingOrdersInput = {
   type: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderAddressesInput
@@ -849,16 +849,16 @@ export type OrderAddressUncheckedCreateWithoutShippingOrdersInput = {
   type: string
   sourceUserAddressId?: number | null
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   billingOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutBillingAddressInput
@@ -872,16 +872,16 @@ export type OrderAddressCreateOrConnectWithoutShippingOrdersInput = {
 export type OrderAddressCreateWithoutOrderInput = {
   type: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sourceUserAddress?: Prisma.UserAddressCreateNestedOneWithoutOrderAddressesInput
@@ -894,16 +894,16 @@ export type OrderAddressUncheckedCreateWithoutOrderInput = {
   type: string
   sourceUserAddressId?: number | null
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   billingOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutBillingAddressInput
@@ -934,16 +934,16 @@ export type OrderAddressUpdateToOneWithWhereWithoutBillingOrdersInput = {
 export type OrderAddressUpdateWithoutBillingOrdersInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderAddressesNestedInput
@@ -957,16 +957,16 @@ export type OrderAddressUncheckedUpdateWithoutBillingOrdersInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUserAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shippingOrders?: Prisma.OrderUncheckedUpdateManyWithoutShippingAddressNestedInput
@@ -986,16 +986,16 @@ export type OrderAddressUpdateToOneWithWhereWithoutShippingOrdersInput = {
 export type OrderAddressUpdateWithoutShippingOrdersInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderAddressesNestedInput
@@ -1009,16 +1009,16 @@ export type OrderAddressUncheckedUpdateWithoutShippingOrdersInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUserAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   billingOrders?: Prisma.OrderUncheckedUpdateManyWithoutBillingAddressNestedInput
@@ -1049,16 +1049,16 @@ export type OrderAddressScalarWhereInput = {
   type?: Prisma.StringFilter<"OrderAddress"> | string
   sourceUserAddressId?: Prisma.IntNullableFilter<"OrderAddress"> | number | null
   firstName?: Prisma.StringFilter<"OrderAddress"> | string
-  lastName?: Prisma.StringFilter<"OrderAddress"> | string
+  lastName?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   company?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   email?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   phone?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   addressLine1?: Prisma.StringFilter<"OrderAddress"> | string
   addressLine2?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
-  city?: Prisma.StringFilter<"OrderAddress"> | string
-  state?: Prisma.StringFilter<"OrderAddress"> | string
-  postalCode?: Prisma.StringFilter<"OrderAddress"> | string
-  country?: Prisma.StringFilter<"OrderAddress"> | string
+  city?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  state?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  postalCode?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
+  country?: Prisma.StringNullableFilter<"OrderAddress"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OrderAddress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrderAddress"> | Date | string
 }
@@ -1066,16 +1066,16 @@ export type OrderAddressScalarWhereInput = {
 export type OrderAddressCreateWithoutSourceUserAddressInput = {
   type: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderAddressesInput
@@ -1088,16 +1088,16 @@ export type OrderAddressUncheckedCreateWithoutSourceUserAddressInput = {
   orderId: number
   type: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   billingOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutBillingAddressInput
@@ -1135,16 +1135,16 @@ export type OrderAddressCreateManyOrderInput = {
   type: string
   sourceUserAddressId?: number | null
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1152,16 +1152,16 @@ export type OrderAddressCreateManyOrderInput = {
 export type OrderAddressUpdateWithoutOrderInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sourceUserAddress?: Prisma.UserAddressUpdateOneWithoutOrderAddressesNestedInput
@@ -1174,16 +1174,16 @@ export type OrderAddressUncheckedUpdateWithoutOrderInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUserAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   billingOrders?: Prisma.OrderUncheckedUpdateManyWithoutBillingAddressNestedInput
@@ -1195,16 +1195,16 @@ export type OrderAddressUncheckedUpdateManyWithoutOrderInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   sourceUserAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1214,16 +1214,16 @@ export type OrderAddressCreateManySourceUserAddressInput = {
   orderId: number
   type: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   company?: string | null
   email?: string | null
   phone?: string | null
   addressLine1: string
   addressLine2?: string | null
-  city: string
-  state: string
-  postalCode: string
-  country: string
+  city?: string | null
+  state?: string | null
+  postalCode?: string | null
+  country?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1231,16 +1231,16 @@ export type OrderAddressCreateManySourceUserAddressInput = {
 export type OrderAddressUpdateWithoutSourceUserAddressInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderAddressesNestedInput
@@ -1253,16 +1253,16 @@ export type OrderAddressUncheckedUpdateWithoutSourceUserAddressInput = {
   orderId?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   billingOrders?: Prisma.OrderUncheckedUpdateManyWithoutBillingAddressNestedInput
@@ -1274,16 +1274,16 @@ export type OrderAddressUncheckedUpdateManyWithoutSourceUserAddressInput = {
   orderId?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressLine1?: Prisma.StringFieldUpdateOperationsInput | string
   addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  postalCode?: Prisma.StringFieldUpdateOperationsInput | string
-  country?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1448,16 +1448,16 @@ export type $OrderAddressPayload<ExtArgs extends runtime.Types.Extensions.Intern
     type: string
     sourceUserAddressId: number | null
     firstName: string
-    lastName: string
+    lastName: string | null
     company: string | null
     email: string | null
     phone: string | null
     addressLine1: string
     addressLine2: string | null
-    city: string
-    state: string
-    postalCode: string
-    country: string
+    city: string | null
+    state: string | null
+    postalCode: string | null
+    country: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["orderAddress"]>

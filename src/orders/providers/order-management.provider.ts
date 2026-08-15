@@ -706,10 +706,8 @@ export class OrderManagementProvider {
       const newOrder = await tx.order.create({
         data: {
           userId: undefined,
-          guestEmail: dto.guestEmail,
-          guestPhone: dto.guestPhone,
-          guestFirstName: dto.guestFirstName,
-          guestLastName: dto.guestLastName,
+          guestPhone: dto.phone,
+          guestFirstName: dto.firstName,
           isGuestOrder: true,
           externalRef,
           subtotalAmount: subtotal,
@@ -726,37 +724,20 @@ export class OrderManagementProvider {
         data: {
           orderId: newOrder.id,
           type: 'shipping',
-          firstName: dto.shippingAddress.firstName,
-          lastName: dto.shippingAddress.lastName,
-          email: dto.shippingAddress.email,
-          phone: dto.shippingAddress.phone,
-          company: dto.shippingAddress.company,
-          addressLine1: dto.shippingAddress.addressLine1,
-          addressLine2: dto.shippingAddress.addressLine2,
-          city: dto.shippingAddress.city,
-          state: dto.shippingAddress.state,
-          postalCode: dto.shippingAddress.postalCode,
-          country: dto.shippingAddress.country,
+          firstName: dto.firstName,
+          phone: dto.phone,
+          addressLine1: dto.addressLine1,
         },
       });
 
-      // Create billing address snapshot (use shipping if not provided)
-      const billingAddr = dto.billingAddress || dto.shippingAddress;
+      // Guest checkout uses the same minimal address for billing and shipping.
       await tx.orderAddress.create({
         data: {
           orderId: newOrder.id,
           type: 'billing',
-          firstName: billingAddr.firstName,
-          lastName: billingAddr.lastName,
-          email: billingAddr.email,
-          phone: billingAddr.phone,
-          company: billingAddr.company,
-          addressLine1: billingAddr.addressLine1,
-          addressLine2: billingAddr.addressLine2,
-          city: billingAddr.city,
-          state: billingAddr.state,
-          postalCode: billingAddr.postalCode,
-          country: billingAddr.country,
+          firstName: dto.firstName,
+          phone: dto.phone,
+          addressLine1: dto.addressLine1,
         },
       });
 
@@ -797,15 +778,15 @@ export class OrderManagementProvider {
   }
 
   /**
-   * Lookup guest order by email and order reference
+   * Lookup guest order by phone and order reference
    */
   async lookupGuestOrder(
-    email: string,
+    phone: string,
     orderReference: string,
   ): Promise<Order | null> {
     const order = await this.prisma.order.findFirst({
       where: {
-        guestEmail: { equals: email },
+        guestPhone: { equals: phone },
         externalRef: orderReference,
         isGuestOrder: true,
       },

@@ -75,7 +75,7 @@ export class OrdersController {
   @HttpCode(HttpStatus.OK)
   async lookupGuestOrder(@Body() dto: GuestOrderLookupDto) {
     const order = await this.orders.lookupGuestOrder(
-      dto.email,
+      dto.phone,
       dto.orderReference,
     );
 

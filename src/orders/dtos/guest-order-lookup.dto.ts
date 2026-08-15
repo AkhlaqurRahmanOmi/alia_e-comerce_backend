@@ -1,13 +1,15 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class GuestOrderLookupDto {
   @ApiProperty({
-    description: 'Guest email address used during checkout',
-    example: 'guest@example.com',
+    description: 'Guest phone number used during checkout',
+    example: '01700000000',
   })
-  @IsEmail()
-  email: string;
+  @IsString()
+  @MinLength(10)
+  @MaxLength(20)
+  phone: string;
 
   @ApiProperty({
     description: 'Order confirmation number or external reference',
