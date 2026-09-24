@@ -90,7 +90,53 @@ async function bootstrap() {
   OpenApiModule.setup('api/docs', app, documentation);
 
   // Enable CORS
-  app.enableCors();
+  const configuredFrontendUrl =
+    configService.get<string>('FRONTEND_URL') || process.env.FRONTEND_URL;
+
+  const allowedOrigins = [
+    configuredFrontendUrl,
+    'https://aliaatelier.shop',
+    'https://www.aliaatelier.shop',
+    'https://admin.aliaatelier.shop',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:5173',
+  ].filter(Boolean) as string[];
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g., mobile apps, curl, Postman, server-to-server)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.aliaatelier.shop') ||
+        (environment !== 'production' &&
+          (/^http:\/\/localhost(:\d+)?$/.test(origin) ||
+            /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)));
+
+      if (isAllowed) {
+        return callback(null, true);
+      }
+
+      return callback(null, false);
+    },
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With',
+      'Content-Type',
+      'Accept',
+      'Authorization',
+      'X-Trace-Id',
+      'x-device-id',
+      'x-session-id',
+    ],
+    exposedHeaders: ['X-Trace-Id', 'Content-Disposition'],
+  });
 
   await app.listen(port);
 
