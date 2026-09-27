@@ -72,3 +72,7 @@ PAYMENT_INTEGRATION.md
 # Uploaded files
 uploads/
 !uploads/.gitkeep
+
+graphify-out/
+.graphify/
+.graphify*

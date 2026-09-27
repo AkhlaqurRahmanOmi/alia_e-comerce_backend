@@ -13,6 +13,11 @@ import {
 } from '../dtos';
 import { GuestCreateOrderDto } from '../dtos/guest-create-order.dto';
 import { PaginatedResult } from '../../shared/types';
+import {
+  resolveVariantImage,
+  VARIANT_IMAGE_INCLUDE,
+  VariantImageSources,
+} from '../../shared/utils';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
 import { InventoryService } from '../../inventory/inventory.service';
 import { BundlesService } from '../../bundles/bundles.service';
@@ -313,7 +318,9 @@ export class OrderManagementProvider {
     for (const item of items) {
       const variant = await tx.variant.findUnique({
         where: { id: item.variantId },
-        include: { product: true },
+        // VARIANT_IMAGE_INCLUDE carries `product` plus everything
+        // resolveVariantImage needs to snapshot the line's thumbnail.
+        include: VARIANT_IMAGE_INCLUDE,
       });
 
       if (!variant) {
@@ -476,6 +483,7 @@ export class OrderManagementProvider {
           lineTotal: variant.price * item.quantity,
           productNameSnapshot: variant.product?.name,
           variantSkuSnapshot: variant.sku,
+          imageSnapshot: resolveVariantImage(variant as VariantImageSources),
         },
       });
     }
@@ -757,6 +765,7 @@ export class OrderManagementProvider {
             lineTotal: variant.price * item.quantity,
             productNameSnapshot: variant.product?.name,
             variantSkuSnapshot: variant.sku,
+            imageSnapshot: resolveVariantImage(variant as VariantImageSources),
           },
         });
       }

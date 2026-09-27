@@ -401,11 +401,14 @@ model ProductOption {
 }
 
 model OptionValue {
-  id       Int    @id @default(autoincrement())
-  optionId Int    @map("option_id")
-  value    String @db.VarChar(100)
-  position Int    @default(1)
-  meta     Json?  @map("meta")
+  id       Int     @id @default(autoincrement())
+  optionId Int     @map("option_id")
+  value    String  @db.VarChar(100)
+  // Short token for SKU patterns such as "TEE-{Color}-{Size}" (e.g. "GRN").
+  // Falls back to the sanitised value when not set.
+  code     String? @db.VarChar(16)
+  position Int     @default(1)
+  meta     Json?   @map("meta")
 
   // Relations
   productOption       ProductOption        @relation(fields: [optionId], references: [id])
@@ -735,6 +738,9 @@ model OrderItem {
   currency            String   @default("USD") @db.Char(3)
   productNameSnapshot String?  @map("product_name_snapshot") @db.VarChar(255)
   variantSkuSnapshot  String?  @map("variant_sku_snapshot") @db.VarChar(50)
+  // Resolved at checkout so order history keeps its thumbnail even after the
+  // product, its variants or its option values are changed or deleted.
+  imageSnapshot       String?  @map("image_snapshot") @db.VarChar(500)
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @default(now()) @map("updated_at")
 

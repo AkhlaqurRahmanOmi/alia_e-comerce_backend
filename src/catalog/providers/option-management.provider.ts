@@ -307,8 +307,9 @@ export class OptionManagementProvider {
       data: {
         optionId: createValueDto.optionId,
         value: createValueDto.value,
+        code: createValueDto.code,
         position: createValueDto.position || 1,
-        meta: createValueDto.meta as Prisma.InputJsonValue | undefined,
+        meta: createValueDto.meta as unknown as Prisma.InputJsonValue | undefined,
       },
       include: {
         productOption: true,

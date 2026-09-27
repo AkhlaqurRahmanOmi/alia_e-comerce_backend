@@ -7,6 +7,7 @@ import {
   QueryOptions,
   FilterOptions,
 } from '@/shared/types';
+import { VARIANT_IMAGE_INCLUDE } from '@/shared/utils';
 
 @Injectable()
 export class CartItemRepository extends BaseRepository<CartItem, number> {
@@ -22,10 +23,7 @@ export class CartItemRepository extends BaseRepository<CartItem, number> {
       where: { id },
       include: {
         variant: {
-          include: {
-            product: true,
-            variantImages: true,
-          },
+          include: VARIANT_IMAGE_INCLUDE,
         },
         bundle: {
           include: {
@@ -64,10 +62,7 @@ export class CartItemRepository extends BaseRepository<CartItem, number> {
       data: data as Prisma.CartItemCreateInput,
       include: {
         variant: {
-          include: {
-            product: true,
-            variantImages: true,
-          },
+          include: VARIANT_IMAGE_INCLUDE,
         },
         bundle: true,
       },
@@ -86,10 +81,7 @@ export class CartItemRepository extends BaseRepository<CartItem, number> {
       },
       include: {
         variant: {
-          include: {
-            product: true,
-            variantImages: true,
-          },
+          include: VARIANT_IMAGE_INCLUDE,
         },
         bundle: true,
       },
@@ -226,8 +218,7 @@ export class CartItemRepository extends BaseRepository<CartItem, number> {
       include: {
         variant: {
           include: {
-            product: true,
-            variantImages: true,
+            ...VARIANT_IMAGE_INCLUDE,
             variantInventories: true,
           },
         },

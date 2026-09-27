@@ -5284,6 +5284,7 @@ export const OptionValueScalarFieldEnum = {
   id: 'id',
   optionId: 'optionId',
   value: 'value',
+  code: 'code',
   position: 'position',
   meta: 'meta'
 } as const
@@ -5508,6 +5509,7 @@ export const OrderItemScalarFieldEnum = {
   currency: 'currency',
   productNameSnapshot: 'productNameSnapshot',
   variantSkuSnapshot: 'variantSkuSnapshot',
+  imageSnapshot: 'imageSnapshot',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

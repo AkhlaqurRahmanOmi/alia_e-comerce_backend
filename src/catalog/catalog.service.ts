@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 import {
   ProductManagementProvider,
   VariantManagementProvider,
+  VariantGenerationProvider,
   CategoryManagementProvider,
   ImageManagementProvider,
   OptionManagementProvider,
@@ -46,6 +47,7 @@ export class CatalogService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private readonly productManagement: ProductManagementProvider,
     private readonly variantManagement: VariantManagementProvider,
+    private readonly variantGeneration: VariantGenerationProvider,
     private readonly categoryManagement: CategoryManagementProvider,
     private readonly segmentManagement: SegmentManagementProvider,
     private readonly imageManagement: ImageManagementProvider,
@@ -308,6 +310,33 @@ export class CatalogService {
     return value.trim().toLowerCase();
   }
 
+  /**
+   * SKUs are unique across the whole table, so a clash inside one payload would
+   * only surface as an opaque Prisma constraint error part-way through the
+   * transaction. Catch it up front — this also covers a generated SKU colliding
+   * with one written out by hand.
+   */
+  private assertVariantSkusAreUnique(variants?: Array<{ sku: string }>): void {
+    const seen = new Set<string>();
+    const duplicates = new Set<string>();
+
+    for (const variant of variants ?? []) {
+      const sku = variant.sku?.trim();
+      if (!sku) continue;
+
+      if (seen.has(sku)) {
+        duplicates.add(sku);
+      }
+      seen.add(sku);
+    }
+
+    if (duplicates.size > 0) {
+      throw new BadRequestException(
+        `Duplicate SKU(s) in this product: ${[...duplicates].join(', ')}.`,
+      );
+    }
+  }
+
   private async validateCategoryIdsInTransaction(
     tx: Prisma.TransactionClient,
     categoryIds?: number[],
@@ -389,6 +418,18 @@ export class CatalogService {
    * Uses Unit of Work pattern to ensure all operations succeed or rollback.
    */
   async createCompleteProduct(data: CreateCompleteProductDto) {
+    // Expand the option grid before opening the transaction: it is pure
+    // computation, and a bad pattern should fail without holding a connection.
+    const variants = data.generateVariants
+      ? [
+          ...(data.variants ?? []),
+          ...this.variantGeneration.generate(data.options, data.generateVariants),
+        ]
+      : data.variants;
+
+    this.assertVariantSkusAreUnique(variants);
+    data = { ...data, variants };
+
     const productId = await this.unitOfWork.transaction(async (tx) => {
       const { segmentIds, attributes, ...productData } = data.product;
       const normalizedSegmentIds = [...new Set(segmentIds ?? [])];
@@ -486,8 +527,9 @@ export class CatalogService {
                 data: {
                   optionId: createdOption.id,
                   value: value.value,
+                  code: value.code,
                   position: value.position ?? index + 1,
-                  meta: value.meta as Prisma.InputJsonValue | undefined,
+                  meta: value.meta as unknown as Prisma.InputJsonValue | undefined,
                 },
               });
 

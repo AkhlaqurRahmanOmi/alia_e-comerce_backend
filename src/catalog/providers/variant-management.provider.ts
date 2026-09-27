@@ -8,6 +8,10 @@ import { Variant } from '@/generated/prisma/client';
 import { VariantRepository } from '../repositories';
 import { CreateVariantDto, UpdateVariantDto } from '../dtos';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
+import {
+  assertNotOrdered,
+  deleteVariantChildren,
+} from './catalog-cascade.util';
 
 @Injectable()
 export class VariantManagementProvider {
@@ -110,7 +114,13 @@ export class VariantManagementProvider {
   }
 
   /**
-   * Delete a variant
+   * Permanently delete a variant along with everything hanging off it —
+   * inventory, stock movements, images, option links, and any bundle, cart or
+   * wishlist entry pointing at it.
+   *
+   * Refuses when the variant appears on an order, since severing that link
+   * would break returns and refunds. Stock on hand is no longer a blocker: the
+   * inventory rows are removed as part of the delete.
    */
   async deleteVariant(id: number): Promise<void> {
     const variant = await this.variantRepository.findById(id);
@@ -118,23 +128,11 @@ export class VariantManagementProvider {
       throw new NotFoundException(`Variant with ID ${id} not found`);
     }
 
-    // Check if variant has inventory
-    const inventory = await this.prisma.variantInventory.findFirst({
-      where: {
-        variantId: id,
-        quantity: {
-          gt: 0,
-        },
-      },
+    await this.prisma.$transaction(async (tx) => {
+      await assertNotOrdered(tx, [id], `variant ${variant.sku}`);
+      await deleteVariantChildren(tx, [id]);
+      await tx.variant.delete({ where: { id } });
     });
-
-    if (inventory) {
-      throw new BadRequestException(
-        'Cannot delete variant with existing inventory. Please adjust inventory first.',
-      );
-    }
-
-    await this.variantRepository.delete(id);
   }
 
   /**

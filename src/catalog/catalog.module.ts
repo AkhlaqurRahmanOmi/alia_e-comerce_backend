@@ -4,6 +4,7 @@ import { CatalogService } from './catalog.service';
 import {
   ProductManagementProvider,
   VariantManagementProvider,
+  VariantGenerationProvider,
   CategoryManagementProvider,
   ImageManagementProvider,
   OptionManagementProvider,
@@ -33,6 +34,7 @@ import { SharedModule } from '../shared/shared.module';
     // Providers (exported for reusability in other modules)
     ProductManagementProvider,
     VariantManagementProvider,
+    VariantGenerationProvider,
     CategoryManagementProvider,
     SegmentManagementProvider,
     ImageManagementProvider,

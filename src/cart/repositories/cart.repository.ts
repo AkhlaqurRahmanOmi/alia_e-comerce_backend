@@ -11,6 +11,7 @@ import {
   QueryOptions,
   FilterOptions,
 } from '../../shared/types';
+import { VARIANT_IMAGE_INCLUDE } from '../../shared/utils';
 
 @Injectable()
 export class CartRepository extends BaseRepository<Cart, number> {
@@ -28,10 +29,7 @@ export class CartRepository extends BaseRepository<Cart, number> {
         cartItems: {
           include: {
             variant: {
-              include: {
-                product: true,
-                variantImages: true,
-              },
+              include: VARIANT_IMAGE_INCLUDE,
             },
             bundle: true,
           },
@@ -218,10 +216,7 @@ export class CartRepository extends BaseRepository<Cart, number> {
         cartItems: {
           include: {
             variant: {
-              include: {
-                product: true,
-                variantImages: true,
-              },
+              include: VARIANT_IMAGE_INCLUDE,
             },
             bundle: true,
           },
@@ -245,10 +240,7 @@ export class CartRepository extends BaseRepository<Cart, number> {
           cartItems: {
             include: {
               variant: {
-                include: {
-                  product: true,
-                  variantImages: true,
-                },
+                include: VARIANT_IMAGE_INCLUDE,
               },
               bundle: true,
             },

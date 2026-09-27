@@ -15,10 +15,11 @@ import { CreateProductOptionDto } from './create-product-option.dto';
 import { CreateProductImageDto } from './create-product-image.dto';
 import { CreateVariantImageDto } from './create-variant-image.dto';
 import { CreateOptionValueDto } from './create-option-value.dto';
+import { GenerateVariantsDto } from './generate-variants.dto';
 
-class CompleteOptionValueDto extends OmitType(CreateOptionValueDto, ['optionId'] as const) {}
+export class CompleteOptionValueDto extends OmitType(CreateOptionValueDto, ['optionId'] as const) {}
 
-class CompleteProductOptionDto extends OmitType(CreateProductOptionDto, ['productId'] as const) {
+export class CompleteProductOptionDto extends OmitType(CreateProductOptionDto, ['productId'] as const) {
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
@@ -26,7 +27,7 @@ class CompleteProductOptionDto extends OmitType(CreateProductOptionDto, ['produc
   values?: CompleteOptionValueDto[];
 }
 
-class CompleteVariantOptionSelectionDto {
+export class CompleteVariantOptionSelectionDto {
   @IsString()
   @IsNotEmpty()
   optionName: string;
@@ -36,9 +37,9 @@ class CompleteVariantOptionSelectionDto {
   optionValue: string;
 }
 
-class CompleteVariantImageDto extends OmitType(CreateVariantImageDto, ['variantId'] as const) {}
+export class CompleteVariantImageDto extends OmitType(CreateVariantImageDto, ['variantId'] as const) {}
 
-class CompleteProductVariantDto extends OmitType(CreateVariantDto, ['productId'] as const) {
+export class CompleteProductVariantDto extends OmitType(CreateVariantDto, ['productId'] as const) {
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
@@ -52,7 +53,7 @@ class CompleteProductVariantDto extends OmitType(CreateVariantDto, ['productId']
   images?: CompleteVariantImageDto[];
 }
 
-class CompleteProductImageDto extends OmitType(CreateProductImageDto, ['productId'] as const) {}
+export class CompleteProductImageDto extends OmitType(CreateProductImageDto, ['productId'] as const) {}
 
 export class CreateCompleteProductDto {
   @ValidateNested()
@@ -81,4 +82,14 @@ export class CreateCompleteProductDto {
   @ValidateNested({ each: true })
   @Type(() => CompleteProductImageDto)
   images?: CompleteProductImageDto[];
+
+  /**
+   * Expand `options` into variants instead of listing each combination.
+   * Generated variants are appended to any written out in `variants`; a SKU
+   * collision between the two is rejected.
+   */
+  @ValidateNested()
+  @IsOptional()
+  @Type(() => GenerateVariantsDto)
+  generateVariants?: GenerateVariantsDto;
 }

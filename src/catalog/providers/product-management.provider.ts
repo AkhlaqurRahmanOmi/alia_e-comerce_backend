@@ -8,6 +8,11 @@ import { ProductRepository } from '../repositories';
 import { CreateProductDto, UpdateProductDto, ProductFilterDto } from '../dtos';
 import { PaginatedResult, QueryOptions } from '../../shared/types';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
+import {
+  assertNotOrdered,
+  deleteProductChildren,
+  deleteVariantChildren,
+} from './catalog-cascade.util';
 
 @Injectable()
 export class ProductManagementProvider {
@@ -165,7 +170,13 @@ export class ProductManagementProvider {
   }
 
   /**
-   * Soft delete a product
+   * Permanently delete a product and everything beneath it: every variant with
+   * its inventory and stock movements, plus the product's images, options,
+   * option values, categories, attributes, segments, coupon links, reviews and
+   * recently-viewed entries.
+   *
+   * Refuses when any of its variants appears on an order, since severing that
+   * link would break returns and refunds.
    */
   async deleteProduct(id: number): Promise<void> {
     const product = await this.productRepository.findById(id);
@@ -173,7 +184,22 @@ export class ProductManagementProvider {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
 
-    await this.productRepository.delete(id);
+    await this.prisma.$transaction(async (tx) => {
+      const variantIds = (
+        await tx.variant.findMany({
+          where: { productId: id },
+          select: { id: true },
+        })
+      ).map((variant) => variant.id);
+
+      await assertNotOrdered(tx, variantIds, `product "${product.name}"`);
+
+      await deleteVariantChildren(tx, variantIds);
+      await deleteProductChildren(tx, id);
+
+      await tx.variant.deleteMany({ where: { productId: id } });
+      await tx.product.delete({ where: { id } });
+    });
   }
 
   /**

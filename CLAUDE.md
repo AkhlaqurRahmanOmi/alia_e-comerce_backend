@@ -327,3 +327,28 @@ Configuration: `src/config/swagger.config.ts`
 - Detailed request/response schemas
 - Try-it-out functionality
 - Organized by tags/modules
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships. It exists so sessions do not have to read or grep the codebase to get oriented — querying it is roughly 8x cheaper in tokens than scanning source.
+
+**Query the graph before reading source.** For any question about this codebase — how something works, what calls what, where a feature lives, how a change propagates — run one of these first:
+
+```bash
+graphify query "<question>"      # scoped subgraph for a question
+graphify path "<A>" "<B>"        # how two things connect
+graphify explain "<symbol>"      # a node and its immediate neighbors
+graphify affected "<symbol>"     # what breaks if you change it
+graphify god-nodes               # the architectural hubs
+```
+
+Then open only the specific files the graph points at. Do not enumerate directories or grep broadly to build a mental model first — that is what the graph replaces.
+
+Rules:
+- A `SessionStart` hook (`.claude/hooks/graphify-orient.sh`) injects graph stats, architectural hubs, and the main code areas at the start of every session. Treat that as your starting map; query the graph to go deeper.
+- Use `graphify-out/wiki/index.md` for broad navigation instead of raw source browsing. One article per community, 349 of them.
+- Read `graphify-out/GRAPH_REPORT.md` only for a full architecture review, or when query/path/explain do not surface enough. It is ~63KB — prefer the targeted commands.
+- Read and grep freely **once oriented**, and whenever you are editing or debugging specific lines. The graph replaces exploratory scanning, not actual code work.
+- **The code is the source of truth.** The graph is a snapshot and can be stale or wrong (it currently carries some dangling and collapsed edges, and generated Prisma types dominate node counts). If the graph and the code disagree, trust the code, say so, and run `graphify update .`.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost, no LLM — ~14s, zero tokens). Note it re-clusters and replaces curated community names with the busiest node's filename; the orientation hook derives its own area names from source paths, so its output is unaffected.
+- The graph covers code structurally via AST. The 17 `.sql` files contribute nothing until `pip install 'graphifyy[sql]'` is run.

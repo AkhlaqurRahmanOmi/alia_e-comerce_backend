@@ -22,4 +22,5 @@ export * from './update-segment.dto';
 export * from './add-to-wishlist.dto';
 export * from './bulk-add-to-wishlist.dto';
 export * from './move-to-cart.dto';
-
+export * from './option-value-meta.dto';
+export * from './generate-variants.dto';

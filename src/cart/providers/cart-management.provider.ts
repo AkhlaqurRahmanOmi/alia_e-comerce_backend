@@ -9,6 +9,10 @@ import { CartInventoryProvider } from './cart-inventory.provider';
 import { AddToCartDto, UpdateCartItemDto } from '../dtos';
 import { Cart, CartItem, CartStatus } from '@/generated/prisma/client';
 import { PrismaService } from '../../core/config/prisma/prisma.service';
+import { resolveVariantImage, VariantImageSources } from '@/shared/utils';
+
+/** A cart line enriched with the thumbnail the storefront should render. */
+type CartItemWithImage<T> = T & { displayImage: string | null };
 
 @Injectable()
 export class CartManagementProvider {
@@ -24,9 +28,43 @@ export class CartManagementProvider {
   ) {}
 
   /**
+   * Attach the resolved thumbnail to a cart line.
+   *
+   * Images live on the colour option value rather than on the variant, so the
+   * line cannot simply read `variant.variantImages` any more — see
+   * {@link resolveVariantImage} for the resolution order.
+   */
+  /**
+   * Attach `displayImage` to every line of a cart, so each endpoint that
+   * returns a whole cart reports it the same way. A freshly created cart has no
+   * `cartItems` relation loaded, hence the default.
+   */
+  private withCartItemImages<T extends object>(cart: T) {
+    const { cartItems = [] } = cart as {
+      cartItems?: Array<{ variant?: VariantImageSources | null }>;
+    };
+
+    return {
+      ...cart,
+      cartItems: cartItems.map((item) => this.withDisplayImage(item)),
+    };
+  }
+
+  private withDisplayImage<T extends object>(item: T): CartItemWithImage<T> {
+    // The repositories are typed as the bare Prisma model even though they
+    // select the relations, so `variant` has to be read structurally.
+    const { variant } = item as { variant?: VariantImageSources | null };
+
+    return {
+      ...item,
+      displayImage: resolveVariantImage(variant),
+    };
+  }
+
+  /**
    * Get or create cart for user/session
    */
-  async getOrCreateCart(userId?: number, sessionId?: string): Promise<Cart> {
+  async getOrCreateCart(userId?: number, sessionId?: string) {
     // Try to find existing active cart
     let cart: Cart | null = null;
 
@@ -46,26 +84,26 @@ export class CartManagementProvider {
       });
     }
 
-    return cart;
+    return this.withCartItemImages(cart);
   }
 
   /**
    * Get cart by ID
    */
-  async getCartById(cartId: number): Promise<Cart> {
+  async getCartById(cartId: number) {
     const cart = await this.cartRepository.findById(cartId);
 
     if (!cart) {
       throw new NotFoundException(`Cart with ID ${cartId} not found`);
     }
 
-    return cart;
+    return this.withCartItemImages(cart);
   }
 
   /**
    * Add item to cart with stock validation
    */
-  async addItemToCart(cartId: number, dto: AddToCartDto): Promise<CartItem> {
+  async addItemToCart(cartId: number, dto: AddToCartDto) {
     const { variantId, bundleId, quantity } = dto;
 
     // Validate only one of variantId or bundleId
@@ -172,7 +210,7 @@ export class CartManagementProvider {
       // Touch cart
       await this.cartRepository.touchCart(cartId);
 
-      return updatedItem;
+      return this.withDisplayImage(updatedItem);
     }
 
     // Get current price
@@ -205,7 +243,7 @@ export class CartManagementProvider {
     // Touch cart
     await this.cartRepository.touchCart(cartId);
 
-    return cartItem;
+    return this.withDisplayImage(cartItem);
   }
 
   /**
@@ -215,7 +253,7 @@ export class CartManagementProvider {
     cartId: number,
     itemId: number,
     dto: UpdateCartItemDto,
-  ): Promise<CartItem> {
+  ) {
     const { quantity } = dto;
 
     // Get cart item
@@ -247,7 +285,7 @@ export class CartManagementProvider {
     // Touch cart
     await this.cartRepository.touchCart(cartId);
 
-    return updatedItem;
+    return this.withDisplayImage(updatedItem);
   }
 
   /**
@@ -304,7 +342,7 @@ export class CartManagementProvider {
         }
 
         return {
-          ...item,
+          ...this.withDisplayImage(item),
           stockInfo,
         };
       }),

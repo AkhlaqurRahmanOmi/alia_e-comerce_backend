@@ -63,6 +63,7 @@ export type OrderItemMinAggregateOutputType = {
   currency: string | null
   productNameSnapshot: string | null
   variantSkuSnapshot: string | null
+  imageSnapshot: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -80,6 +81,7 @@ export type OrderItemMaxAggregateOutputType = {
   currency: string | null
   productNameSnapshot: string | null
   variantSkuSnapshot: string | null
+  imageSnapshot: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -97,6 +99,7 @@ export type OrderItemCountAggregateOutputType = {
   currency: number
   productNameSnapshot: number
   variantSkuSnapshot: number
+  imageSnapshot: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -140,6 +143,7 @@ export type OrderItemMinAggregateInputType = {
   currency?: true
   productNameSnapshot?: true
   variantSkuSnapshot?: true
+  imageSnapshot?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -157,6 +161,7 @@ export type OrderItemMaxAggregateInputType = {
   currency?: true
   productNameSnapshot?: true
   variantSkuSnapshot?: true
+  imageSnapshot?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -174,6 +179,7 @@ export type OrderItemCountAggregateInputType = {
   currency?: true
   productNameSnapshot?: true
   variantSkuSnapshot?: true
+  imageSnapshot?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -278,6 +284,7 @@ export type OrderItemGroupByOutputType = {
   currency: string
   productNameSnapshot: string | null
   variantSkuSnapshot: string | null
+  imageSnapshot: string | null
   createdAt: Date
   updatedAt: Date
   _count: OrderItemCountAggregateOutputType | null
@@ -318,6 +325,7 @@ export type OrderItemWhereInput = {
   currency?: Prisma.StringFilter<"OrderItem"> | string
   productNameSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   variantSkuSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  imageSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
@@ -342,6 +350,7 @@ export type OrderItemOrderByWithRelationInput = {
   currency?: Prisma.SortOrder
   productNameSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
   variantSkuSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   order?: Prisma.OrderOrderByWithRelationInput
@@ -369,6 +378,7 @@ export type OrderItemWhereUniqueInput = Prisma.AtLeast<{
   currency?: Prisma.StringFilter<"OrderItem"> | string
   productNameSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   variantSkuSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  imageSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
@@ -393,6 +403,7 @@ export type OrderItemOrderByWithAggregationInput = {
   currency?: Prisma.SortOrder
   productNameSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
   variantSkuSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OrderItemCountOrderByAggregateInput
@@ -418,6 +429,7 @@ export type OrderItemScalarWhereWithAggregatesInput = {
   currency?: Prisma.StringWithAggregatesFilter<"OrderItem"> | string
   productNameSnapshot?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
   variantSkuSnapshot?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
+  imageSnapshot?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OrderItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OrderItem"> | Date | string
 }
@@ -431,6 +443,7 @@ export type OrderItemCreateInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
@@ -455,6 +468,7 @@ export type OrderItemUncheckedCreateInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedCreateNestedManyWithoutOrderItemInput
@@ -472,6 +486,7 @@ export type OrderItemUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
@@ -496,6 +511,7 @@ export type OrderItemUncheckedUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedUpdateManyWithoutOrderItemNestedInput
@@ -517,6 +533,7 @@ export type OrderItemCreateManyInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -530,6 +547,7 @@ export type OrderItemUpdateManyMutationInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -547,6 +565,7 @@ export type OrderItemUncheckedUpdateManyInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -574,6 +593,7 @@ export type OrderItemCountOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   productNameSnapshot?: Prisma.SortOrder
   variantSkuSnapshot?: Prisma.SortOrder
+  imageSnapshot?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -603,6 +623,7 @@ export type OrderItemMaxOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   productNameSnapshot?: Prisma.SortOrder
   variantSkuSnapshot?: Prisma.SortOrder
+  imageSnapshot?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -620,6 +641,7 @@ export type OrderItemMinOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   productNameSnapshot?: Prisma.SortOrder
   variantSkuSnapshot?: Prisma.SortOrder
+  imageSnapshot?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -839,6 +861,7 @@ export type OrderItemCreateWithoutVariantInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
@@ -861,6 +884,7 @@ export type OrderItemUncheckedCreateWithoutVariantInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedCreateNestedManyWithoutOrderItemInput
@@ -911,6 +935,7 @@ export type OrderItemScalarWhereInput = {
   currency?: Prisma.StringFilter<"OrderItem"> | string
   productNameSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   variantSkuSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  imageSnapshot?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
 }
@@ -924,6 +949,7 @@ export type OrderItemCreateWithoutBundleInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
@@ -946,6 +972,7 @@ export type OrderItemUncheckedCreateWithoutBundleInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedCreateNestedManyWithoutOrderItemInput
@@ -989,6 +1016,7 @@ export type OrderItemCreateWithoutOrderInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   variant?: Prisma.VariantCreateNestedOneWithoutOrderItemsInput
@@ -1011,6 +1039,7 @@ export type OrderItemUncheckedCreateWithoutOrderInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedCreateNestedManyWithoutOrderItemInput
@@ -1054,6 +1083,7 @@ export type OrderItemCreateWithoutFulfillmentItemsInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
@@ -1077,6 +1107,7 @@ export type OrderItemUncheckedCreateWithoutFulfillmentItemsInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   refundItems?: Prisma.RefundItemUncheckedCreateNestedManyWithoutOrderItemInput
@@ -1109,6 +1140,7 @@ export type OrderItemUpdateWithoutFulfillmentItemsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
@@ -1132,6 +1164,7 @@ export type OrderItemUncheckedUpdateWithoutFulfillmentItemsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refundItems?: Prisma.RefundItemUncheckedUpdateManyWithoutOrderItemNestedInput
@@ -1148,6 +1181,7 @@ export type OrderItemCreateWithoutRefundItemsInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
@@ -1171,6 +1205,7 @@ export type OrderItemUncheckedCreateWithoutRefundItemsInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedCreateNestedManyWithoutOrderItemInput
@@ -1203,6 +1238,7 @@ export type OrderItemUpdateWithoutRefundItemsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
@@ -1226,6 +1262,7 @@ export type OrderItemUncheckedUpdateWithoutRefundItemsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedUpdateManyWithoutOrderItemNestedInput
@@ -1242,6 +1279,7 @@ export type OrderItemCreateWithoutReturnItemsInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
@@ -1265,6 +1303,7 @@ export type OrderItemUncheckedCreateWithoutReturnItemsInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedCreateNestedManyWithoutOrderItemInput
@@ -1297,6 +1336,7 @@ export type OrderItemUpdateWithoutReturnItemsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
@@ -1320,6 +1360,7 @@ export type OrderItemUncheckedUpdateWithoutReturnItemsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedUpdateManyWithoutOrderItemNestedInput
@@ -1336,6 +1377,7 @@ export type OrderItemCreateWithoutReviewsInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
@@ -1359,6 +1401,7 @@ export type OrderItemUncheckedCreateWithoutReviewsInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedCreateNestedManyWithoutOrderItemInput
@@ -1391,6 +1434,7 @@ export type OrderItemUpdateWithoutReviewsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
@@ -1414,6 +1458,7 @@ export type OrderItemUncheckedUpdateWithoutReviewsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedUpdateManyWithoutOrderItemNestedInput
@@ -1433,6 +1478,7 @@ export type OrderItemCreateManyVariantInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1446,6 +1492,7 @@ export type OrderItemUpdateWithoutVariantInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
@@ -1468,6 +1515,7 @@ export type OrderItemUncheckedUpdateWithoutVariantInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedUpdateManyWithoutOrderItemNestedInput
@@ -1488,6 +1536,7 @@ export type OrderItemUncheckedUpdateManyWithoutVariantInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1504,6 +1553,7 @@ export type OrderItemCreateManyBundleInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1517,6 +1567,7 @@ export type OrderItemUpdateWithoutBundleInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
@@ -1539,6 +1590,7 @@ export type OrderItemUncheckedUpdateWithoutBundleInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedUpdateManyWithoutOrderItemNestedInput
@@ -1559,6 +1611,7 @@ export type OrderItemUncheckedUpdateManyWithoutBundleInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1575,6 +1628,7 @@ export type OrderItemCreateManyOrderInput = {
   currency?: string
   productNameSnapshot?: string | null
   variantSkuSnapshot?: string | null
+  imageSnapshot?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1588,6 +1642,7 @@ export type OrderItemUpdateWithoutOrderInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variant?: Prisma.VariantUpdateOneWithoutOrderItemsNestedInput
@@ -1610,6 +1665,7 @@ export type OrderItemUncheckedUpdateWithoutOrderInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fulfillmentItems?: Prisma.FulfillmentItemUncheckedUpdateManyWithoutOrderItemNestedInput
@@ -1630,6 +1686,7 @@ export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   productNameSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   variantSkuSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageSnapshot?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1705,6 +1762,7 @@ export type OrderItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   currency?: boolean
   productNameSnapshot?: boolean
   variantSkuSnapshot?: boolean
+  imageSnapshot?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -1730,6 +1788,7 @@ export type OrderItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   currency?: boolean
   productNameSnapshot?: boolean
   variantSkuSnapshot?: boolean
+  imageSnapshot?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -1750,6 +1809,7 @@ export type OrderItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   currency?: boolean
   productNameSnapshot?: boolean
   variantSkuSnapshot?: boolean
+  imageSnapshot?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -1770,11 +1830,12 @@ export type OrderItemSelectScalar = {
   currency?: boolean
   productNameSnapshot?: boolean
   variantSkuSnapshot?: boolean
+  imageSnapshot?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "variantId" | "bundleId" | "quantity" | "unitPrice" | "discountAmount" | "taxAmount" | "lineTotal" | "currency" | "productNameSnapshot" | "variantSkuSnapshot" | "createdAt" | "updatedAt", ExtArgs["result"]["orderItem"]>
+export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "variantId" | "bundleId" | "quantity" | "unitPrice" | "discountAmount" | "taxAmount" | "lineTotal" | "currency" | "productNameSnapshot" | "variantSkuSnapshot" | "imageSnapshot" | "createdAt" | "updatedAt", ExtArgs["result"]["orderItem"]>
 export type OrderItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.OrderItem$variantArgs<ExtArgs>
@@ -1820,6 +1881,7 @@ export type $OrderItemPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     currency: string
     productNameSnapshot: string | null
     variantSkuSnapshot: string | null
+    imageSnapshot: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["orderItem"]>
@@ -2264,6 +2326,7 @@ export interface OrderItemFieldRefs {
   readonly currency: Prisma.FieldRef<"OrderItem", 'String'>
   readonly productNameSnapshot: Prisma.FieldRef<"OrderItem", 'String'>
   readonly variantSkuSnapshot: Prisma.FieldRef<"OrderItem", 'String'>
+  readonly imageSnapshot: Prisma.FieldRef<"OrderItem", 'String'>
   readonly createdAt: Prisma.FieldRef<"OrderItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OrderItem", 'DateTime'>
 }

@@ -15,7 +15,12 @@ import {
 } from '@nestjs/common';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { Auth } from '@/auth/decorator/auth.decorator';
 import { AuthType } from '@/auth/enums/auth-type.enum';
 import { Permissions } from '@/auth/decorator/permissions.decorator';
@@ -536,9 +541,24 @@ export class CatalogController {
     await this.catalog.deleteProductImage(imageId);
   }
 
+  /**
+   * @deprecated Images belong on the colour option value, not the variant.
+   * Put them in `OptionValue.meta.images` on a swatch option instead; the cart
+   * and PDP resolve them from there. Retained so existing VariantImage rows
+   * keep rendering.
+   */
   @Post('variants/:id/images')
   @Permissions('products:create')
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    deprecated: true,
+    summary: 'Deprecated — store images on the colour option value',
+    description:
+      'Variant-level images are no longer the source of truth. Set `meta.images` ' +
+      'on the colour (or pattern) option value instead, so one upload covers every ' +
+      'size of that colour. This route is kept only for products created before ' +
+      'the change.',
+  })
   addVariantImage(
     @Param('id', ParseIntPipe) variantId: number,
     @Body() createImageDto: CreateVariantImageDto,
@@ -546,12 +566,24 @@ export class CatalogController {
     return this.catalog.addVariantImage({ ...createImageDto, variantId });
   }
 
+  /**
+   * @deprecated See {@link CatalogController.addVariantImage}. Upload the image
+   * once and reference it from the colour option value's `meta.images`.
+   */
   @Post('variants/:id/images/upload')
   @Permissions('products:create')
   @UseInterceptors(FileInterceptor('file'))
   @HttpCode(HttpStatus.CREATED)
   @ApiBearerAuth('JWT-auth')
   @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    deprecated: true,
+    summary: 'Deprecated — store images on the colour option value',
+    description:
+      'Uploading per variant duplicates the same photo across every size of a ' +
+      'colour. Upload once and reference the URL from the colour option value ' +
+      "'s `meta.images` instead.",
+  })
   @ApiBody({
     schema: {
       type: 'object',
