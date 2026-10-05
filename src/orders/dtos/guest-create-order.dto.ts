@@ -4,6 +4,7 @@ import {
   ValidateNested,
   IsOptional,
   IsEnum,
+  IsEmail,
   IsNumber,
   MinLength,
   MaxLength,
@@ -40,6 +41,33 @@ export class GuestCreateOrderDto {
   @MinLength(10)
   @MaxLength(20)
   phone: string;
+
+  /**
+   * Optional: without it a guest order has no reachable address, so the
+   * confirmation email in OrderNotificationProvider cannot be sent and the
+   * customer's only record of the order is the reference shown once on screen.
+   * Kept optional so existing clients that omit it keep working.
+   */
+  @ApiProperty({
+    description:
+      'Customer email. Optional, but required to send an order confirmation.',
+    example: 'customer@example.com',
+    required: false,
+  })
+  @IsEmail()
+  @IsOptional()
+  @MaxLength(255)
+  email?: string;
+
+  @ApiProperty({
+    description: 'Customer last name',
+    example: 'Rahman',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  lastName?: string;
 
   @ApiProperty({ description: 'Street address', example: 'Road 10, Dhaka' })
   @IsString()

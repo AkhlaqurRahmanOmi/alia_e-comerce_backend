@@ -716,6 +716,10 @@ export class OrderManagementProvider {
           userId: undefined,
           guestPhone: dto.phone,
           guestFirstName: dto.firstName,
+          guestLastName: dto.lastName,
+          // resolveDirectRecipientEmail() reads guestEmail first, so this is
+          // what makes the order confirmation reachable for a guest.
+          guestEmail: dto.email,
           isGuestOrder: true,
           externalRef,
           subtotalAmount: subtotal,
@@ -733,6 +737,8 @@ export class OrderManagementProvider {
           orderId: newOrder.id,
           type: 'shipping',
           firstName: dto.firstName,
+          lastName: dto.lastName,
+          email: dto.email,
           phone: dto.phone,
           addressLine1: dto.addressLine1,
         },
@@ -744,6 +750,8 @@ export class OrderManagementProvider {
           orderId: newOrder.id,
           type: 'billing',
           firstName: dto.firstName,
+          lastName: dto.lastName,
+          email: dto.email,
           phone: dto.phone,
           addressLine1: dto.addressLine1,
         },
