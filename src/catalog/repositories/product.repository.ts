@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 // import { Product } from '../../generated/prisma/models/Product';
-import { OptionDisplayType, Product } from '@/generated/prisma/client';
+import { OptionDisplayType, Prisma, Product } from '@/generated/prisma/client';
 import Fuse  from 'fuse.js'
 import { PrismaService } from '@/core/config/prisma/prisma.service';
 import { BaseRepository } from '@/shared/repository/base.repository';
@@ -290,20 +290,84 @@ export class ProductRepository extends BaseRepository<Product, number> {
               },
             });
 
-            // Update option values (delete old, create new)
-            await tx.optionValue.deleteMany({
-              where: { optionId: existingOption.id },
-            });
-
+            // Update option values in place.
+            //
+            // These must NOT be deleted and recreated: VariantOptionValue
+            // references optionValueId with the default RESTRICT, so wiping the
+            // values of a product that has variants aborts the whole
+            // transaction ("violates RESTRICT setting of foreign key
+            // constraint VariantOptionValue_option_value_id_fkey"). Even where
+            // the delete did succeed, recreating the rows would hand out new
+            // ids and break every variant's colour/size link. Matching on the
+            // value keeps those ids stable, the same way variants below are
+            // upserted rather than replaced.
             if (optionData.values && optionData.values.length > 0) {
-              await tx.optionValue.createMany({
-                data: optionData.values.map((val: any) => ({
-                  optionId: existingOption.id,
-                  value: val.value,
-                  position: val.position ?? 1,
-                  meta: val.meta,
-                })),
-              });
+              const incoming = optionData.values as Array<{
+                value: string;
+                code?: string;
+                position?: number;
+                meta?: unknown;
+              }>;
+
+              const normalise = (value: string) => value.trim().toLowerCase();
+              const existingByValue = new Map(
+                existingOption.optionValues.map((optionValue) => [
+                  normalise(optionValue.value),
+                  optionValue,
+                ]),
+              );
+
+              for (const [index, val] of incoming.entries()) {
+                const match = existingByValue.get(normalise(val.value));
+
+                if (match) {
+                  await tx.optionValue.update({
+                    where: { id: match.id },
+                    data: {
+                      position: val.position ?? index + 1,
+                      // DbNull clears the column; `undefined` would leave the
+                      // previous meta in place when a caller removes it.
+                      meta: (val.meta ?? Prisma.DbNull) as Prisma.InputJsonValue,
+                      // Only overwrite the SKU code when one was supplied -
+                      // dropping it would break SKU patterns built from it.
+                      ...(val.code ? { code: val.code } : {}),
+                    },
+                  });
+                } else {
+                  await tx.optionValue.create({
+                    data: {
+                      optionId: existingOption.id,
+                      value: val.value,
+                      code: val.code,
+                      position: val.position ?? index + 1,
+                      meta: val.meta as Prisma.InputJsonValue | undefined,
+                    },
+                  });
+                }
+              }
+
+              // Remove values that dropped out of the payload, but only when no
+              // variant still points at them - otherwise report which ones are
+              // blocking instead of letting the driver raise a bare 500.
+              const keep = new Set(incoming.map((val) => normalise(val.value)));
+              const removed = existingOption.optionValues.filter(
+                (optionValue) => !keep.has(normalise(optionValue.value)),
+              );
+
+              for (const optionValue of removed) {
+                const inUse = await tx.variantOptionValue.count({
+                  where: { optionValueId: optionValue.id },
+                });
+
+                if (inUse > 0) {
+                  throw new BadRequestException(
+                    `Cannot remove option value "${optionValue.value}" from "${optionData.name}": ` +
+                      `${inUse} variant(s) still use it. Delete those variants first.`,
+                  );
+                }
+
+                await tx.optionValue.delete({ where: { id: optionValue.id } });
+              }
             }
           } else {
             // CREATE new option
